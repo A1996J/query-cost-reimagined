@@ -15,7 +15,7 @@ export const PDFExport: React.FC<PDFExportProps> = ({ scenarioResults, scenarios
     try {
       toast({
         title: "Generating PDF",
-        description: "Creating your 4-slide report..."
+        description: "Creating your 5-slide report..."
       });
 
       const pdf = new jsPDF('landscape', 'mm', 'a4');
@@ -80,41 +80,87 @@ export const PDFExport: React.FC<PDFExportProps> = ({ scenarioResults, scenarios
         if (keyAssumptions) slide2.appendChild(keyAssumptions.cloneNode(true));
         document.body.appendChild(slide2);
 
-        // Slide 3: Executive Summary with enhanced formatting
+        // Slide 3: Executive Summary Part 1 (Pre-Ema and Post-Ema)
         const slide3 = document.createElement('div');
         slide3.id = 'pdf-slide-3';
         slide3.className = 'p-6 bg-white';
-        slide3.style.fontSize = '12px';
-        slide3.style.lineHeight = '1.5';
         
         const summary = document.querySelector('.executive-summary-container') as HTMLElement;
         if (summary) {
           const summaryClone = summary.cloneNode(true) as HTMLElement;
-          // Enhanced table styling for PDF
           const table = summaryClone.querySelector('table');
           if (table) {
-            table.style.fontSize = '10px';
-            table.style.lineHeight = '1.4';
-            const cells = table.querySelectorAll('td, th');
-            cells.forEach((cell) => {
-              (cell as HTMLElement).style.padding = '8px 6px';
-              (cell as HTMLElement).style.border = '1px solid #e5e7eb';
-            });
+            const tbody = table.querySelector('tbody');
+            if (tbody) {
+              // Keep only first 3 sections (Pre-Ema, Post-Ema, Direct Savings)
+              const rows = tbody.querySelectorAll('tr');
+              let sectionCount = 0;
+              const rowsToKeep: Element[] = [];
+              
+              rows.forEach((row) => {
+                const firstCell = row.querySelector('td');
+                if (firstCell?.getAttribute('colSpan') === '7') {
+                  sectionCount++;
+                }
+                if (sectionCount <= 3) {
+                  rowsToKeep.push(row);
+                }
+              });
+              
+              // Clear tbody and add only first 3 sections
+              tbody.innerHTML = '';
+              rowsToKeep.forEach(row => tbody.appendChild(row));
+            }
           }
           slide3.appendChild(summaryClone);
         }
         document.body.appendChild(slide3);
 
-        // Slide 4: Glossary
+        // Slide 4: Executive Summary Part 2 (Additional Savings and All-In)
         const slide4 = document.createElement('div');
         slide4.id = 'pdf-slide-4';
-        slide4.className = 'p-8 bg-white';
+        slide4.className = 'p-6 bg-white';
         
-        const glossary = document.querySelector('.glossary-container') as HTMLElement;
-        if (glossary) slide4.appendChild(glossary.cloneNode(true));
+        if (summary) {
+          const summaryClone2 = summary.cloneNode(true) as HTMLElement;
+          const table2 = summaryClone2.querySelector('table');
+          if (table2) {
+            const tbody2 = table2.querySelector('tbody');
+            if (tbody2) {
+              // Keep only last 2 sections (Additional Savings, All-In Savings)
+              const rows = tbody2.querySelectorAll('tr');
+              let sectionCount = 0;
+              const rowsToKeep: Element[] = [];
+              
+              rows.forEach((row) => {
+                const firstCell = row.querySelector('td');
+                if (firstCell?.getAttribute('colSpan') === '7') {
+                  sectionCount++;
+                }
+                if (sectionCount > 3) {
+                  rowsToKeep.push(row);
+                }
+              });
+              
+              // Clear tbody and add only last 2 sections
+              tbody2.innerHTML = '';
+              rowsToKeep.forEach(row => tbody2.appendChild(row));
+            }
+          }
+          slide4.appendChild(summaryClone2);
+        }
         document.body.appendChild(slide4);
 
-        return [slide1, slide2, slide3, slide4];
+        // Slide 5: Glossary
+        const slide5 = document.createElement('div');
+        slide5.id = 'pdf-slide-5';
+        slide5.className = 'p-8 bg-white';
+        
+        const glossary = document.querySelector('.glossary-container') as HTMLElement;
+        if (glossary) slide5.appendChild(glossary.cloneNode(true));
+        document.body.appendChild(slide5);
+
+        return [slide1, slide2, slide3, slide4, slide5];
       };
 
       const cleanupSlideElements = (elements: HTMLElement[]) => {
@@ -132,6 +178,7 @@ export const PDFExport: React.FC<PDFExportProps> = ({ scenarioResults, scenarios
       await captureAndAdd('pdf-slide-2', 2);
       await captureAndAdd('pdf-slide-3', 3);
       await captureAndAdd('pdf-slide-4', 4);
+      await captureAndAdd('pdf-slide-5', 5);
 
       // Cleanup
       cleanupSlideElements(slideElements);
@@ -162,7 +209,7 @@ export const PDFExport: React.FC<PDFExportProps> = ({ scenarioResults, scenarios
       className="mb-6"
     >
       <Download className="mr-2 h-4 w-4" />
-      Export 4-Slide PDF Report
+      Export 5-Slide PDF Report
     </Button>
   );
 };
