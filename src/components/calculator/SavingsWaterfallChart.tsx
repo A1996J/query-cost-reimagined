@@ -30,7 +30,7 @@ export const SavingsWaterfallChart: React.FC<SavingsWaterfallChartProps> = ({ sc
   const postEMAFilledHeight = (basePostEMAPercent + bullPostEMAPercent) / 2;
 
   const formatRange = (baseValue: number, bullValue: number) => {
-    return `${baseValue.toFixed(1)}%–${bullValue.toFixed(1)}%`;
+    return `${baseValue.toFixed(0)}%–${bullValue.toFixed(0)}%`;
   };
 
   return (
@@ -42,17 +42,17 @@ export const SavingsWaterfallChart: React.FC<SavingsWaterfallChartProps> = ({ sc
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="relative h-96 flex items-end justify-center space-x-8 p-4">
+        <div className="relative h-96 flex items-end justify-center space-x-12 p-6">
           {/* Pre-EMA Cost Bar */}
           <div className="flex flex-col items-center">
-            <div className="relative w-16 bg-muted h-80 rounded-sm border">
+            <div className="relative w-24 bg-muted h-80 rounded-sm border">
             </div>
             <div className="mt-2 text-sm font-medium text-center">Pre-EMA<br/>Cost</div>
           </div>
 
           {/* Direct Savings Bar */}
           <div className="flex flex-col items-center">
-            <div className="relative w-16 h-80 rounded-sm border overflow-hidden">
+            <div className="relative w-24 h-80 rounded-sm border overflow-hidden">
               {/* Full height background */}
               <div className="absolute inset-0 bg-muted"></div>
               {/* Direct savings portion - waterfall from top */}
@@ -60,7 +60,7 @@ export const SavingsWaterfallChart: React.FC<SavingsWaterfallChartProps> = ({ sc
                 className="absolute top-0 w-full bg-finance-success rounded-sm flex items-center justify-center"
                 style={{ height: `${directHeight * 3.2}px` }}
               >
-                <div className="text-xs font-medium text-white text-center px-1">
+                <div className="text-xs font-medium text-white text-center px-2">
                   {formatRange(baseDirectPercent, bullDirectPercent)}
                 </div>
               </div>
@@ -70,7 +70,7 @@ export const SavingsWaterfallChart: React.FC<SavingsWaterfallChartProps> = ({ sc
 
           {/* Additional Savings Bar */}
           <div className="flex flex-col items-center">
-            <div className="relative w-16 h-80 rounded-sm border overflow-hidden">
+            <div className="relative w-24 h-80 rounded-sm border overflow-hidden">
               {/* Full height background */}
               <div className="absolute inset-0 bg-muted"></div>
               {/* Additional savings portion - waterfall continues from direct savings */}
@@ -81,7 +81,7 @@ export const SavingsWaterfallChart: React.FC<SavingsWaterfallChartProps> = ({ sc
                   height: `${additionalHeight * 3.2}px` 
                 }}
               >
-                <div className="text-xs font-medium text-white text-center px-1">
+                <div className="text-xs font-medium text-white text-center px-2">
                   {formatRange(baseAdditionalPercent, bullAdditionalPercent)}
                 </div>
               </div>
@@ -91,7 +91,7 @@ export const SavingsWaterfallChart: React.FC<SavingsWaterfallChartProps> = ({ sc
 
           {/* Post-EMA Cost Bar */}
           <div className="flex flex-col items-center">
-            <div className="relative w-16 h-80 rounded-sm border overflow-hidden">
+            <div className="relative w-24 h-80 rounded-sm border overflow-hidden">
               {/* Solid filled portion - remaining cost */}
               <div 
                 className="absolute bottom-0 w-full bg-finance-primary rounded-sm"
@@ -105,7 +105,7 @@ export const SavingsWaterfallChart: React.FC<SavingsWaterfallChartProps> = ({ sc
                   height: `${(directHeight + additionalHeight) * 3.2}px`
                 }}
               >
-                <div className="absolute top-2 left-1/2 transform -translate-x-1/2 text-xs font-medium text-finance-primary text-center">
+                <div className="absolute top-2 left-1/2 transform -translate-x-1/2 text-xs font-medium text-finance-primary text-center px-2">
                   {formatRange(baseDirectPercent + baseAdditionalPercent, bullDirectPercent + bullAdditionalPercent)}
                 </div>
               </div>
