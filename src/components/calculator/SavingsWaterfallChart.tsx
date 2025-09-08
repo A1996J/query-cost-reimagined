@@ -58,7 +58,7 @@ export const SavingsWaterfallChart: React.FC<SavingsWaterfallChartProps> = ({ sc
                 className="absolute top-0 w-full bg-finance-success rounded-sm flex items-center justify-center"
                 style={{ height: `${directHeight * 3.2}px` }}
               >
-                <div className="text-[10px] font-medium text-white text-center px-1 whitespace-nowrap">
+                <div className="text-sm font-medium text-white text-center whitespace-nowrap">
                   {formatRange(baseDirectPercent, bullDirectPercent)}
                 </div>
               </div>
@@ -77,7 +77,7 @@ export const SavingsWaterfallChart: React.FC<SavingsWaterfallChartProps> = ({ sc
                   height: `${additionalHeight * 3.2}px` 
                 }}
               >
-                <div className="text-[10px] font-medium text-white text-center px-1 whitespace-nowrap">
+                <div className="text-sm font-medium text-white text-center whitespace-nowrap">
                   {formatRange(baseAdditionalPercent, bullAdditionalPercent)}
                 </div>
               </div>
@@ -101,7 +101,7 @@ export const SavingsWaterfallChart: React.FC<SavingsWaterfallChartProps> = ({ sc
                   height: `${(directHeight + additionalHeight) * 3.2}px`
                 }}
               >
-                <div className="absolute top-2 left-1/2 transform -translate-x-1/2 text-[10px] font-medium text-finance-primary text-center px-1 whitespace-nowrap">
+                <div className="absolute top-2 left-1/2 transform -translate-x-1/2 text-sm font-medium text-finance-primary text-center whitespace-nowrap">
                   {formatRange(baseDirectPercent + baseAdditionalPercent, bullDirectPercent + bullAdditionalPercent)}
                 </div>
               </div>

@@ -5,6 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { TrendingUp, DollarSign, Target, Award, PercentIcon } from 'lucide-react';
 import { CalculationResults, ScenarioResults } from '@/types/ema-calculator';
 import { SavingsWaterfallChart } from './SavingsWaterfallChart';
+import { SensitivityHeatmap } from './SensitivityHeatmap';
 
 interface ResultsDisplayProps {
   results: CalculationResults;
@@ -233,7 +234,10 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, currenc
 
       {/* Waterfall Chart - only show if we have both scenarios */}
       {scenarioResults && (
-        <SavingsWaterfallChart scenarioResults={scenarioResults} />
+        <>
+          <SavingsWaterfallChart scenarioResults={scenarioResults} />
+          <SensitivityHeatmap scenarioResults={scenarioResults} />
+        </>
       )}
     </div>
   );
