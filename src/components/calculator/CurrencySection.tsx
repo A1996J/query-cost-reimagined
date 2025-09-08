@@ -41,9 +41,12 @@ const mockFXRates: { [key: string]: number } = {
 
 export const CurrencySection: React.FC<CurrencySectionProps> = ({ inputs, onUpdateInput }) => {
   const [isLoadingFX, setIsLoadingFX] = useState(false);
+  const [hasUserEditedFX, setHasUserEditedFX] = useState(false);
 
-  // Update FX rate when currency changes
+  // Update FX rate when currency changes (only if user hasn't manually edited it)
   useEffect(() => {
+    if (hasUserEditedFX) return; // Don't override user's manual input
+
     const fetchFXRate = async () => {
       setIsLoadingFX(true);
       try {
@@ -61,7 +64,7 @@ export const CurrencySection: React.FC<CurrencySectionProps> = ({ inputs, onUpda
     };
 
     fetchFXRate();
-  }, [inputs.currency, onUpdateInput]);
+  }, [inputs.currency, onUpdateInput, hasUserEditedFX]);
 
   const handleCountryChange = (countryCode: string) => {
     const country = countries.find(c => c.code === countryCode);
@@ -123,7 +126,10 @@ export const CurrencySection: React.FC<CurrencySectionProps> = ({ inputs, onUpda
             id="fxRate"
             type="number"
             value={inputs.fxRate}
-            onChange={(e) => onUpdateInput('fxRate', parseFloat(e.target.value) || 1)}
+            onChange={(e) => {
+              setHasUserEditedFX(true);
+              onUpdateInput('fxRate', parseFloat(e.target.value) || 1);
+            }}
             step="0.0001"
             className="text-lg font-medium"
           />
