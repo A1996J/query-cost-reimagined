@@ -3,13 +3,14 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calculator, TrendingUp, DollarSign, BarChart3 } from 'lucide-react';
-import emaLogo from '@/assets/ema-logo.png';
+import emaLogo from '/lovable-uploads/93b7ff10-d08c-4f6d-bb64-a3e8cee08d36.png';
 import { CriticalInputsSection } from './calculator/CriticalInputsSection';
 import { DetailedAssumptionsSection } from './calculator/DetailedAssumptionsSection';
 import { AdvancedInputsSection } from './calculator/AdvancedInputsSection';
 import { ResultsDisplay } from './calculator/ResultsDisplay';
 import { SavingsWaterfallChart } from './calculator/SavingsWaterfallChart';
 import { SensitivityHeatmap } from './calculator/SensitivityHeatmap';
+import { SummaryTable } from './calculator/SummaryTable';
 import { KeyAssumptionsTable } from './calculator/KeyAssumptionsTable';
 import { calculateEMASavings, populateBullFromBase, calculateScenarioResults } from '@/lib/ema-calculations';
 import { EMACalculatorInputs, CalculationResults, Scenario, ScenarioInputs, ScenarioResults } from '@/types/ema-calculator';
@@ -346,6 +347,9 @@ export const EMACalculator: React.FC = () => {
                   
                   {/* Key Assumptions Table */}
                   <KeyAssumptionsTable scenarios={scenarios} />
+                  
+                  {/* Executive Summary Table */}
+                  <SummaryTable scenarioResults={scenarioResults} scenarios={scenarios} />
                 </>
               ) : (
                 <Card className="p-8 text-center shadow-soft">
