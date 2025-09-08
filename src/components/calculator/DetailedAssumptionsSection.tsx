@@ -4,7 +4,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
-import { Settings, ChevronDown, ChevronUp, Target, Zap } from 'lucide-react';
+import { Settings, ChevronDown, ChevronUp, Target, Zap, TrendingUp } from 'lucide-react';
 import { EMACalculatorInputs } from '@/types/ema-calculator';
 
 interface DetailedAssumptionsSectionProps {
@@ -42,7 +42,10 @@ export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProp
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Capacity Buffer */}
               <div className="space-y-2">
-                <Label htmlFor="capacityBuffer">Capacity Buffer for Leaves/Peaks</Label>
+                <Label htmlFor="capacityBuffer" className="flex items-center gap-2">
+                  <Target className="h-4 w-4" />
+                  Rep Capacity Buffer (%)
+                </Label>
                 <Input
                   id="capacityBuffer"
                   type="number"
@@ -52,15 +55,15 @@ export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProp
                   className="text-lg font-medium"
                 />
                 <p className="text-sm text-muted-foreground">
-                  Operational buffer for leaves, sick days, and peak demand periods
+                  Buffer to account for leaves, holidays, or peak seasonal demand.
                 </p>
               </div>
 
-              {/* Final Year EMA Containment Rate */}
+              {/* Final Year Ema Containment Rate */}
               <div className="space-y-2">
                 <Label htmlFor="containmentRate" className="flex items-center gap-2">
                   <Target className="h-4 w-4" />
-                  Final Year EMA Containment Rate (%)
+                  Final Year Ema Containment Rate (%)
                 </Label>
                 <Input
                   id="containmentRate"
@@ -73,7 +76,7 @@ export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProp
                   className="text-lg font-medium"
                 />
                 <p className="text-sm text-muted-foreground">
-                  Percentage of queries EMA will handle by Year 3 (mature state)
+                  Percentage of queries Ema will handle by Year 3 (mature state)
                 </p>
               </div>
             </div>
@@ -94,7 +97,7 @@ export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProp
                 className="text-lg font-medium"
               />
               <p className="text-sm text-muted-foreground">
-                Human agent efficiency improvement from EMA assistance and reduced workload
+                Percentage efficiency gain in human agent productivity due to Ema support.
               </p>
             </div>
 
@@ -104,7 +107,10 @@ export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProp
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="duplicateQueries">Duplicate Queries (%)</Label>
+                  <Label htmlFor="duplicateQueries" className="flex items-center gap-2">
+                    <Target className="h-4 w-4" />
+                    Duplicate Queries (%)
+                  </Label>
                   <Input
                     id="duplicateQueries"
                     type="number"
@@ -114,12 +120,15 @@ export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProp
                     className="text-lg font-medium"
                   />
                   <p className="text-sm text-muted-foreground">
-                    Percentage of current queries that are duplicates or could be self-served
+                    Queries for which customers have to call back more than once (avg assumed = 2 calls).
                   </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="complianceCost">Annual Compliance Cost Reduction ($M)</Label>
+                  <Label htmlFor="complianceCost" className="flex items-center gap-2">
+                    <Settings className="h-4 w-4" />
+                    Annual Compliance Cost Reduction ($M)
+                  </Label>
                   <Input
                     id="complianceCost"
                     type="number"
@@ -129,14 +138,17 @@ export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProp
                     className="text-lg font-medium"
                   />
                   <p className="text-sm text-muted-foreground">
-                    Reduced compliance costs from consistent, accurate responses
+                    Reduction in compliance cost from responses aligned with regulatory standards.
                   </p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 <div className="space-y-2">
-                  <Label htmlFor="customerExperience">Customer Experience as % of Revenue (%)</Label>
+                  <Label htmlFor="customerExperience" className="flex items-center gap-2">
+                    <Zap className="h-4 w-4" />
+                    Customer Experience as % of Revenue (%)
+                  </Label>
                   <Input
                     id="customerExperience"
                     type="number"
@@ -151,7 +163,10 @@ export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProp
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="upsellPercent">Upsell % of Revenue (%)</Label>
+                  <Label htmlFor="upsellPercent" className="flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4" />
+                    Revenue Defended and Grown (%)
+                  </Label>
                   <Input
                     id="upsellPercent"
                     type="number"
@@ -161,7 +176,7 @@ export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProp
                     className="text-lg font-medium"
                   />
                   <p className="text-sm text-muted-foreground">
-                    Revenue impact from improved upselling and reduced customer churn
+                    Percent of revenue uplifted or retained due to better CX via Ema.
                   </p>
                 </div>
               </div>

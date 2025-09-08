@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calculator, TrendingUp, DollarSign, BarChart3 } from 'lucide-react';
+import emaLogo from '@/assets/ema-logo.png';
 import { CriticalInputsSection } from './calculator/CriticalInputsSection';
 import { DetailedAssumptionsSection } from './calculator/DetailedAssumptionsSection';
 import { AdvancedInputsSection } from './calculator/AdvancedInputsSection';
@@ -173,13 +174,15 @@ export const EMACalculator: React.FC = () => {
       <div className="bg-finance-gradient shadow-medium">
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center gap-4 text-white">
-            <div className="p-3 bg-white/20 rounded-xl">
-              <Calculator className="h-8 w-8" />
-            </div>
+            <img 
+              src={emaLogo} 
+              alt="Ema.co Logo" 
+              className="h-12 w-auto"
+            />
             <div>
-              <h1 className="text-3xl font-bold mb-2">EMA ROI Calculator</h1>
+              <h1 className="text-3xl font-bold mb-2">Ema Partners ROI Calculation Buddy</h1>
               <p className="text-white/90 text-lg">
-                Calculate 3-year direct cost savings from implementing an EMA solution
+                Calculate 3-year direct cost savings from implementing an Ema solution
               </p>
             </div>
           </div>
@@ -232,7 +235,7 @@ export const EMACalculator: React.FC = () => {
                     size="lg"
                   >
                     <TrendingUp className="mr-2 h-5 w-5" />
-                    {isCalculating ? 'Calculating...' : 'Calculate EMA Savings'}
+                    {isCalculating ? 'Calculating...' : 'Calculate Ema Savings'}
                   </Button>
                 </Card>
               </div>
@@ -254,7 +257,7 @@ export const EMACalculator: React.FC = () => {
                   <DollarSign className="h-16 w-16 mx-auto mb-4 text-finance-primary" />
                   <h3 className="text-xl font-semibold mb-2">Ready to Calculate</h3>
                   <p className="text-muted-foreground">
-                    Fill in all critical inputs to see the EMA ROI calculation results
+                    Fill in all critical inputs to see the Ema ROI calculation results
                   </p>
                 </Card>
               )}
@@ -304,7 +307,7 @@ export const EMACalculator: React.FC = () => {
                     size="lg"
                   >
                     <TrendingUp className="mr-2 h-5 w-5" />
-                    {isCalculating ? 'Calculating...' : 'Calculate EMA Savings'}
+                    {isCalculating ? 'Calculating...' : 'Calculate Ema Savings'}
                   </Button>
                 </Card>
               </div>
@@ -326,7 +329,7 @@ export const EMACalculator: React.FC = () => {
                   <DollarSign className="h-16 w-16 mx-auto mb-4 text-finance-primary" />
                   <h3 className="text-xl font-semibold mb-2">Ready to Calculate</h3>
                   <p className="text-muted-foreground">
-                    Fill in all critical inputs to see the EMA ROI calculation results
+                    Fill in all critical inputs to see the Ema ROI calculation results
                   </p>
                 </Card>
               )}

@@ -96,11 +96,11 @@ export const CriticalInputsSection: React.FC<CriticalInputsSectionProps> = ({
         <div className="space-y-2">
           <Label htmlFor="country" className="flex items-center gap-2">
             <Globe className="h-4 w-4" />
-            Country
+            Partner Country
           </Label>
           <Select value={inputs.country || ''} onValueChange={handleCountryChange}>
             <SelectTrigger>
-              <SelectValue placeholder="Select country" />
+              <SelectValue placeholder="Select partner country" />
             </SelectTrigger>
             <SelectContent className="bg-card">
               {countries.map((country) => (
@@ -111,7 +111,7 @@ export const CriticalInputsSection: React.FC<CriticalInputsSectionProps> = ({
             </SelectContent>
           </Select>
           <p className="text-sm text-muted-foreground">
-            Determines currency and initial FX rate
+            Country where the partner's team or operation is located.
           </p>
         </div>
 
@@ -138,7 +138,10 @@ export const CriticalInputsSection: React.FC<CriticalInputsSectionProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Average Annual Salary */}
           <div className="space-y-2">
-            <Label htmlFor="salary">Average Annual Salary per Rep ({inputs.currency})</Label>
+            <Label htmlFor="salary" className="flex items-center gap-2">
+              <DollarSign className="h-4 w-4" />
+              Average Annual Salary per Rep ({inputs.currency})
+            </Label>
             <Input
               id="salary"
               type="number"
@@ -176,7 +179,10 @@ export const CriticalInputsSection: React.FC<CriticalInputsSectionProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Average Handling Time */}
           <div className="space-y-2">
-            <Label htmlFor="aht">Average Handling Time (Minutes)</Label>
+            <Label htmlFor="aht" className="flex items-center gap-2">
+              <TrendingUp className="h-4 w-4" />
+              Average Handling Time (Minutes)
+            </Label>
             <Input
               id="aht"
               type="number"
@@ -193,7 +199,10 @@ export const CriticalInputsSection: React.FC<CriticalInputsSectionProps> = ({
 
           {/* Implementation Cost */}
           <div className="space-y-2">
-            <Label htmlFor="implementationCost">Implementation Cost ($M)</Label>
+            <Label htmlFor="implementationCost" className="flex items-center gap-2">
+              <DollarSign className="h-4 w-4" />
+              Partner Charge Implementation Cost ($M)
+            </Label>
             <Input
               id="implementationCost"
               type="number"
@@ -211,7 +220,10 @@ export const CriticalInputsSection: React.FC<CriticalInputsSectionProps> = ({
 
         {/* Company Growth */}
         <div className="space-y-2">
-          <Label htmlFor="growthRate">Company Growth (%)</Label>
+          <Label htmlFor="growthRate" className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4" />
+            Client Growth (%)
+          </Label>
           <Input
             id="growthRate"
             type="number"
@@ -222,7 +234,7 @@ export const CriticalInputsSection: React.FC<CriticalInputsSectionProps> = ({
             placeholder="Enter growth percentage"
           />
           <p className="text-sm text-muted-foreground">
-            Annual growth rate for query volume and business scaling
+            Annual growth rate for the client's business over the next two years.
           </p>
         </div>
       </CardContent>

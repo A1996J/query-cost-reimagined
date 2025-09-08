@@ -103,9 +103,31 @@ export const AdvancedInputsSection: React.FC<AdvancedInputsSectionProps> = ({
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Partner Overhead Multiplier */}
+                  {/* Benefits + Management Multiplier - FIRST */}
                   <div className="space-y-2">
-                    <Label htmlFor="partnerOverhead">Overheads and Profit Multiplier for Partner</Label>
+                    <Label htmlFor="benefitsMultiplier" className="flex items-center gap-2">
+                      <Shield className="h-4 w-4" />
+                      Benefits + Management Multiplier
+                    </Label>
+                    <Input
+                      id="benefitsMultiplier"
+                      type="number"
+                      value={inputs.benefitsMultiplier}
+                      onChange={(e) => onUpdateInput('benefitsMultiplier', parseFloat(e.target.value) || 0)}
+                      step="0.1"
+                      className="text-lg font-medium"
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      Multiplier applied to rep salary to account for benefits and management overhead — used to calculate all-in partner cost per rep.
+                    </p>
+                  </div>
+
+                  {/* Overhead & Profit Multiplier - SECOND */}
+                  <div className="space-y-2">
+                    <Label htmlFor="partnerOverhead" className="flex items-center gap-2">
+                      <Shield className="h-4 w-4" />
+                      Overhead & Profit Multiplier
+                    </Label>
                     <Input
                       id="partnerOverhead"
                       type="number"
@@ -115,31 +137,18 @@ export const AdvancedInputsSection: React.FC<AdvancedInputsSectionProps> = ({
                       className="text-lg font-medium"
                     />
                     <p className="text-sm text-muted-foreground">
-                      Multiplier applied to agent costs to account for partner overhead and profit
-                    </p>
-                  </div>
-
-                  {/* Benefits Multiplier */}
-                  <div className="space-y-2">
-                    <Label htmlFor="multiplier">Multiplier for Benefits plus Management</Label>
-                    <Input
-                      id="multiplier"
-                      type="number"
-                      value={inputs.benefitsMultiplier}
-                      onChange={(e) => onUpdateInput('benefitsMultiplier', parseFloat(e.target.value) || 0)}
-                      step="0.1"
-                      className="text-lg font-medium"
-                    />
-                    <p className="text-sm text-muted-foreground">
-                      Factor to account for benefits, taxes, and management overhead on base salary
+                      Partner margin multiplier applied to cost per query to get final price to client.
                     </p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* EMA Price per Query */}
+                  {/* Ema Price per Query */}
                   <div className="space-y-2">
-                    <Label htmlFor="emaPrice">EMA Price per Query ($)</Label>
+                    <Label htmlFor="emaPrice" className="flex items-center gap-2">
+                      <Shield className="h-4 w-4" />
+                      Ema Price per Query ($)
+                    </Label>
                     <Input
                       id="emaPrice"
                       type="number"
@@ -149,13 +158,16 @@ export const AdvancedInputsSection: React.FC<AdvancedInputsSectionProps> = ({
                       className="text-lg font-medium"
                     />
                     <p className="text-sm text-muted-foreground">
-                      Cost per query handled by the EMA system (vendor pricing)
+                      Price charged by Ema for resolving each query.
                     </p>
                   </div>
 
                   {/* Partner Profit Margin */}
                   <div className="space-y-2">
-                    <Label htmlFor="partnerMargin">Partner Profit Margin on EMA-Handled Queries</Label>
+                    <Label htmlFor="partnerMargin" className="flex items-center gap-2">
+                      <Shield className="h-4 w-4" />
+                      Partner Profit Margin on Ema-Handled Queries
+                    </Label>
                     <Input
                       id="partnerMargin"
                       type="number"
@@ -165,7 +177,7 @@ export const AdvancedInputsSection: React.FC<AdvancedInputsSectionProps> = ({
                       className="text-lg font-medium"
                     />
                     <p className="text-sm text-muted-foreground">
-                      Partner's profit margin percentage on EMA-handled interactions
+                      Partner's profit margin percentage on Ema-handled interactions
                     </p>
                   </div>
                 </div>
