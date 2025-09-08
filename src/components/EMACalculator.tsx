@@ -13,6 +13,7 @@ import { SensitivityHeatmap } from './calculator/SensitivityHeatmap';
 import { SummaryTable } from './calculator/SummaryTable';
 import { SavingsStickers } from './calculator/SavingsStickers';
 import { GlossarySection } from './calculator/GlossarySection';
+import { PDFExport } from './calculator/PDFExport';
 import { KeyAssumptionsTable } from './calculator/KeyAssumptionsTable';
 import { calculateEMASavings, populateBullFromBase, calculateScenarioResults } from '@/lib/ema-calculations';
 import { EMACalculatorInputs, CalculationResults, Scenario, ScenarioInputs, ScenarioResults } from '@/types/ema-calculator';
@@ -43,10 +44,10 @@ const defaultDetailedInputs: Partial<EMACalculatorInputs> = {
 
 // PIN-protected advanced defaults
 const defaultAdvancedInputs: Partial<EMACalculatorInputs> = {
-  benefitsMultiplier: 1.4,
-  partnerOverheadMultiplier: 1.3,
-  emaPricePerQuery: 0.50,
-  partnerProfitMargin: 0.15,
+  benefitsMultiplier: 3.0,
+  partnerOverheadMultiplier: 1.67,
+  emaPricePerQuery: 1.0,
+  partnerProfitMargin: 0.45,
 };
 
 const defaultInputs: EMACalculatorInputs = {
@@ -343,21 +344,36 @@ export const EMACalculator: React.FC = () => {
             <div className="space-y-8">
               {scenarioResults && scenarios ? (
                 <>
+                  {/* PDF Export Button */}
+                  <PDFExport scenarioResults={scenarioResults} scenarios={scenarios} />
+                  
                   {/* Savings Stickers */}
-                  <SavingsStickers scenarioResults={scenarioResults} />
+                  <div className="savings-stickers-container">
+                    <SavingsStickers scenarioResults={scenarioResults} />
+                  </div>
                   
                   {/* Charts */}
-                  <SavingsWaterfallChart scenarioResults={scenarioResults} />
-                  <SensitivityHeatmap scenarioResults={scenarioResults} scenarios={scenarios} />
+                  <div className="waterfall-chart-container">
+                    <SavingsWaterfallChart scenarioResults={scenarioResults} />
+                  </div>
+                  <div className="sensitivity-heatmap-container">
+                    <SensitivityHeatmap scenarioResults={scenarioResults} scenarios={scenarios} />
+                  </div>
                   
                   {/* Key Assumptions Table */}
-                  <KeyAssumptionsTable scenarios={scenarios} />
+                  <div className="key-assumptions-container">
+                    <KeyAssumptionsTable scenarios={scenarios} />
+                  </div>
                   
                   {/* Executive Summary Table */}
-                  <SummaryTable scenarioResults={scenarioResults} scenarios={scenarios} />
+                  <div className="executive-summary-container">
+                    <SummaryTable scenarioResults={scenarioResults} scenarios={scenarios} />
+                  </div>
                   
                   {/* Glossary and Other Assumptions */}
-                  <GlossarySection />
+                  <div className="glossary-container">
+                    <GlossarySection />
+                  </div>
                 </>
               ) : (
                 <Card className="p-8 text-center shadow-soft">

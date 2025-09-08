@@ -107,7 +107,7 @@ export const AdvancedInputsSection: React.FC<AdvancedInputsSectionProps> = ({
                   <div className="space-y-2">
                     <Label htmlFor="benefitsMultiplier" className="flex items-center gap-2">
                       <Shield className="h-4 w-4" />
-                      Benefits + Management Multiplier
+                      Benefits + Management Multiplier (x)
                     </Label>
                     <Input
                       id="benefitsMultiplier"
@@ -126,7 +126,7 @@ export const AdvancedInputsSection: React.FC<AdvancedInputsSectionProps> = ({
                   <div className="space-y-2">
                     <Label htmlFor="partnerOverhead" className="flex items-center gap-2">
                       <Shield className="h-4 w-4" />
-                      Overhead & Profit Multiplier
+                      Overhead & Profit Multiplier (x)
                     </Label>
                     <Input
                       id="partnerOverhead"
@@ -166,7 +166,7 @@ export const AdvancedInputsSection: React.FC<AdvancedInputsSectionProps> = ({
                   <div className="space-y-2">
                     <Label htmlFor="partnerMargin" className="flex items-center gap-2">
                       <Shield className="h-4 w-4" />
-                      Partner Profit Margin on Ema-Handled Queries
+                      Partner Profit Margin on Ema Queries (%)
                     </Label>
                     <Input
                       id="partnerMargin"

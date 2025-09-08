@@ -31,8 +31,8 @@ export const SensitivityHeatmap: React.FC<SensitivityHeatmapProps> = ({ scenario
   const containmentRates = generateAxisValues(baseContainmentRate, bullContainmentRate);
   const productivityGains = generateAxisValues(baseProductivityGain, bullProductivityGain);
 
-  // Calculate direct savings percentage using proper EMA calculation logic
-  const calculateDirectSavingsPercent = (finalYearContainmentRate: number, year1ProductivityGain: number): number => {
+  // Calculate direct savings in millions using proper Ema calculation logic
+  const calculateDirectSavingsMillions = (finalYearContainmentRate: number, year1ProductivityGain: number): number => {
     // Create modified inputs based on the sensitivity parameters
     const modifiedInputs: EMACalculatorInputs = {
       ...baseInputs,
@@ -94,7 +94,7 @@ export const SensitivityHeatmap: React.FC<SensitivityHeatmapProps> = ({ scenario
       totalPreEMACost += preEMACost;
     }
     
-    const result = (totalDirectSavings / totalPreEMACost) * 100;
+    const result = totalDirectSavings / 1000000; // Convert to millions
     return result;
   };
 
@@ -103,7 +103,7 @@ export const SensitivityHeatmap: React.FC<SensitivityHeatmapProps> = ({ scenario
   for (let i = 0; i < 5; i++) {
     const row: number[] = [];
     for (let j = 0; j < 5; j++) {
-      row.push(calculateDirectSavingsPercent(containmentRates[j], productivityGains[i]));
+      row.push(calculateDirectSavingsMillions(containmentRates[j], productivityGains[i]));
     }
     heatmapData.push(row);
   }
@@ -147,7 +147,7 @@ export const SensitivityHeatmap: React.FC<SensitivityHeatmapProps> = ({ scenario
           Direct Savings Sensitivities
         </CardTitle>
         <p className="text-sm text-muted-foreground mt-2">
-          3-Year Direct Savings (% of Pre-EMA Cost) by Final Year EMA Containment Rate and Y1 Human Productivity Benefit
+          3-Year Direct Savings ($M) by Final Year Ema Containment Rate and Y1 Human Productivity Benefit
         </p>
       </CardHeader>
       <CardContent>
@@ -158,7 +158,7 @@ export const SensitivityHeatmap: React.FC<SensitivityHeatmapProps> = ({ scenario
               <thead>
                 <tr>
                   <th className="border border-border p-2 bg-muted text-sm font-medium">
-                    Y1 Productivity ↓ / EMA Containment →
+                    Y1 Productivity ↓ / Ema Containment →
                   </th>
                   {containmentRates.map((rate, idx) => (
                     <th key={idx} className="border border-border p-2 bg-muted text-sm font-medium min-w-20">
@@ -178,9 +178,9 @@ export const SensitivityHeatmap: React.FC<SensitivityHeatmapProps> = ({ scenario
                         key={colIdx} 
                         className="border border-border p-2 text-center text-sm font-medium text-white min-w-20"
                         style={{ backgroundColor: getColor(value) }}
-                        title={`Direct Savings: ${value.toFixed(2)}%`}
+                        title={`3-Year Direct Savings: $${value.toFixed(1)}M`}
                       >
-                        {value.toFixed(2)}%
+                        ${value.toFixed(1)}M
                       </td>
                     ))}
                   </tr>

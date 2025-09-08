@@ -25,20 +25,20 @@ export const SavingsStickers: React.FC<SavingsStickersProps> = ({ scenarioResult
     {
       label: "All-In Savings Over 3 Years",
       sublabel: "(Post-Implementation Cost)",
-      value: `${formatCurrency(baseAllIn)} → ${formatCurrency(bullAllIn)}`,
+      value: `${formatCurrency(baseAllIn)} - ${formatCurrency(bullAllIn)}`,
       className: "bg-finance-gradient text-white"
     },
     {
       label: "Direct Savings from Replacing Human Support with Ema",
       sublabel: "Over 3 years, after implementation cost",
-      value: `${formatCurrency(baseDirect)} → ${formatCurrency(bullDirect)}`,
-      className: "bg-gradient-to-br from-finance-primary to-finance-secondary text-white"
+      value: `${formatCurrency(baseDirect)} - ${formatCurrency(bullDirect)}`,
+      className: "bg-finance-gradient text-white"
     },
     {
       label: "Additional Savings from Better FCR, Compliance, and Upselling",
       sublabel: "Over 3 years",
-      value: `${formatCurrency(baseAdditional)} → ${formatCurrency(bullAdditional)}`,
-      className: "bg-gradient-to-br from-finance-secondary to-finance-accent text-white"
+      value: `${formatCurrency(baseAdditional)} - ${formatCurrency(bullAdditional)}`,
+      className: "bg-finance-gradient text-white"
     }
   ];
 

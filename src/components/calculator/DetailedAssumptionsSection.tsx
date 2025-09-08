@@ -84,7 +84,7 @@ export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProp
             <div className="space-y-2">
               <Label htmlFor="productivityGain" className="flex items-center gap-2">
                 <Zap className="h-4 w-4" />
-                Y1 Productivity Gain (Human Agents)
+                Y1 Productivity Gain (%) for Human Agents
               </Label>
               <Input
                 id="productivityGain"
