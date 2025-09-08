@@ -88,7 +88,7 @@ export const KeyAssumptionsTable: React.FC<KeyAssumptionsTableProps> = ({ scenar
                 <TableCell className="text-center">{formatNumber(bullValues.totalReps, 0)}</TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium">Rep Cost per Year (All-In, USD)</TableCell>
+                <TableCell className="font-medium">Rep Cost per Year (All-In, $)</TableCell>
                 <TableCell className="text-center">{formatCurrency(baseValues.repCostPerYear)}</TableCell>
                 <TableCell className="text-center">{formatCurrency(bullValues.repCostPerYear)}</TableCell>
               </TableRow>

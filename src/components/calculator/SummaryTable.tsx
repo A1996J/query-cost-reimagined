@@ -21,30 +21,52 @@ export const SummaryTable: React.FC<SummaryTableProps> = ({ scenarioResults, sce
     return `$${value.toFixed(decimals)}`;
   };
 
-  // Calculate derived values for each scenario and year
+  // Constants from ema-calculations.ts
+  const WORKING_MINUTES_PER_YEAR = 124800;
+
+  // Calculate derived values using exact same logic as ema-calculations.ts
   const getPreEmaCostPerQuery = (scenario: keyof ScenarioInputs) => {
     const inputs = scenarios[scenario];
-    const annualSalaryWithBenefits = inputs.averageAnnualSalary * inputs.benefitsMultiplier;
-    const annualQueriesPerRep = (60 / inputs.averageHandlingTime) * 8 * 5 * 52 * (1 - inputs.capacityBuffer);
-    return (annualSalaryWithBenefits / annualQueriesPerRep) * inputs.partnerOverheadMultiplier;
+    const salaryUSD = inputs.averageAnnualSalary / inputs.fxRate;
+    const allInCostPerRep = salaryUSD * inputs.benefitsMultiplier;
+    const annualQueries = inputs.monthlyQueryVolume * 12;
+    const repsNeeded100 = (annualQueries * 1000000 * inputs.averageHandlingTime) / WORKING_MINUTES_PER_YEAR;
+    const totalReps = repsNeeded100 * (1 + inputs.capacityBuffer);
+    const costPerQuery = (allInCostPerRep * totalReps) / (annualQueries * 1000000);
+    return costPerQuery * inputs.partnerOverheadMultiplier;
   };
 
-  const getEmaCostPerQuery = () => {
-    return scenarios.base.emaPricePerQuery * scenarios.base.partnerOverheadMultiplier;
+  const getEmaCostPerQuery = (scenario: keyof ScenarioInputs) => {
+    const inputs = scenarios[scenario];
+    return inputs.emaPricePerQuery * (1 + inputs.partnerProfitMargin);
   };
 
   const getHumanQueryCostWithEma = (scenario: keyof ScenarioInputs, year: number) => {
-    const inputs = scenarios[scenario];
-    const productivityMultiplier = 1 + inputs.year1ProductivityGain;
-    const adjustedHandlingTime = inputs.averageHandlingTime / productivityMultiplier;
-    const annualSalaryWithBenefits = inputs.averageAnnualSalary * inputs.benefitsMultiplier;
-    const annualQueriesPerRep = (60 / adjustedHandlingTime) * 8 * 5 * 52 * (1 - inputs.capacityBuffer);
-    return (annualSalaryWithBenefits / annualQueriesPerRep) * inputs.partnerOverheadMultiplier;
+    const preEmaCost = getPreEmaCostPerQuery(scenario);
+    let productivityGain = scenarios[scenario].year1ProductivityGain;
+    if (year >= 2) {
+      productivityGain = scenarios[scenario].year1ProductivityGain * (4/3);
+    }
+    return preEmaCost * (1 - productivityGain);
   };
 
-  const getEmaContainmentRate = (year: number) => {
-    // Linear progression to final year containment rate
-    return Math.min(0.2 + (scenarios.base.finalYearContainmentRate - 0.2) * (year - 1) / 2, scenarios.base.finalYearContainmentRate);
+  const getEmaContainmentRate = (scenario: keyof ScenarioInputs, year: number) => {
+    return scenarios[scenario].finalYearContainmentRate * (year / 3);
+  };
+
+  const getTotalPreEmaCost = (scenario: keyof ScenarioInputs, year: number) => {
+    const inputs = scenarios[scenario];
+    const annualQueries = inputs.monthlyQueryVolume * 12;
+    const queries = annualQueries * Math.pow(1 + inputs.companyGrowthRate, year - 1);
+    return queries * 1000000 * getPreEmaCostPerQuery(scenario);
+  };
+
+  const getReductionInHandlingTime = (scenario: keyof ScenarioInputs, year: number) => {
+    let productivityGain = scenarios[scenario].year1ProductivityGain;
+    if (year >= 2) {
+      productivityGain = scenarios[scenario].year1ProductivityGain * (4/3);
+    }
+    return productivityGain;
   };
 
   const sections = [
@@ -52,12 +74,12 @@ export const SummaryTable: React.FC<SummaryTableProps> = ({ scenarioResults, sce
       title: "Pre-Ema (Before Automation)",
       rows: [
         {
-          field: "Cost per Query (Pre-Ema)",
+          field: "Cost per Query Handled by Human (Pre-Ema, $)",
           getValue: (scenario: keyof ScenarioInputs, year: number) => formatNumber(getPreEmaCostPerQuery(scenario))
         },
         {
-          field: "Pre-Ema Cost per query ($)",
-          getValue: (scenario: keyof ScenarioInputs, year: number) => formatNumber(getPreEmaCostPerQuery(scenario))
+          field: "Total Pre-Ema Cost ($)",
+          getValue: (scenario: keyof ScenarioInputs, year: number) => formatCurrency(getTotalPreEmaCost(scenario, year))
         },
         {
           field: "Share of Queries Handled by Humans (%)",
@@ -70,19 +92,19 @@ export const SummaryTable: React.FC<SummaryTableProps> = ({ scenarioResults, sce
       rows: [
         {
           field: "Cost per Query Solved by Ema ($)",
-          getValue: (scenario: keyof ScenarioInputs, year: number) => formatNumber(getEmaCostPerQuery())
-        },
-        {
-          field: "Reduction in Human Handling Time (%)",
-          getValue: (scenario: keyof ScenarioInputs, year: number) => formatPercentage(scenarios[scenario].year1ProductivityGain)
+          getValue: (scenario: keyof ScenarioInputs, year: number) => formatNumber(getEmaCostPerQuery(scenario))
         },
         {
           field: "Cost per Human Query Aided by Ema ($)",
           getValue: (scenario: keyof ScenarioInputs, year: number) => formatNumber(getHumanQueryCostWithEma(scenario, year))
         },
         {
-          field: "Queries Handled by Ema (%)",
-          getValue: (scenario: keyof ScenarioInputs, year: number) => formatPercentage(getEmaContainmentRate(year))
+          field: "Share of Queries Handled by Ema (%)",
+          getValue: (scenario: keyof ScenarioInputs, year: number) => formatPercentage(getEmaContainmentRate(scenario, year))
+        },
+        {
+          field: "Reduction in Human Handling Time (%)",
+          getValue: (scenario: keyof ScenarioInputs, year: number) => formatPercentage(getReductionInHandlingTime(scenario, year))
         }
       ]
     },
@@ -90,7 +112,21 @@ export const SummaryTable: React.FC<SummaryTableProps> = ({ scenarioResults, sce
       title: "Direct Savings from Ema",
       rows: [
         {
-          field: "Direct Savings from Ema ($M)",
+          field: "Gross Direct Savings ($)",
+          getValue: (scenario: keyof ScenarioInputs, year: number) => {
+            const results = scenarioResults[scenario];
+            const yearData = results.yearlyBreakdown[year - 1];
+            return formatCurrency(yearData.preEMACost - yearData.postEMACost);
+          }
+        },
+        {
+          field: "Less: Implementation Cost ($)",
+          getValue: (scenario: keyof ScenarioInputs, year: number) => {
+            return year === 1 ? formatCurrency(scenarios[scenario].implementationCost * 1000000) : "$0.0M";
+          }
+        },
+        {
+          field: "Net Direct Savings ($)",
           getValue: (scenario: keyof ScenarioInputs, year: number) => {
             const results = scenarioResults[scenario];
             const yearData = results.yearlyBreakdown[year - 1];
@@ -98,22 +134,7 @@ export const SummaryTable: React.FC<SummaryTableProps> = ({ scenarioResults, sce
           }
         },
         {
-          field: "Less: Implementation Cost ($M)",
-          getValue: (scenario: keyof ScenarioInputs, year: number) => {
-            return year === 1 ? formatCurrency(scenarios[scenario].implementationCost) : "$0.0M";
-          }
-        },
-        {
-          field: "Net Direct Savings ($M)",
-          getValue: (scenario: keyof ScenarioInputs, year: number) => {
-            const results = scenarioResults[scenario];
-            const yearData = results.yearlyBreakdown[year - 1];
-            const implementationCost = year === 1 ? scenarios[scenario].implementationCost : 0;
-            return formatCurrency(yearData.savings - implementationCost);
-          }
-        },
-        {
-          field: "% of Pre-Ema Baseline Cost",
+          field: "% of Baseline Saved (%)",
           getValue: (scenario: keyof ScenarioInputs, year: number) => {
             const results = scenarioResults[scenario];
             const yearData = results.yearlyBreakdown[year - 1];
@@ -126,7 +147,7 @@ export const SummaryTable: React.FC<SummaryTableProps> = ({ scenarioResults, sce
       title: "Additional Savings",
       rows: [
         {
-          field: "First Call Resolution Benefit ($M)",
+          field: "First Call Resolution Benefit ($)",
           getValue: (scenario: keyof ScenarioInputs, year: number) => {
             const results = scenarioResults[scenario];
             const yearData = results.yearlyBreakdown[year - 1];
@@ -134,7 +155,7 @@ export const SummaryTable: React.FC<SummaryTableProps> = ({ scenarioResults, sce
           }
         },
         {
-          field: "Compliance Cost Reduction ($M)",
+          field: "Compliance Cost Reduction ($)",
           getValue: (scenario: keyof ScenarioInputs, year: number) => {
             const results = scenarioResults[scenario];
             const yearData = results.yearlyBreakdown[year - 1];
@@ -142,7 +163,7 @@ export const SummaryTable: React.FC<SummaryTableProps> = ({ scenarioResults, sce
           }
         },
         {
-          field: "Upsell / Revenue Retention Benefit ($M)",
+          field: "Revenue Defended / Upsell ($)",
           getValue: (scenario: keyof ScenarioInputs, year: number) => {
             const results = scenarioResults[scenario];
             const yearData = results.yearlyBreakdown[year - 1];
@@ -152,27 +173,23 @@ export const SummaryTable: React.FC<SummaryTableProps> = ({ scenarioResults, sce
       ]
     },
     {
-      title: "All-In Savings ($M)",
+      title: "All-In Savings ($)",
       rows: [
         {
-          field: "Total All-In Savings (3-Year Sum)",
+          field: "Total All-In Savings ($)",
           getValue: (scenario: keyof ScenarioInputs, year: number) => {
-            if (year === 3) {
-              const results = scenarioResults[scenario];
-              return formatCurrency(results.totalAllInSavings);
-            }
-            return "-";
+            const results = scenarioResults[scenario];
+            const yearData = results.yearlyBreakdown[year - 1];
+            return formatCurrency(yearData.allInSavings);
           }
         },
         {
-          field: "% of Pre-Ema Baseline Cost",
+          field: "% of Baseline Saved (%)",
           getValue: (scenario: keyof ScenarioInputs, year: number) => {
-            if (year === 3) {
-              const results = scenarioResults[scenario];
-              const totalBaselineCost = results.yearlyBreakdown.reduce((sum, year) => sum + year.preEMACost, 0);
-              return formatPercentage(results.totalAllInSavings / totalBaselineCost);
-            }
-            return "-";
+            const results = scenarioResults[scenario];
+            const yearData = results.yearlyBreakdown[year - 1];
+            const preEmaCost = yearData.preEMACost;
+            return formatPercentage(yearData.allInSavings / preEmaCost);
           }
         }
       ]
@@ -193,7 +210,7 @@ export const SummaryTable: React.FC<SummaryTableProps> = ({ scenarioResults, sce
               <TableHead className="font-bold text-lg w-80">Field Name</TableHead>
               <TableHead className="font-bold text-lg text-center">Base Case - Year 1</TableHead>
               <TableHead className="font-bold text-lg text-center">Base Case - Year 2</TableHead>
-              <TableHead className="font-bold text-lg text-center">Base Case - Year 3</TableHead>
+              <TableHead className="font-bold text-lg text-center border-r-2 border-border">Base Case - Year 3</TableHead>
               <TableHead className="font-bold text-lg text-center">Bull Case - Year 1</TableHead>
               <TableHead className="font-bold text-lg text-center">Bull Case - Year 2</TableHead>
               <TableHead className="font-bold text-lg text-center">Bull Case - Year 3</TableHead>
@@ -212,7 +229,7 @@ export const SummaryTable: React.FC<SummaryTableProps> = ({ scenarioResults, sce
                     <TableCell className="font-medium py-3 pl-6">{row.field}</TableCell>
                     <TableCell className="text-center py-3">{row.getValue('base', 1)}</TableCell>
                     <TableCell className="text-center py-3">{row.getValue('base', 2)}</TableCell>
-                    <TableCell className="text-center py-3">{row.getValue('base', 3)}</TableCell>
+                    <TableCell className="text-center py-3 border-r-2 border-border">{row.getValue('base', 3)}</TableCell>
                     <TableCell className="text-center py-3">{row.getValue('bull', 1)}</TableCell>
                     <TableCell className="text-center py-3">{row.getValue('bull', 2)}</TableCell>
                     <TableCell className="text-center py-3">{row.getValue('bull', 3)}</TableCell>

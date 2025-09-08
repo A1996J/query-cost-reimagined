@@ -170,7 +170,7 @@ export const SensitivityHeatmap: React.FC<SensitivityHeatmapProps> = ({ scenario
               <tbody>
                 {heatmapData.map((row, rowIdx) => (
                   <tr key={rowIdx}>
-                    <td className="border border-border p-2 bg-muted text-sm font-medium">
+                    <td className="border border-border p-2 bg-muted text-sm font-medium text-right">
                       {formatPercentage(productivityGains[rowIdx])}
                     </td>
                     {row.map((value, colIdx) => (

@@ -119,7 +119,7 @@ export const CriticalInputsSection: React.FC<CriticalInputsSectionProps> = ({
         <div className="space-y-2">
           <Label htmlFor="fxRate" className="flex items-center gap-2">
             <DollarSign className="h-4 w-4" />
-            FX Rate to USD
+            FX Rate to $
           </Label>
           <Input
             id="fxRate"
@@ -131,7 +131,7 @@ export const CriticalInputsSection: React.FC<CriticalInputsSectionProps> = ({
             placeholder="Enter FX rate"
           />
           <p className="text-sm text-muted-foreground">
-            Exchange rate for converting {inputs.currency} to USD (auto-filled but editable)
+            Exchange rate for converting {inputs.currency} to $ (auto-filled but editable)
           </p>
         </div>
 
