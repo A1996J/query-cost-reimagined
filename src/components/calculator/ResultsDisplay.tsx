@@ -2,16 +2,18 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { TrendingUp, DollarSign, Target, Award } from 'lucide-react';
-import { CalculationResults } from '@/types/ema-calculator';
+import { TrendingUp, DollarSign, Target, Award, PercentIcon } from 'lucide-react';
+import { CalculationResults, ScenarioResults } from '@/types/ema-calculator';
+import { SavingsWaterfallChart } from './SavingsWaterfallChart';
 
 interface ResultsDisplayProps {
   results: CalculationResults;
   currency: string;
   scenario?: string;
+  scenarioResults?: ScenarioResults;
 }
 
-export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, currency, scenario = 'base' }) => {
+export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, currency, scenario = 'base', scenarioResults }) => {
   const formatCurrency = (amount: number, inMillions = false) => {
     const value = inMillions ? amount / 1000000 : amount;
     return new Intl.NumberFormat('en-US', {
@@ -187,6 +189,52 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, currenc
           </div>
         </CardContent>
       </Card>
+
+      {/* 3-Year Baseline Totals */}
+      <Card className="shadow-soft">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-2 text-finance-primary">
+            <PercentIcon className="h-5 w-5" />
+            3-Year Baseline Savings Summary ({scenario.toUpperCase()})
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="text-center p-4 bg-finance-subtle rounded-lg">
+              <div className="text-2xl font-bold text-finance-primary mb-1">
+                {((results.totalSavings / results.yearlyBreakdown.reduce((sum, year) => sum + year.preEMACost, 0)) * 100).toFixed(1)}%
+              </div>
+              <div className="text-sm text-muted-foreground">Direct Savings<br/>% of Baseline</div>
+              <div className="text-xs text-finance-primary mt-1">
+                {formatCurrency(results.totalSavings, true)}M Total
+              </div>
+            </div>
+            <div className="text-center p-4 bg-finance-subtle rounded-lg">
+              <div className="text-2xl font-bold text-finance-accent mb-1">
+                {((results.totalAdditionalSavings / results.yearlyBreakdown.reduce((sum, year) => sum + year.preEMACost, 0)) * 100).toFixed(1)}%
+              </div>
+              <div className="text-sm text-muted-foreground">Additional Savings<br/>% of Baseline</div>
+              <div className="text-xs text-finance-accent mt-1">
+                {formatCurrency(results.totalAdditionalSavings, true)}M Total
+              </div>
+            </div>
+            <div className="text-center p-4 bg-finance-subtle rounded-lg">
+              <div className="text-2xl font-bold text-finance-success mb-1">
+                {((results.totalAllInSavings / results.yearlyBreakdown.reduce((sum, year) => sum + year.preEMACost, 0)) * 100).toFixed(1)}%
+              </div>
+              <div className="text-sm text-muted-foreground">All-In Savings<br/>% of Baseline</div>
+              <div className="text-xs text-finance-success mt-1">
+                {formatCurrency(results.totalAllInSavings, true)}M Total
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Waterfall Chart - only show if we have both scenarios */}
+      {scenarioResults && (
+        <SavingsWaterfallChart scenarioResults={scenarioResults} />
+      )}
     </div>
   );
 };

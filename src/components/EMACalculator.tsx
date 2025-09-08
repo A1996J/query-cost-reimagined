@@ -40,6 +40,7 @@ export const EMACalculator: React.FC = () => {
     bull: defaultInputs
   });
   const [results, setResults] = useState<CalculationResults | null>(null);
+  const [scenarioResults, setScenarioResults] = useState<ScenarioResults | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
 
   const updateInput = (field: keyof EMACalculatorInputs, value: string | number) => {
@@ -73,7 +74,9 @@ export const EMACalculator: React.FC = () => {
     setIsCalculating(true);
     try {
       const calculatedResults = calculateEMASavings(scenarios[currentScenario]);
+      const allScenarioResults = calculateScenarioResults(scenarios);
       setResults(calculatedResults);
+      setScenarioResults(allScenarioResults);
       toast({
         title: "Calculation Complete",
         description: `Total All-In savings (${currentScenario.toUpperCase()}): $${(calculatedResults.totalAllInSavings / 1000000).toFixed(2)}M`
@@ -189,7 +192,12 @@ export const EMACalculator: React.FC = () => {
           <div className="xl:col-span-1">
             <div className="sticky top-8">
               {results && (
-                <ResultsDisplay results={results} currency={scenarios[currentScenario].currency} scenario={currentScenario} />
+                <ResultsDisplay 
+                  results={results} 
+                  currency={scenarios[currentScenario].currency} 
+                  scenario={currentScenario}
+                  scenarioResults={scenarioResults}
+                />
               )}
               
               {!results && (
