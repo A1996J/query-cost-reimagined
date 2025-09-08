@@ -87,9 +87,11 @@ export const EMASection: React.FC<EMASectionProps> = ({ inputs, onUpdateInput })
             <Input
               id="containmentRate"
               type="number"
-              value={inputs.finalYearContainmentRate * 100}
+              value={Math.round(inputs.finalYearContainmentRate * 100)}
               onChange={(e) => onUpdateInput('finalYearContainmentRate', (parseFloat(e.target.value) || 0) / 100)}
               step="1"
+              min="0"
+              max="100"
               className="text-lg font-medium"
             />
             <p className="text-sm text-muted-foreground">
@@ -105,9 +107,11 @@ export const EMASection: React.FC<EMASectionProps> = ({ inputs, onUpdateInput })
             <Input
               id="productivityGain"
               type="number"
-              value={inputs.year1ProductivityGain * 100}
+              value={Math.round(inputs.year1ProductivityGain * 100)}
               onChange={(e) => onUpdateInput('year1ProductivityGain', (parseFloat(e.target.value) || 0) / 100)}
               step="1"
+              min="0"
+              max="100"
               className="text-lg font-medium"
             />
             <p className="text-sm text-muted-foreground">

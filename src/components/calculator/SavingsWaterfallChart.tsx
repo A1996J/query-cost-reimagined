@@ -58,9 +58,9 @@ export const SavingsWaterfallChart: React.FC<SavingsWaterfallChartProps> = ({ sc
             <div className="relative w-16 h-80 rounded-sm border overflow-hidden">
               {/* Full height background */}
               <div className="absolute inset-0 bg-muted"></div>
-              {/* Direct savings portion */}
+              {/* Direct savings portion - waterfall from top */}
               <div 
-                className="absolute bottom-0 w-full bg-finance-success rounded-sm flex items-center justify-center"
+                className="absolute top-0 w-full bg-finance-success rounded-sm flex items-center justify-center"
                 style={{ height: `${directHeight * 3.2}px` }}
               >
                 <div className="text-xs font-medium text-white text-center px-1">
@@ -76,10 +76,13 @@ export const SavingsWaterfallChart: React.FC<SavingsWaterfallChartProps> = ({ sc
             <div className="relative w-16 h-80 rounded-sm border overflow-hidden">
               {/* Full height background */}
               <div className="absolute inset-0 bg-muted"></div>
-              {/* Additional savings portion */}
+              {/* Additional savings portion - waterfall continues from direct savings */}
               <div 
-                className="absolute bottom-0 w-full bg-finance-success rounded-sm flex items-center justify-center"
-                style={{ height: `${additionalHeight * 3.2}px` }}
+                className="absolute w-full bg-finance-success rounded-sm flex items-center justify-center"
+                style={{ 
+                  top: `${directHeight * 3.2}px`,
+                  height: `${additionalHeight * 3.2}px` 
+                }}
               >
                 <div className="text-xs font-medium text-white text-center px-1">
                   {formatRange(baseAdditionalPercent, bullAdditionalPercent)}
