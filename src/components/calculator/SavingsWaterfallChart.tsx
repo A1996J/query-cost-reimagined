@@ -46,9 +46,6 @@ export const SavingsWaterfallChart: React.FC<SavingsWaterfallChartProps> = ({ sc
           {/* Pre-EMA Cost Bar */}
           <div className="flex flex-col items-center">
             <div className="relative w-16 bg-muted h-80 rounded-sm border">
-              <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 text-xs font-medium text-muted-foreground rotate-90 whitespace-nowrap">
-                100%
-              </div>
             </div>
             <div className="mt-2 text-sm font-medium text-center">Pre-EMA<br/>Cost</div>
           </div>
@@ -95,20 +92,23 @@ export const SavingsWaterfallChart: React.FC<SavingsWaterfallChartProps> = ({ sc
           {/* Post-EMA Cost Bar */}
           <div className="flex flex-col items-center">
             <div className="relative w-16 h-80 rounded-sm border overflow-hidden">
-              {/* Dashed outline showing range */}
-              <div 
-                className="absolute bottom-0 w-full border-2 border-dashed border-finance-success bg-finance-success/10"
-                style={{ height: `${Math.max(postEMAFilledHeight, Math.min(basePostEMAPercent, bullPostEMAPercent)) * 3.2}px` }}
-              >
-                <div className="absolute top-2 left-1/2 transform -translate-x-1/2 text-xs font-medium text-finance-primary text-center">
-                  {formatRange(basePostEMAPercent, bullPostEMAPercent)}
-                </div>
-              </div>
-              {/* Solid filled portion */}
+              {/* Solid filled portion - remaining cost */}
               <div 
                 className="absolute bottom-0 w-full bg-finance-primary rounded-sm"
                 style={{ height: `${postEMAFilledHeight * 3.2}px` }}
               />
+              {/* Dashed outline showing total savings range - stacks on top of solid bar */}
+              <div 
+                className="absolute w-full border-2 border-dashed border-finance-success bg-finance-success/10"
+                style={{ 
+                  bottom: `${postEMAFilledHeight * 3.2}px`,
+                  height: `${(directHeight + additionalHeight) * 3.2}px`
+                }}
+              >
+                <div className="absolute top-2 left-1/2 transform -translate-x-1/2 text-xs font-medium text-finance-primary text-center">
+                  {formatRange(baseDirectPercent + baseAdditionalPercent, bullDirectPercent + bullAdditionalPercent)}
+                </div>
+              </div>
             </div>
             <div className="mt-2 text-sm font-medium text-center">Post-EMA<br/>Cost</div>
           </div>
