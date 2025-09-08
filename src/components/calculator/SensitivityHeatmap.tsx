@@ -1,22 +1,23 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ScenarioResults } from '@/types/ema-calculator';
+import { ScenarioResults, ScenarioInputs, EMACalculatorInputs } from '@/types/ema-calculator';
 import { Activity } from 'lucide-react';
 
 interface SensitivityHeatmapProps {
   scenarioResults: ScenarioResults;
+  scenarios: ScenarioInputs;
 }
 
-export const SensitivityHeatmap: React.FC<SensitivityHeatmapProps> = ({ scenarioResults }) => {
-  const { base, bull } = scenarioResults;
+export const SensitivityHeatmap: React.FC<SensitivityHeatmapProps> = ({ scenarioResults, scenarios }) => {
+  const { base: baseResults } = scenarioResults;
+  const { base: baseInputs, bull: bullInputs } = scenarios;
 
-  // Get the base inputs from the calculation results
-  // We need to reverse-engineer these from the yearly breakdown
-  const baseContainmentRate = base.yearlyBreakdown[2]?.emaContainmentRate || 0.8;
-  const bullContainmentRate = bull.yearlyBreakdown[2]?.emaContainmentRate || 0.9;
+  // Get the actual input values from the scenarios
+  const baseContainmentRate = baseInputs.finalYearContainmentRate;
+  const bullContainmentRate = bullInputs.finalYearContainmentRate;
   
-  const baseProductivityGain = base.yearlyBreakdown[0]?.productivityGain || 0.1;
-  const bullProductivityGain = bull.yearlyBreakdown[0]?.productivityGain || 0.2;
+  const baseProductivityGain = baseInputs.year1ProductivityGain;
+  const bullProductivityGain = bullInputs.year1ProductivityGain;
 
   // Generate 5 evenly spaced values for each axis
   const generateAxisValues = (min: number, max: number): number[] => {
@@ -30,41 +31,72 @@ export const SensitivityHeatmap: React.FC<SensitivityHeatmapProps> = ({ scenario
   const containmentRates = generateAxisValues(baseContainmentRate, bullContainmentRate);
   const productivityGains = generateAxisValues(baseProductivityGain, bullProductivityGain);
 
-  // Calculate direct savings percentage for each combination
-  const calculateDirectSavingsPercent = (containmentRate: number, productivityGain: number): number => {
-    // Simplified calculation based on the logic pattern from the actual calculations
-    // This is an approximation - ideally we'd have access to the full input parameters
-    const baselineQuery = base.yearlyBreakdown[0]?.queries || 100000;
-    const baselinePreEMACost = base.yearlyBreakdown.reduce((sum, year) => sum + year.preEMACost, 0);
-    const humanCostPerQuery = base.yearlyBreakdown[0]?.humanCostPerQuery || 5;
+  // Calculate direct savings percentage using proper EMA calculation logic
+  const calculateDirectSavingsPercent = (finalYearContainmentRate: number, year1ProductivityGain: number): number => {
+    // Create modified inputs based on the sensitivity parameters
+    const modifiedInputs: EMACalculatorInputs = {
+      ...baseInputs,
+      finalYearContainmentRate,
+      year1ProductivityGain
+    };
+    
+    // Constants from ema-calculations.ts
+    const WORKING_MINUTES_PER_YEAR = 124800;
+    
+    // Calculate base values (using same logic as ema-calculations.ts)
+    const salaryUSD = modifiedInputs.averageAnnualSalary / modifiedInputs.fxRate;
+    const allInCostPerRep = salaryUSD * modifiedInputs.benefitsMultiplier;
+    const annualQueries = modifiedInputs.monthlyQueryVolume * 12;
+    const repsNeeded100 = (annualQueries * 1000000 * modifiedInputs.averageHandlingTime) / WORKING_MINUTES_PER_YEAR;
+    const totalReps = repsNeeded100 * (1 + modifiedInputs.capacityBuffer);
+    const costPerQuery = (allInCostPerRep * totalReps) / (annualQueries * 1000000);
+    const pricePerHumanQuery = costPerQuery * modifiedInputs.partnerOverheadMultiplier;
+    const emaCustomerPrice = modifiedInputs.emaPricePerQuery * (1 + modifiedInputs.partnerProfitMargin);
     
     let totalDirectSavings = 0;
+    let totalPreEMACost = 0;
     
-    // Calculate for 3 years
+    // Calculate for 3 years using exact same logic as ema-calculations.ts
     for (let year = 1; year <= 3; year++) {
-      const yearlyQueries = baselineQuery * Math.pow(1.1, year - 1); // Assuming 10% growth
-      const yearContainmentRate = containmentRate * (0.5 + 0.3 * (year - 1)); // Ramp up over years
-      const yearProductivityGain = productivityGain * (0.7 + 0.15 * (year - 1)); // Ramp up
+      // Query growth
+      const queries = annualQueries * Math.pow(1 + modifiedInputs.companyGrowthRate, year - 1);
       
-      const humanQueriesHandled = yearlyQueries * (1 - yearContainmentRate);
-      const adjustedHumanCost = humanCostPerQuery * (1 - yearProductivityGain);
-      const emaCost = yearlyQueries * yearContainmentRate * 0.5; // Assuming $0.5 per EMA query
+      // EMA containment ramp (exact same formula)
+      const emaContainmentRate = modifiedInputs.finalYearContainmentRate * (year / 3);
       
-      const preEMACost = yearlyQueries * humanCostPerQuery;
-      const postEMACost = humanQueriesHandled * adjustedHumanCost + emaCost;
+      // Productivity gain ramp (exact same formula)
+      let productivityGain = modifiedInputs.year1ProductivityGain;
+      if (year >= 2) {
+        productivityGain = modifiedInputs.year1ProductivityGain * (4/3);
+      }
       
-      totalDirectSavings += (preEMACost - postEMACost);
+      // Pre-EMA cost
+      const preEMACost = queries * 1000000 * pricePerHumanQuery;
+      
+      // Post-EMA cost calculation
+      const emaQueries = queries * 1000000 * emaContainmentRate;
+      const humanQueries = queries * 1000000 * (1 - emaContainmentRate);
+      const postEMAHumanCostPerQuery = pricePerHumanQuery * (1 - productivityGain);
+      
+      const emaCost = emaQueries * emaCustomerPrice;
+      const humanCost = humanQueries * postEMAHumanCostPerQuery;
+      const postEMACost = emaCost + humanCost;
+      
+      // Calculate direct savings (before implementation cost)
+      const yearSavings = preEMACost - postEMACost;
+      totalDirectSavings += yearSavings;
+      totalPreEMACost += preEMACost;
     }
     
-    return (totalDirectSavings / baselinePreEMACost) * 100;
+    return (totalDirectSavings / totalPreEMACost) * 100;
   };
 
-  // Generate heatmap data
+  // Generate heatmap data (fix Y-axis ordering to be ascending)
   const heatmapData: number[][] = [];
   for (let i = 0; i < 5; i++) {
     const row: number[] = [];
     for (let j = 0; j < 5; j++) {
-      row.push(calculateDirectSavingsPercent(containmentRates[j], productivityGains[4 - i]));
+      row.push(calculateDirectSavingsPercent(containmentRates[j], productivityGains[i]));
     }
     heatmapData.push(row);
   }
@@ -132,7 +164,7 @@ export const SensitivityHeatmap: React.FC<SensitivityHeatmapProps> = ({ scenario
                 {heatmapData.map((row, rowIdx) => (
                   <tr key={rowIdx}>
                     <td className="border border-border p-2 bg-muted text-sm font-medium">
-                      {formatPercentage(productivityGains[4 - rowIdx])}
+                      {formatPercentage(productivityGains[rowIdx])}
                     </td>
                     {row.map((value, colIdx) => (
                       <td 

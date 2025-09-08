@@ -197,6 +197,7 @@ export const EMACalculator: React.FC = () => {
                   currency={scenarios[currentScenario].currency} 
                   scenario={currentScenario}
                   scenarioResults={scenarioResults}
+                  scenarios={scenarios}
                 />
               )}
               

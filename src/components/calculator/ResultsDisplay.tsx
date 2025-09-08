@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { TrendingUp, DollarSign, Target, Award, PercentIcon } from 'lucide-react';
-import { CalculationResults, ScenarioResults } from '@/types/ema-calculator';
+import { CalculationResults, ScenarioResults, ScenarioInputs } from '@/types/ema-calculator';
 import { SavingsWaterfallChart } from './SavingsWaterfallChart';
 import { SensitivityHeatmap } from './SensitivityHeatmap';
 
@@ -12,9 +12,10 @@ interface ResultsDisplayProps {
   currency: string;
   scenario?: string;
   scenarioResults?: ScenarioResults;
+  scenarios?: ScenarioInputs;
 }
 
-export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, currency, scenario = 'base', scenarioResults }) => {
+export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, currency, scenario = 'base', scenarioResults, scenarios }) => {
   const formatCurrency = (amount: number, inMillions = false) => {
     const value = inMillions ? amount / 1000000 : amount;
     return new Intl.NumberFormat('en-US', {
@@ -233,10 +234,10 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, currenc
       </Card>
 
       {/* Waterfall Chart - only show if we have both scenarios */}
-      {scenarioResults && (
+      {scenarioResults && scenarios && (
         <>
           <SavingsWaterfallChart scenarioResults={scenarioResults} />
-          <SensitivityHeatmap scenarioResults={scenarioResults} />
+          <SensitivityHeatmap scenarioResults={scenarioResults} scenarios={scenarios} />
         </>
       )}
     </div>
