@@ -201,7 +201,7 @@ export const CriticalInputsSection: React.FC<CriticalInputsSectionProps> = ({
           <div className="space-y-2">
             <Label htmlFor="implementationCost" className="flex items-center gap-2">
               <DollarSign className="h-4 w-4" />
-              Partner Charge Implementation Cost ($M)
+              Implementation Cost ($M)
             </Label>
             <Input
               id="implementationCost"

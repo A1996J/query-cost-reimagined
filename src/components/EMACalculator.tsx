@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calculator, TrendingUp, DollarSign, BarChart3 } from 'lucide-react';
 import emaLogo from '/lovable-uploads/93b7ff10-d08c-4f6d-bb64-a3e8cee08d36.png';
+import { Onboarding } from './Onboarding';
+import { Disclaimer } from './Disclaimer';
 import { CriticalInputsSection } from './calculator/CriticalInputsSection';
 import { DetailedAssumptionsSection } from './calculator/DetailedAssumptionsSection';
 import { AdvancedInputsSection } from './calculator/AdvancedInputsSection';
@@ -57,6 +59,8 @@ const defaultInputs: EMACalculatorInputs = {
 } as EMACalculatorInputs;
 
 export const EMACalculator: React.FC = () => {
+  const [showOnboarding, setShowOnboarding] = useState(true);
+  const [companyName, setCompanyName] = useState('');
   const [currentTab, setCurrentTab] = useState('base');
   const [currentScenario, setCurrentScenario] = useState<Scenario>('base');
   const [scenarios, setScenarios] = useState<ScenarioInputs>({
@@ -172,8 +176,17 @@ export const EMACalculator: React.FC = () => {
     }
   }, [scenarios, currentScenario]);
 
+  const handleOnboardingComplete = (name: string) => {
+    setCompanyName(name);
+    setShowOnboarding(false);
+  };
+
+  if (showOnboarding) {
+    return <Onboarding onComplete={handleOnboardingComplete} />;
+  }
+
   return (
-    <div className="min-h-screen bg-finance-subtle">
+    <div className="min-h-screen bg-finance-subtle relative">
       {/* Header */}
       <div className="bg-finance-gradient shadow-medium">
         <div className="container mx-auto px-4 py-8">
@@ -184,7 +197,7 @@ export const EMACalculator: React.FC = () => {
               className="h-12 w-auto"
             />
             <div>
-              <h1 className="text-3xl font-bold mb-2">Ema Partners ROI Calculation Buddy</h1>
+              <h1 className="text-3xl font-bold mb-2">{companyName}'s ROI with Ema</h1>
               <p className="text-white/90 text-lg">
                 Calculate 3-year direct cost savings from implementing an Ema solution
               </p>
@@ -193,7 +206,8 @@ export const EMACalculator: React.FC = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-8">
+        <Disclaimer />
         <Tabs value={currentTab} onValueChange={(value) => {
           setCurrentTab(value);
           if (value === 'base' || value === 'bull') {

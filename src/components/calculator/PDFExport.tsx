@@ -80,13 +80,29 @@ export const PDFExport: React.FC<PDFExportProps> = ({ scenarioResults, scenarios
         if (keyAssumptions) slide2.appendChild(keyAssumptions.cloneNode(true));
         document.body.appendChild(slide2);
 
-        // Slide 3: Executive Summary
+        // Slide 3: Executive Summary with enhanced formatting
         const slide3 = document.createElement('div');
         slide3.id = 'pdf-slide-3';
-        slide3.className = 'p-8 bg-white';
+        slide3.className = 'p-6 bg-white';
+        slide3.style.fontSize = '12px';
+        slide3.style.lineHeight = '1.5';
         
         const summary = document.querySelector('.executive-summary-container') as HTMLElement;
-        if (summary) slide3.appendChild(summary.cloneNode(true));
+        if (summary) {
+          const summaryClone = summary.cloneNode(true) as HTMLElement;
+          // Enhanced table styling for PDF
+          const table = summaryClone.querySelector('table');
+          if (table) {
+            table.style.fontSize = '10px';
+            table.style.lineHeight = '1.4';
+            const cells = table.querySelectorAll('td, th');
+            cells.forEach((cell) => {
+              (cell as HTMLElement).style.padding = '8px 6px';
+              (cell as HTMLElement).style.border = '1px solid #e5e7eb';
+            });
+          }
+          slide3.appendChild(summaryClone);
+        }
         document.body.appendChild(slide3);
 
         // Slide 4: Glossary

@@ -120,7 +120,7 @@ export const SummaryTable: React.FC<SummaryTableProps> = ({ scenarioResults, sce
           }
         },
         {
-          field: "Less: Implementation Cost ($)",
+          field: "Less: Implementation Cost ($M)",
           getValue: (scenario: keyof ScenarioInputs, year: number) => {
             return year === 1 ? formatCurrency(scenarios[scenario].implementationCost * 1000000) : "$0.0M";
           }
