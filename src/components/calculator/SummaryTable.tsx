@@ -130,7 +130,9 @@ export const SummaryTable: React.FC<SummaryTableProps> = ({ scenarioResults, sce
           getValue: (scenario: keyof ScenarioInputs, year: number) => {
             const results = scenarioResults[scenario];
             const yearData = results.yearlyBreakdown[year - 1];
-            return formatCurrency(yearData.savings);
+            const grossSavings = yearData.preEMACost - yearData.postEMACost;
+            const implementationCost = year === 1 ? scenarios[scenario].implementationCost * 1000000 : 0;
+            return formatCurrency(grossSavings - implementationCost);
           }
         },
         {
@@ -190,6 +192,23 @@ export const SummaryTable: React.FC<SummaryTableProps> = ({ scenarioResults, sce
             const yearData = results.yearlyBreakdown[year - 1];
             const preEmaCost = yearData.preEMACost;
             return formatPercentage(yearData.allInSavings / preEmaCost);
+          }
+        },
+        {
+          field: "3-Year Total Savings ($)",
+          getValue: (scenario: keyof ScenarioInputs, year: number) => {
+            if (year !== 1) return "";
+            const results = scenarioResults[scenario];
+            return formatCurrency(results.totalAllInSavings);
+          }
+        },
+        {
+          field: "% of Baseline Saved Over 3 Years (%)",
+          getValue: (scenario: keyof ScenarioInputs, year: number) => {
+            if (year !== 1) return "";
+            const results = scenarioResults[scenario];
+            const total3YearPreEma = results.yearlyBreakdown.reduce((sum, yearData) => sum + yearData.preEMACost, 0);
+            return formatPercentage(results.totalAllInSavings / total3YearPreEma);
           }
         }
       ]

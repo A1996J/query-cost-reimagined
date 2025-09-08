@@ -11,6 +11,8 @@ import { ResultsDisplay } from './calculator/ResultsDisplay';
 import { SavingsWaterfallChart } from './calculator/SavingsWaterfallChart';
 import { SensitivityHeatmap } from './calculator/SensitivityHeatmap';
 import { SummaryTable } from './calculator/SummaryTable';
+import { SavingsStickers } from './calculator/SavingsStickers';
+import { GlossarySection } from './calculator/GlossarySection';
 import { KeyAssumptionsTable } from './calculator/KeyAssumptionsTable';
 import { calculateEMASavings, populateBullFromBase, calculateScenarioResults } from '@/lib/ema-calculations';
 import { EMACalculatorInputs, CalculationResults, Scenario, ScenarioInputs, ScenarioResults } from '@/types/ema-calculator';
@@ -341,6 +343,9 @@ export const EMACalculator: React.FC = () => {
             <div className="space-y-8">
               {scenarioResults && scenarios ? (
                 <>
+                  {/* Savings Stickers */}
+                  <SavingsStickers scenarioResults={scenarioResults} />
+                  
                   {/* Charts */}
                   <SavingsWaterfallChart scenarioResults={scenarioResults} />
                   <SensitivityHeatmap scenarioResults={scenarioResults} scenarios={scenarios} />
@@ -350,6 +355,9 @@ export const EMACalculator: React.FC = () => {
                   
                   {/* Executive Summary Table */}
                   <SummaryTable scenarioResults={scenarioResults} scenarios={scenarios} />
+                  
+                  {/* Glossary and Other Assumptions */}
+                  <GlossarySection />
                 </>
               ) : (
                 <Card className="p-8 text-center shadow-soft">
