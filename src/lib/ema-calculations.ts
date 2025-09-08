@@ -22,7 +22,7 @@ export function calculateEMASavings(inputs: EMACalculatorInputs): CalculationRes
   
   // Customer price per EMA query
   const emaCustomerPrice = inputs.emaPricePerQuery * (1 + inputs.partnerProfitMargin);
-  
+
   const yearlyBreakdown: YearlyCalculation[] = [];
   
   for (let year = 1; year <= 3; year++) {
@@ -50,7 +50,7 @@ export function calculateEMASavings(inputs: EMACalculatorInputs): CalculationRes
     const humanCost = humanQueries * postEMAHumanCostPerQuery;
     const postEMACost = emaCost + humanCost;
     
-    // Calculate savings
+    // Calculate direct savings
     const savings = preEMACost - postEMACost;
     let netSavings = savings;
     
@@ -58,6 +58,29 @@ export function calculateEMASavings(inputs: EMACalculatorInputs): CalculationRes
     if (year === 1) {
       netSavings = savings - (inputs.implementationCost * 1000000);
     }
+
+    // Additional Savings Calculations
+    
+    // 1. First Call Resolution (Duplicate Queries)
+    const firstCallResolutionBenefit = humanQueries * pricePerHumanQuery * inputs.duplicateQueriesPercent;
+    
+    // 2. Compliance Cost Reduction
+    const complianceSavings = inputs.annualComplianceCostReduction * 1000000;
+    
+    // 3. Upselling / Reduced Cancellations
+    const revenueEstimate = preEMACost / inputs.customerExperienceAsPercentOfRevenue;
+    const upsellBenefit = revenueEstimate * inputs.upsellPercentOfRevenue;
+    
+    // Total Additional Savings
+    const totalAdditionalSavings = firstCallResolutionBenefit + complianceSavings + upsellBenefit;
+    
+    // All-In Savings
+    const allInSavings = netSavings + totalAdditionalSavings;
+    
+    // Baseline percentages
+    const directSavingsPercentOfBaseline = netSavings / preEMACost;
+    const additionalSavingsPercentOfBaseline = totalAdditionalSavings / preEMACost;
+    const allInSavingsPercentOfBaseline = allInSavings / preEMACost;
     
     yearlyBreakdown.push({
       year,
@@ -69,16 +92,28 @@ export function calculateEMASavings(inputs: EMACalculatorInputs): CalculationRes
       emaCost,
       humanCostPerQuery: postEMAHumanCostPerQuery,
       savings,
-      netSavings
+      netSavings,
+      firstCallResolutionBenefit,
+      complianceSavings,
+      upsellBenefit,
+      totalAdditionalSavings,
+      allInSavings,
+      directSavingsPercentOfBaseline,
+      additionalSavingsPercentOfBaseline,
+      allInSavingsPercentOfBaseline
     });
   }
   
-  // Calculate total savings
+  // Calculate totals
   const totalSavings = yearlyBreakdown.reduce((sum, year) => sum + year.netSavings, 0);
+  const totalAdditionalSavings = yearlyBreakdown.reduce((sum, year) => sum + year.totalAdditionalSavings, 0);
+  const totalAllInSavings = yearlyBreakdown.reduce((sum, year) => sum + year.allInSavings, 0);
   
   return {
     yearlyBreakdown,
     totalSavings,
+    totalAdditionalSavings,
+    totalAllInSavings,
     implementationCost: inputs.implementationCost * 1000000
   };
 }
@@ -89,7 +124,10 @@ export function populateBullFromBase(baseInputs: EMACalculatorInputs): EMACalcul
     ...baseInputs,
     // Transform specific fields for Bull scenario
     finalYearContainmentRate: Math.min(0.90, baseInputs.finalYearContainmentRate * 1.25),
-    year1ProductivityGain: Math.min(1.0, baseInputs.year1ProductivityGain + 0.05) // +5 percentage points
+    year1ProductivityGain: Math.min(1.0, baseInputs.year1ProductivityGain + 0.05), // +5 percentage points
+    // Transform additional savings fields for Bull scenario
+    annualComplianceCostReduction: baseInputs.annualComplianceCostReduction * 3,
+    upsellPercentOfRevenue: baseInputs.upsellPercentOfRevenue * 1.5
   };
   
   return bullInputs;

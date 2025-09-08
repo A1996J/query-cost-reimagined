@@ -21,6 +21,12 @@ export interface EMACalculatorInputs {
   companyGrowthRate: number;
   finalYearContainmentRate: number;
   year1ProductivityGain: number;
+
+  // Additional Savings Inputs
+  duplicateQueriesPercent: number;
+  annualComplianceCostReduction: number;
+  customerExperienceAsPercentOfRevenue: number;
+  upsellPercentOfRevenue: number;
 }
 
 export interface ScenarioInputs {
@@ -39,11 +45,23 @@ export interface YearlyCalculation {
   humanCostPerQuery: number;
   savings: number;
   netSavings: number;
+  // Additional savings breakdown
+  firstCallResolutionBenefit: number;
+  complianceSavings: number;
+  upsellBenefit: number;
+  totalAdditionalSavings: number;
+  allInSavings: number;
+  // Baseline percentages
+  directSavingsPercentOfBaseline: number;
+  additionalSavingsPercentOfBaseline: number;
+  allInSavingsPercentOfBaseline: number;
 }
 
 export interface CalculationResults {
   yearlyBreakdown: YearlyCalculation[];
   totalSavings: number;
+  totalAdditionalSavings: number;
+  totalAllInSavings: number;
   implementationCost: number;
 }
 

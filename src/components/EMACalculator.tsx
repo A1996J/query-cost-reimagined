@@ -5,6 +5,7 @@ import { Calculator, TrendingUp, DollarSign } from 'lucide-react';
 import { CurrencySection } from './calculator/CurrencySection';
 import { HumanAgentSection } from './calculator/HumanAgentSection';
 import { EMASection } from './calculator/EMASection';
+import { AdditionalSavingsSection } from './calculator/AdditionalSavingsSection';
 import { ResultsDisplay } from './calculator/ResultsDisplay';
 import { calculateEMASavings, populateBullFromBase, calculateScenarioResults } from '@/lib/ema-calculations';
 import { EMACalculatorInputs, CalculationResults, Scenario, ScenarioInputs, ScenarioResults } from '@/types/ema-calculator';
@@ -25,7 +26,11 @@ const defaultInputs: EMACalculatorInputs = {
   implementationCost: 0.5,
   companyGrowthRate: 0.10,
   finalYearContainmentRate: 0.70,
-  year1ProductivityGain: 0.15
+  year1ProductivityGain: 0.15,
+  duplicateQueriesPercent: 0.10,
+  annualComplianceCostReduction: 0.25,
+  customerExperienceAsPercentOfRevenue: 0.02,
+  upsellPercentOfRevenue: 0.05
 };
 
 export const EMACalculator: React.FC = () => {
@@ -71,7 +76,7 @@ export const EMACalculator: React.FC = () => {
       setResults(calculatedResults);
       toast({
         title: "Calculation Complete",
-        description: `Total 3-year savings (${currentScenario.toUpperCase()}): $${(calculatedResults.totalSavings / 1000000).toFixed(2)}M`
+        description: `Total All-In savings (${currentScenario.toUpperCase()}): $${(calculatedResults.totalAllInSavings / 1000000).toFixed(2)}M`
       });
     } catch (error) {
       toast({
@@ -158,6 +163,11 @@ export const EMACalculator: React.FC = () => {
             />
             
             <EMASection 
+              inputs={scenarios[currentScenario]}
+              onUpdateInput={updateInput}
+            />
+            
+            <AdditionalSavingsSection 
               inputs={scenarios[currentScenario]}
               onUpdateInput={updateInput}
             />
