@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calculator, TrendingUp, DollarSign } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Calculator, TrendingUp, DollarSign, BarChart3 } from 'lucide-react';
 import { CurrencySection } from './calculator/CurrencySection';
 import { HumanAgentSection } from './calculator/HumanAgentSection';
 import { EMASection } from './calculator/EMASection';
 import { AdditionalSavingsSection } from './calculator/AdditionalSavingsSection';
 import { ResultsDisplay } from './calculator/ResultsDisplay';
+import { SavingsWaterfallChart } from './calculator/SavingsWaterfallChart';
+import { SensitivityHeatmap } from './calculator/SensitivityHeatmap';
+import { KeyAssumptionsTable } from './calculator/KeyAssumptionsTable';
 import { calculateEMASavings, populateBullFromBase, calculateScenarioResults } from '@/lib/ema-calculations';
 import { EMACalculatorInputs, CalculationResults, Scenario, ScenarioInputs, ScenarioResults } from '@/types/ema-calculator';
 import { toast } from '@/hooks/use-toast';
@@ -34,6 +38,7 @@ const defaultInputs: EMACalculatorInputs = {
 };
 
 export const EMACalculator: React.FC = () => {
+  const [currentTab, setCurrentTab] = useState('base');
   const [currentScenario, setCurrentScenario] = useState<Scenario>('base');
   const [scenarios, setScenarios] = useState<ScenarioInputs>({
     base: defaultInputs,
@@ -68,6 +73,7 @@ export const EMACalculator: React.FC = () => {
 
   const switchScenario = (scenario: Scenario) => {
     setCurrentScenario(scenario);
+    setCurrentTab(scenario);
   };
 
   const handleCalculate = async () => {
@@ -114,105 +120,181 @@ export const EMACalculator: React.FC = () => {
               <p className="text-white/90 text-lg">
                 Calculate 3-year direct cost savings from implementing an EMA solution
               </p>
-              <div className="flex items-center gap-4 mt-4">
-                <div className="flex bg-white/10 rounded-lg p-1">
-                  <button
-                    onClick={() => switchScenario('base')}
-                    className={`px-4 py-2 rounded-md transition-all ${
-                      currentScenario === 'base'
-                        ? 'bg-white text-finance-primary font-semibold'
-                        : 'text-white/80 hover:text-white'
-                    }`}
-                  >
-                    Base
-                  </button>
-                  <button
-                    onClick={() => switchScenario('bull')}
-                    className={`px-4 py-2 rounded-md transition-all ${
-                      currentScenario === 'bull'
-                        ? 'bg-white text-finance-primary font-semibold'
-                        : 'text-white/80 hover:text-white'
-                    }`}
-                  >
-                    Bull
-                  </button>
-                </div>
-                {currentScenario === 'bull' && (
-                  <button
-                    onClick={populateBullScenario}
-                    className="px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-all text-sm"
-                  >
-                    Populate Bull from Base
-                  </button>
-                )}
-              </div>
             </div>
           </div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-          {/* Input Sections */}
-          <div className="xl:col-span-2 space-y-6">
-            <CurrencySection 
-              inputs={scenarios[currentScenario]}
-              onUpdateInput={updateInput}
-            />
-            
-            <HumanAgentSection 
-              inputs={scenarios[currentScenario]}
-              onUpdateInput={updateInput}
-            />
-            
-            <EMASection 
-              inputs={scenarios[currentScenario]}
-              onUpdateInput={updateInput}
-            />
-            
-            <AdditionalSavingsSection 
-              inputs={scenarios[currentScenario]}
-              onUpdateInput={updateInput}
-            />
+        <Tabs value={currentTab} onValueChange={(value) => {
+          setCurrentTab(value);
+          if (value === 'base' || value === 'bull') {
+            setCurrentScenario(value as Scenario);
+          }
+        }}>
+          <TabsList className="grid w-full grid-cols-3 mb-8">
+            <TabsTrigger value="base">Base Case</TabsTrigger>
+            <TabsTrigger value="bull">Bull Case</TabsTrigger>
+            <TabsTrigger value="report">Report</TabsTrigger>
+          </TabsList>
 
-            <Card className="p-6 shadow-soft">
-              <Button 
-                onClick={handleCalculate}
-                disabled={isCalculating}
-                className="w-full bg-finance-gradient hover:shadow-medium transition-all duration-300 text-lg py-6"
-                size="lg"
-              >
-                <TrendingUp className="mr-2 h-5 w-5" />
-                {isCalculating ? 'Calculating...' : 'Calculate EMA Savings'}
-              </Button>
-            </Card>
-          </div>
-
-          {/* Results Section */}
-          <div className="xl:col-span-1">
-            <div className="sticky top-8">
-              {results && (
-                <ResultsDisplay 
-                  results={results} 
-                  currency={scenarios[currentScenario].currency} 
-                  scenario={currentScenario}
-                  scenarioResults={scenarioResults}
-                  scenarios={scenarios}
+          <TabsContent value="base">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+              {/* Input Sections */}
+              <div className="xl:col-span-2 space-y-6">
+                <CurrencySection 
+                  inputs={scenarios.base}
+                  onUpdateInput={updateInput}
                 />
-              )}
-              
-              {!results && (
+                
+                <HumanAgentSection 
+                  inputs={scenarios.base}
+                  onUpdateInput={updateInput}
+                />
+                
+                <EMASection 
+                  inputs={scenarios.base}
+                  onUpdateInput={updateInput}
+                />
+                
+                <AdditionalSavingsSection 
+                  inputs={scenarios.base}
+                  onUpdateInput={updateInput}
+                />
+
+                <Card className="p-6 shadow-soft">
+                  <Button 
+                    onClick={handleCalculate}
+                    disabled={isCalculating}
+                    className="w-full bg-finance-gradient hover:shadow-medium transition-all duration-300 text-lg py-6"
+                    size="lg"
+                  >
+                    <TrendingUp className="mr-2 h-5 w-5" />
+                    {isCalculating ? 'Calculating...' : 'Calculate EMA Savings'}
+                  </Button>
+                </Card>
+              </div>
+
+              {/* Results Section - Base only */}
+              <div className="xl:col-span-1">
+                <div className="sticky top-8">
+                  {results && currentScenario === 'base' && (
+                    <ResultsDisplay 
+                      results={results} 
+                      currency={scenarios.base.currency} 
+                      scenario="base"
+                    />
+                  )}
+                  
+                  {!results && (
+                    <Card className="p-8 text-center shadow-soft">
+                      <DollarSign className="h-16 w-16 mx-auto mb-4 text-finance-primary" />
+                      <h3 className="text-xl font-semibold mb-2">Ready to Calculate</h3>
+                      <p className="text-muted-foreground">
+                        Fill in your parameters to see the EMA ROI calculation results
+                      </p>
+                    </Card>
+                  )}
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="bull">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+              {/* Input Sections */}
+              <div className="xl:col-span-2 space-y-6">
+                <div className="mb-4">
+                  <Button
+                    onClick={populateBullScenario}
+                    variant="outline"
+                    className="mb-4"
+                  >
+                    Populate Bull from Base
+                  </Button>
+                </div>
+
+                <CurrencySection 
+                  inputs={scenarios.bull}
+                  onUpdateInput={updateInput}
+                />
+                
+                <HumanAgentSection 
+                  inputs={scenarios.bull}
+                  onUpdateInput={updateInput}
+                />
+                
+                <EMASection 
+                  inputs={scenarios.bull}
+                  onUpdateInput={updateInput}
+                />
+                
+                <AdditionalSavingsSection 
+                  inputs={scenarios.bull}
+                  onUpdateInput={updateInput}
+                />
+
+                <Card className="p-6 shadow-soft">
+                  <Button 
+                    onClick={handleCalculate}
+                    disabled={isCalculating}
+                    className="w-full bg-finance-gradient hover:shadow-medium transition-all duration-300 text-lg py-6"
+                    size="lg"
+                  >
+                    <TrendingUp className="mr-2 h-5 w-5" />
+                    {isCalculating ? 'Calculating...' : 'Calculate EMA Savings'}
+                  </Button>
+                </Card>
+              </div>
+
+              {/* Results Section - Bull only */}
+              <div className="xl:col-span-1">
+                <div className="sticky top-8">
+                  {results && currentScenario === 'bull' && (
+                    <ResultsDisplay 
+                      results={results} 
+                      currency={scenarios.bull.currency} 
+                      scenario="bull"
+                    />
+                  )}
+                  
+                  {!results && (
+                    <Card className="p-8 text-center shadow-soft">
+                      <DollarSign className="h-16 w-16 mx-auto mb-4 text-finance-primary" />
+                      <h3 className="text-xl font-semibold mb-2">Ready to Calculate</h3>
+                      <p className="text-muted-foreground">
+                        Fill in your parameters to see the EMA ROI calculation results
+                      </p>
+                    </Card>
+                  )}
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="report">
+            <div className="space-y-8">
+              {scenarioResults && scenarios ? (
+                <>
+                  {/* Charts */}
+                  <SavingsWaterfallChart scenarioResults={scenarioResults} />
+                  <SensitivityHeatmap scenarioResults={scenarioResults} scenarios={scenarios} />
+                  
+                  {/* Key Assumptions Table */}
+                  <KeyAssumptionsTable scenarios={scenarios} />
+                </>
+              ) : (
                 <Card className="p-8 text-center shadow-soft">
-                  <DollarSign className="h-16 w-16 mx-auto mb-4 text-finance-primary" />
-                  <h3 className="text-xl font-semibold mb-2">Ready to Calculate</h3>
+                  <BarChart3 className="h-16 w-16 mx-auto mb-4 text-finance-primary" />
+                  <h3 className="text-xl font-semibold mb-2">Generate Report</h3>
                   <p className="text-muted-foreground">
-                    Fill in your parameters to see the EMA ROI calculation results
+                    Complete calculations in Base and Bull scenarios to view the report
                   </p>
                 </Card>
               )}
             </div>
-          </div>
-        </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

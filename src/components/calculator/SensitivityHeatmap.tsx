@@ -113,26 +113,26 @@ export const SensitivityHeatmap: React.FC<SensitivityHeatmapProps> = ({ scenario
   const minValue = Math.min(...allValues);
   const maxValue = Math.max(...allValues);
 
-  // Color function
+  // Color function - softer, more muted colors for better text readability
   const getColor = (value: number): string => {
     const normalized = (value - minValue) / (maxValue - minValue);
     if (normalized < 0.33) {
-      // Red to Yellow
-      const r = 255;
-      const g = Math.round(255 * (normalized / 0.33));
-      const b = 0;
+      // Soft Red to Orange
+      const r = 200;
+      const g = Math.round(120 + 80 * (normalized / 0.33));
+      const b = 100;
       return `rgb(${r}, ${g}, ${b})`;
     } else if (normalized < 0.67) {
-      // Yellow to Light Green  
-      const r = Math.round(255 * (1 - (normalized - 0.33) / 0.34));
-      const g = 255;
-      const b = 0;
+      // Orange to Light Yellow-Green  
+      const r = Math.round(200 - 80 * ((normalized - 0.33) / 0.34));
+      const g = 200;
+      const b = 100;
       return `rgb(${r}, ${g}, ${b})`;
     } else {
-      // Light Green to Dark Green
-      const r = 0;
-      const g = Math.round(255 - 100 * ((normalized - 0.67) / 0.33));
-      const b = 0;
+      // Light Yellow-Green to Medium Green
+      const r = 120;
+      const g = Math.round(200 - 50 * ((normalized - 0.67) / 0.33));
+      const b = 100;
       return `rgb(${r}, ${g}, ${b})`;
     }
   };

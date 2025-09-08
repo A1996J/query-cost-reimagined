@@ -4,8 +4,6 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { TrendingUp, DollarSign, Target, Award, PercentIcon } from 'lucide-react';
 import { CalculationResults, ScenarioResults, ScenarioInputs } from '@/types/ema-calculator';
-import { SavingsWaterfallChart } from './SavingsWaterfallChart';
-import { SensitivityHeatmap } from './SensitivityHeatmap';
 
 interface ResultsDisplayProps {
   results: CalculationResults;
@@ -233,13 +231,6 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, currenc
         </CardContent>
       </Card>
 
-      {/* Waterfall Chart - only show if we have both scenarios */}
-      {scenarioResults && scenarios && (
-        <>
-          <SavingsWaterfallChart scenarioResults={scenarioResults} />
-          <SensitivityHeatmap scenarioResults={scenarioResults} scenarios={scenarios} />
-        </>
-      )}
     </div>
   );
 };
