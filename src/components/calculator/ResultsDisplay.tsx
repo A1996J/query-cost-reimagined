@@ -8,9 +8,10 @@ import { CalculationResults } from '@/types/ema-calculator';
 interface ResultsDisplayProps {
   results: CalculationResults;
   currency: string;
+  scenario?: string;
 }
 
-export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, currency }) => {
+export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, currency, scenario = 'base' }) => {
   const formatCurrency = (amount: number, inMillions = false) => {
     const value = inMillions ? amount / 1000000 : amount;
     return new Intl.NumberFormat('en-US', {
@@ -32,7 +33,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, currenc
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-xl">
             <Award className="h-6 w-6" />
-            Total EMA Savings
+            Total EMA Savings ({scenario.toUpperCase()})
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -59,7 +60,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, currenc
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-finance-primary">
             <TrendingUp className="h-5 w-5" />
-            Year-by-Year Breakdown
+            Year-by-Year Breakdown ({scenario.toUpperCase()})
           </CardTitle>
         </CardHeader>
         <CardContent>

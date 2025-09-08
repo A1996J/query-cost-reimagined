@@ -124,12 +124,11 @@ export const CurrencySection: React.FC<CurrencySectionProps> = ({ inputs, onUpda
             type="number"
             value={inputs.fxRate}
             onChange={(e) => onUpdateInput('fxRate', parseFloat(e.target.value) || 1)}
-            step="0.01"
-            className="bg-muted/50"
-            readOnly={isLoadingFX}
+            step="0.0001"
+            className="text-lg font-medium"
           />
           <p className="text-sm text-muted-foreground">
-            1 {inputs.currency} = {inputs.fxRate.toFixed(4)} USD
+            Exchange rate for converting {inputs.currency} to USD (editable)
           </p>
         </div>
       </CardContent>

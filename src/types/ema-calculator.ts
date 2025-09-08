@@ -1,3 +1,5 @@
+export type Scenario = 'base' | 'bull';
+
 export interface EMACalculatorInputs {
   // Currency & Country
   country: string;
@@ -21,6 +23,11 @@ export interface EMACalculatorInputs {
   year1ProductivityGain: number;
 }
 
+export interface ScenarioInputs {
+  base: EMACalculatorInputs;
+  bull: EMACalculatorInputs;
+}
+
 export interface YearlyCalculation {
   year: number;
   queries: number;
@@ -38,6 +45,11 @@ export interface CalculationResults {
   yearlyBreakdown: YearlyCalculation[];
   totalSavings: number;
   implementationCost: number;
+}
+
+export interface ScenarioResults {
+  base: CalculationResults;
+  bull: CalculationResults;
 }
 
 export interface CountryData {

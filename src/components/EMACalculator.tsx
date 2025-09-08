@@ -6,8 +6,8 @@ import { CurrencySection } from './calculator/CurrencySection';
 import { HumanAgentSection } from './calculator/HumanAgentSection';
 import { EMASection } from './calculator/EMASection';
 import { ResultsDisplay } from './calculator/ResultsDisplay';
-import { calculateEMASavings } from '@/lib/ema-calculations';
-import { EMACalculatorInputs, CalculationResults } from '@/types/ema-calculator';
+import { calculateEMASavings, populateBullFromBase, calculateScenarioResults } from '@/lib/ema-calculations';
+import { EMACalculatorInputs, CalculationResults, Scenario, ScenarioInputs, ScenarioResults } from '@/types/ema-calculator';
 import { toast } from '@/hooks/use-toast';
 
 const defaultInputs: EMACalculatorInputs = {
@@ -29,25 +29,49 @@ const defaultInputs: EMACalculatorInputs = {
 };
 
 export const EMACalculator: React.FC = () => {
-  const [inputs, setInputs] = useState<EMACalculatorInputs>(defaultInputs);
+  const [currentScenario, setCurrentScenario] = useState<Scenario>('base');
+  const [scenarios, setScenarios] = useState<ScenarioInputs>({
+    base: defaultInputs,
+    bull: defaultInputs
+  });
   const [results, setResults] = useState<CalculationResults | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
 
   const updateInput = (field: keyof EMACalculatorInputs, value: string | number) => {
-    setInputs(prev => ({
+    setScenarios(prev => ({
       ...prev,
-      [field]: value
+      [currentScenario]: {
+        ...prev[currentScenario],
+        [field]: value
+      }
     }));
+  };
+
+  const populateBullScenario = () => {
+    const bullInputs = populateBullFromBase(scenarios.base);
+    setScenarios(prev => ({
+      ...prev,
+      bull: bullInputs
+    }));
+    setCurrentScenario('bull');
+    toast({
+      title: "Bull Scenario Populated",
+      description: "Bull scenario has been populated from Base with optimistic assumptions"
+    });
+  };
+
+  const switchScenario = (scenario: Scenario) => {
+    setCurrentScenario(scenario);
   };
 
   const handleCalculate = async () => {
     setIsCalculating(true);
     try {
-      const calculatedResults = calculateEMASavings(inputs);
+      const calculatedResults = calculateEMASavings(scenarios[currentScenario]);
       setResults(calculatedResults);
       toast({
         title: "Calculation Complete",
-        description: `Total 3-year savings: $${(calculatedResults.totalSavings / 1000000).toFixed(2)}M`
+        description: `Total 3-year savings (${currentScenario.toUpperCase()}): $${(calculatedResults.totalSavings / 1000000).toFixed(2)}M`
       });
     } catch (error) {
       toast({
@@ -66,7 +90,7 @@ export const EMACalculator: React.FC = () => {
       handleCalculate();
     }, 500);
     return () => clearTimeout(timer);
-  }, [inputs]);
+  }, [scenarios, currentScenario]);
 
   return (
     <div className="min-h-screen bg-finance-subtle">
@@ -82,6 +106,38 @@ export const EMACalculator: React.FC = () => {
               <p className="text-white/90 text-lg">
                 Calculate 3-year direct cost savings from implementing an EMA solution
               </p>
+              <div className="flex items-center gap-4 mt-4">
+                <div className="flex bg-white/10 rounded-lg p-1">
+                  <button
+                    onClick={() => switchScenario('base')}
+                    className={`px-4 py-2 rounded-md transition-all ${
+                      currentScenario === 'base'
+                        ? 'bg-white text-finance-primary font-semibold'
+                        : 'text-white/80 hover:text-white'
+                    }`}
+                  >
+                    Base
+                  </button>
+                  <button
+                    onClick={() => switchScenario('bull')}
+                    className={`px-4 py-2 rounded-md transition-all ${
+                      currentScenario === 'bull'
+                        ? 'bg-white text-finance-primary font-semibold'
+                        : 'text-white/80 hover:text-white'
+                    }`}
+                  >
+                    Bull
+                  </button>
+                </div>
+                {currentScenario === 'bull' && (
+                  <button
+                    onClick={populateBullScenario}
+                    className="px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 transition-all text-sm"
+                  >
+                    Populate Bull from Base
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -92,17 +148,17 @@ export const EMACalculator: React.FC = () => {
           {/* Input Sections */}
           <div className="xl:col-span-2 space-y-6">
             <CurrencySection 
-              inputs={inputs}
+              inputs={scenarios[currentScenario]}
               onUpdateInput={updateInput}
             />
             
             <HumanAgentSection 
-              inputs={inputs}
+              inputs={scenarios[currentScenario]}
               onUpdateInput={updateInput}
             />
             
             <EMASection 
-              inputs={inputs}
+              inputs={scenarios[currentScenario]}
               onUpdateInput={updateInput}
             />
 
@@ -123,7 +179,7 @@ export const EMACalculator: React.FC = () => {
           <div className="xl:col-span-1">
             <div className="sticky top-8">
               {results && (
-                <ResultsDisplay results={results} currency={inputs.currency} />
+                <ResultsDisplay results={results} currency={scenarios[currentScenario].currency} scenario={currentScenario} />
               )}
               
               {!results && (

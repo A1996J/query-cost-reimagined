@@ -1,4 +1,4 @@
-import { EMACalculatorInputs, CalculationResults, YearlyCalculation } from '@/types/ema-calculator';
+import { EMACalculatorInputs, CalculationResults, YearlyCalculation, ScenarioInputs, ScenarioResults } from '@/types/ema-calculator';
 
 const WORKING_MINUTES_PER_YEAR = 124800; // 250 workdays × 8 hours × 60 minutes
 
@@ -80,5 +80,24 @@ export function calculateEMASavings(inputs: EMACalculatorInputs): CalculationRes
     yearlyBreakdown,
     totalSavings,
     implementationCost: inputs.implementationCost * 1000000
+  };
+}
+
+export function populateBullFromBase(baseInputs: EMACalculatorInputs): EMACalculatorInputs {
+  // Copy unchanged fields
+  const bullInputs: EMACalculatorInputs = {
+    ...baseInputs,
+    // Transform specific fields for Bull scenario
+    finalYearContainmentRate: Math.min(0.90, baseInputs.finalYearContainmentRate * 1.25),
+    year1ProductivityGain: Math.min(1.0, baseInputs.year1ProductivityGain + 0.05) // +5 percentage points
+  };
+  
+  return bullInputs;
+}
+
+export function calculateScenarioResults(scenarios: ScenarioInputs): ScenarioResults {
+  return {
+    base: calculateEMASavings(scenarios.base),
+    bull: calculateEMASavings(scenarios.bull)
   };
 }
