@@ -94,7 +94,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
         <div className="text-center mb-8">
           <Building2 className="h-16 w-16 mx-auto mb-4 text-finance-primary" />
           <h1 className="text-3xl font-bold mb-2 text-finance-primary">Welcome to Ema ROI Calculator</h1>
-          <p className="text-muted-foreground text-lg">Let's get started with a few quick questions</p>
+          <p className="text-muted-foreground text-lg">Ema Partners' Client ROI Calculation Buddy</p>
         </div>
 
         <Card className="p-8 shadow-soft">
