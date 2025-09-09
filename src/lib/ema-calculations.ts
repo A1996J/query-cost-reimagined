@@ -9,8 +9,8 @@ export function calculateEMASavings(inputs: EMACalculatorInputs): CalculationRes
   // Calculate all-in annual cost per rep
   const allInCostPerRep = salaryUSD * inputs.benefitsMultiplier;
   
-  // Calculate annual queries
-  const annualQueries = inputs.monthlyQueryVolume * 12;
+  // Calculate annual queries (convert from thousands to actual count)
+  const annualQueries = inputs.monthlyQueryVolume * 1000 * 12;
   
   // Calculate reps needed
   const repsNeeded100 = (annualQueries * 1000000 * inputs.averageHandlingTime) / WORKING_MINUTES_PER_YEAR;
@@ -64,8 +64,8 @@ export function calculateEMASavings(inputs: EMACalculatorInputs): CalculationRes
     // 1. First Call Resolution (Duplicate Queries)
     const firstCallResolutionBenefit = humanQueries * pricePerHumanQuery * inputs.duplicateQueriesPercent;
     
-    // 2. Compliance Cost Reduction
-    const complianceSavings = inputs.annualComplianceCostReduction * 1000000;
+    // 2. Compliance Cost Reduction (convert from thousands to dollars)
+    const complianceSavings = inputs.annualComplianceCostReduction * 1000;
     
     // Total Additional Savings
     const totalAdditionalSavings = firstCallResolutionBenefit + complianceSavings;
