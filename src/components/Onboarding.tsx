@@ -101,7 +101,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
           {step === 1 && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-2xl font-semibold mb-4">Step 1: Choose Your Industry</h2>
+                <h2 className="text-2xl font-semibold mb-4">Step 1: Choose Client Industry</h2>
                 <Select value={industry} onValueChange={setIndustry}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select your industry" />
@@ -135,7 +135,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
           {step === 2 && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-2xl font-semibold mb-4">Step 2: Choose Your Use Case</h2>
+                <h2 className="text-2xl font-semibold mb-4">Step 2: Choose Client Use Case</h2>
                 <div className="grid gap-3">
                   {useCases.map((uc) => (
                     <Button
@@ -182,7 +182,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
                   id="company-name"
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
-                  placeholder="Enter your company name"
+                  placeholder="Enter client name"
                   className="mt-2"
                 />
               </div>
@@ -206,7 +206,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-semibold mb-4">Step 4: Critical Business Inputs</h2>
-                <p className="text-muted-foreground mb-6">These inputs are required to calculate your ROI</p>
+                <p className="text-muted-foreground mb-6">Inputs required to calculate ROI cor client</p>
                 
                 <div className="space-y-4">
                   {/* Partner Country */}
@@ -228,7 +228,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
                       </SelectContent>
                     </Select>
                     <p className="text-sm text-muted-foreground">
-                      Country where the partner's team or operation is located
+                      Country where the client's concerned team or operation is located
                     </p>
                   </div>
 
@@ -248,7 +248,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
                       placeholder="Enter monthly volume"
                     />
                     <p className="text-sm text-muted-foreground">
-                      Total customer service queries handled per month
+                      Total customer service queries handled per month by client
                     </p>
                   </div>
 
