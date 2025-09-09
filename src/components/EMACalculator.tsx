@@ -16,6 +16,7 @@ import { SavingsStickers } from './calculator/SavingsStickers';
 import { GlossarySection } from './calculator/GlossarySection';
 import { PDFExport } from './calculator/PDFExport';
 import { KeyAssumptionsTable } from './calculator/KeyAssumptionsTable';
+import { AdditionalBenefitsSection } from './calculator/AdditionalBenefitsSection';
 import { calculateEMASavings, populateBullFromBase, calculateScenarioResults } from '@/lib/ema-calculations';
 import { EMACalculatorInputs, CalculationResults, Scenario, ScenarioInputs, ScenarioResults } from '@/types/ema-calculator';
 import { toast } from '@/hooks/use-toast';
@@ -396,6 +397,9 @@ export const EMACalculator: React.FC = () => {
                   <div className="savings-stickers-container">
                     <SavingsStickers scenarioResults={scenarioResults} />
                   </div>
+                  
+                  {/* Additional Benefits */}
+                  <AdditionalBenefitsSection industry={industry} />
                   
                   {/* Charts */}
                   <div className="waterfall-chart-container">
