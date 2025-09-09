@@ -206,7 +206,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
             <div className="space-y-6">
               <div>
                 <h2 className="text-2xl font-semibold mb-4">Step 4: Critical Business Inputs</h2>
-                <p className="text-muted-foreground mb-6">Inputs required to calculate ROI cor client</p>
+                <p className="text-muted-foreground mb-6">Inputs required to calculate ROI for client</p>
                 
                 <div className="space-y-4">
                   {/* Partner Country */}
