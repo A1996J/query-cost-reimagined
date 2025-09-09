@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ArrowRight, Building2 } from 'lucide-react';
 
 interface OnboardingProps {
-  onComplete: (companyName: string) => void;
+  onComplete: (companyName: string, industry: string) => void;
 }
 
 export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
@@ -54,7 +54,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
 
   const handleComplete = () => {
     if (companyName.trim()) {
-      onComplete(companyName.trim());
+      onComplete(companyName.trim(), industry);
     }
   };
 

@@ -61,6 +61,7 @@ const defaultInputs: EMACalculatorInputs = {
 export const EMACalculator: React.FC = () => {
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [companyName, setCompanyName] = useState('');
+  const [industry, setIndustry] = useState('');
   const [currentTab, setCurrentTab] = useState('base');
   const [currentScenario, setCurrentScenario] = useState<Scenario>('base');
   const [scenarios, setScenarios] = useState<ScenarioInputs>({
@@ -78,7 +79,7 @@ export const EMACalculator: React.FC = () => {
   });
   
   // Section collapse states
-  const [detailedOpen, setDetailedOpen] = useState(true);
+  const [detailedOpen, setDetailedOpen] = useState(false);
   const [advancedOpen, setAdvancedOpen] = useState(false);
 
   const updateInput = (field: keyof EMACalculatorInputs, value: string | number) => {
@@ -128,10 +129,7 @@ export const EMACalculator: React.FC = () => {
 
   const canCalculate = (inputs: EMACalculatorInputs) => {
     return inputs.country && 
-           inputs.averageAnnualSalary > 0 && 
            inputs.monthlyQueryVolume > 0 && 
-           inputs.averageHandlingTime > 0 && 
-           inputs.implementationCost >= 0 && 
            inputs.companyGrowthRate >= 0;
   };
 
@@ -176,8 +174,9 @@ export const EMACalculator: React.FC = () => {
     }
   }, [scenarios, currentScenario]);
 
-  const handleOnboardingComplete = (name: string) => {
+  const handleOnboardingComplete = (name: string, selectedIndustry: string) => {
     setCompanyName(name);
+    setIndustry(selectedIndustry);
     setShowOnboarding(false);
   };
 
@@ -227,8 +226,6 @@ export const EMACalculator: React.FC = () => {
                 <CriticalInputsSection 
                   inputs={scenarios.base}
                   onUpdateInput={updateInput}
-                  fxRateUserEdited={fxRateUserEdited.base}
-                  onFxRateUserEdited={handleFxRateUserEdited}
                 />
                 
                 <DetailedAssumptionsSection 
@@ -236,6 +233,9 @@ export const EMACalculator: React.FC = () => {
                   onUpdateInput={updateInput}
                   isOpen={detailedOpen}
                   onOpenChange={setDetailedOpen}
+                  industry={industry}
+                  fxRateUserEdited={fxRateUserEdited.base}
+                  onFxRateUserEdited={handleFxRateUserEdited}
                 />
                 
                 <AdvancedInputsSection 
@@ -299,8 +299,6 @@ export const EMACalculator: React.FC = () => {
                 <CriticalInputsSection 
                   inputs={scenarios.bull}
                   onUpdateInput={updateInput}
-                  fxRateUserEdited={fxRateUserEdited.bull}
-                  onFxRateUserEdited={handleFxRateUserEdited}
                 />
                 
                 <DetailedAssumptionsSection 
@@ -308,6 +306,9 @@ export const EMACalculator: React.FC = () => {
                   onUpdateInput={updateInput}
                   isOpen={detailedOpen}
                   onOpenChange={setDetailedOpen}
+                  industry={industry}
+                  fxRateUserEdited={fxRateUserEdited.bull}
+                  onFxRateUserEdited={handleFxRateUserEdited}
                 />
                 
                 <AdvancedInputsSection 

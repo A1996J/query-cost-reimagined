@@ -1,25 +1,85 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
-import { Settings, ChevronDown, ChevronUp, Target, Zap, TrendingUp } from 'lucide-react';
+import { Settings, ChevronDown, ChevronUp, Target, Zap, TrendingUp, DollarSign, Globe } from 'lucide-react';
 import { EMACalculatorInputs } from '@/types/ema-calculator';
+
+const WORKING_MINUTES_PER_YEAR = 124800; // 250 workdays × 8 hours × 60 minutes
+
+// Mock FX rates - in production, this would come from an API
+const mockFXRates: { [key: string]: number } = {
+  USD: 1,
+  EUR: 0.85,
+  GBP: 0.73,
+  INR: 86.0,
+  CAD: 1.25,
+  AUD: 1.35,
+  JPY: 110.0,
+  CNY: 6.45,
+  SGD: 1.35,
+};
 
 interface DetailedAssumptionsSectionProps {
   inputs: EMACalculatorInputs;
   onUpdateInput: (field: keyof EMACalculatorInputs, value: string | number) => void;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  industry: string;
+  fxRateUserEdited: boolean;
+  onFxRateUserEdited: (edited: boolean) => void;
 }
 
 export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProps> = ({ 
   inputs, 
   onUpdateInput,
   isOpen,
-  onOpenChange
+  onOpenChange,
+  industry,
+  fxRateUserEdited,
+  onFxRateUserEdited
 }) => {
+  const handleFxRateChange = (value: string) => {
+    onFxRateUserEdited(true);
+    onUpdateInput('fxRate', parseFloat(value) || 1);
+  };
+
+  // Auto-populate fields based on conditions
+  useEffect(() => {
+    // Auto-populate FX rate when country changes (if not user edited)
+    if (inputs.country && inputs.currency && !fxRateUserEdited) {
+      const rate = mockFXRates[inputs.currency] || 1;
+      onUpdateInput('fxRate', rate);
+    }
+  }, [inputs.country, inputs.currency, fxRateUserEdited, onUpdateInput]);
+
+  useEffect(() => {
+    // Auto-populate salary for India
+    if (inputs.country === 'IN' && !inputs.averageAnnualSalary) {
+      onUpdateInput('averageAnnualSalary', 450000);
+    }
+  }, [inputs.country, inputs.averageAnnualSalary, onUpdateInput]);
+
+  useEffect(() => {
+    // Auto-populate handling time for Banking and Financial Services
+    if (industry === 'Banking and Financial Services' && !inputs.averageHandlingTime) {
+      onUpdateInput('averageHandlingTime', 10);
+    }
+  }, [industry, inputs.averageHandlingTime, onUpdateInput]);
+
+  useEffect(() => {
+    // Auto-populate implementation cost based on totalReps calculation
+    if (inputs.monthlyQueryVolume && inputs.averageHandlingTime && inputs.capacityBuffer && !inputs.implementationCost) {
+      const annualQueries = inputs.monthlyQueryVolume * 12;
+      const repsNeeded100 = (annualQueries * 1000000 * inputs.averageHandlingTime) / WORKING_MINUTES_PER_YEAR;
+      const totalReps = repsNeeded100 * (1 + inputs.capacityBuffer);
+      const implementationCostK = totalReps * 1000; // $1000 per rep, result in thousands
+      onUpdateInput('implementationCost', implementationCostK / 1000); // Convert back to millions for storage
+    }
+  }, [inputs.monthlyQueryVolume, inputs.averageHandlingTime, inputs.capacityBuffer, inputs.implementationCost, onUpdateInput]);
+
   return (
     <Card className="shadow-soft">
       <Collapsible open={isOpen} onOpenChange={onOpenChange}>
@@ -39,6 +99,95 @@ export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProp
         
         <CollapsibleContent>
           <CardContent className="space-y-6">
+            {/* Moved fields from Critical Inputs */}
+            <div className="border-b pb-6 mb-6">
+              <h4 className="text-lg font-semibold mb-4 text-finance-primary">Core Business Parameters</h4>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* FX Rate */}
+                <div className="space-y-2">
+                  <Label htmlFor="fxRate" className="flex items-center gap-2">
+                    <DollarSign className="h-4 w-4" />
+                    FX Rate to $
+                  </Label>
+                  <Input
+                    id="fxRate"
+                    type="number"
+                    value={inputs.fxRate || ''}
+                    onChange={(e) => handleFxRateChange(e.target.value)}
+                    step="0.0001"
+                    className="text-lg font-medium"
+                    placeholder="Enter FX rate"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Exchange rate for converting {inputs.currency} to $ (auto-filled but editable)
+                  </p>
+                </div>
+
+                {/* Average Annual Salary */}
+                <div className="space-y-2">
+                  <Label htmlFor="salary" className="flex items-center gap-2">
+                    <DollarSign className="h-4 w-4" />
+                    Average Annual Salary per Rep ({inputs.currency})
+                  </Label>
+                  <Input
+                    id="salary"
+                    type="number"
+                    value={inputs.averageAnnualSalary || ''}
+                    onChange={(e) => onUpdateInput('averageAnnualSalary', parseFloat(e.target.value) || 0)}
+                    className="text-lg font-medium"
+                    placeholder="Enter annual salary"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Base salary before benefits and management overhead {inputs.country === 'IN' ? '(₹4.5 lakh pre-filled for India)' : ''}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                {/* Average Handling Time */}
+                <div className="space-y-2">
+                  <Label htmlFor="aht" className="flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4" />
+                    Average Handling Time (Minutes)
+                  </Label>
+                  <Input
+                    id="aht"
+                    type="number"
+                    value={inputs.averageHandlingTime || ''}
+                    onChange={(e) => onUpdateInput('averageHandlingTime', parseFloat(e.target.value) || 0)}
+                    step="0.5"
+                    className="text-lg font-medium"
+                    placeholder="Enter handling time"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Average time per customer interaction including wrap-up {industry === 'Banking and Financial Services' ? '(10 min pre-filled for Financial Services)' : ''}
+                  </p>
+                </div>
+
+                {/* Implementation Cost */}
+                <div className="space-y-2">
+                  <Label htmlFor="implementationCost" className="flex items-center gap-2">
+                    <DollarSign className="h-4 w-4" />
+                    Implementation Cost ($K)
+                  </Label>
+                  <Input
+                    id="implementationCost"
+                    type="number"
+                    value={inputs.implementationCost ? inputs.implementationCost * 1000 : ''}
+                    onChange={(e) => onUpdateInput('implementationCost', (parseFloat(e.target.value) || 0) / 1000)}
+                    step="1"
+                    className="text-lg font-medium"
+                    placeholder="Enter cost in thousands"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    One-time setup and implementation cost (pre-filled as Total Reps × $1K)
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Original detailed assumptions */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Capacity Buffer */}
               <div className="space-y-2">
