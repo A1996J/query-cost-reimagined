@@ -83,7 +83,7 @@ export const EMASection: React.FC<EMASectionProps> = ({ inputs, onUpdateInput })
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label htmlFor="containmentRate">Final Year EMA Containment Rate (%)</Label>
+            <Label htmlFor="containmentRate">Final Year Ema-handled Queries (%)</Label>
             <Input
               id="containmentRate"
               type="number"
