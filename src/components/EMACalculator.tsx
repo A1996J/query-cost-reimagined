@@ -14,7 +14,6 @@ import { SensitivityHeatmap } from './calculator/SensitivityHeatmap';
 import { SummaryTable } from './calculator/SummaryTable';
 import { SavingsStickers } from './calculator/SavingsStickers';
 import { GlossarySection } from './calculator/GlossarySection';
-import { PDFExport } from './calculator/PDFExport';
 import { KeyAssumptionsTable } from './calculator/KeyAssumptionsTable';
 import { AdditionalBenefitsSection } from './calculator/AdditionalBenefitsSection';
 import { ReportKeyPerformanceIndicators } from './calculator/ReportKeyPerformanceIndicators';
@@ -396,9 +395,6 @@ export const EMACalculator: React.FC = () => {
             <div className="space-y-8">
               {scenarioResults && scenarios ? (
                 <>
-                  {/* PDF Export Button */}
-                  <PDFExport scenarioResults={scenarioResults} scenarios={scenarios} industry={industry} useCase={useCase} />
-                  
                   {/* Savings Stickers */}
                   <div className="savings-stickers-container">
                     <SavingsStickers scenarioResults={scenarioResults} />
