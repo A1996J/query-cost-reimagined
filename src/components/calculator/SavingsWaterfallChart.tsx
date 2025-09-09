@@ -46,14 +46,14 @@ export const SavingsWaterfallChart: React.FC<SavingsWaterfallChartProps> = ({ sc
         <div className="relative h-96 flex items-end justify-center space-x-12 p-6">
           {/* Pre-EMA Cost Bar */}
           <div className="flex flex-col items-center">
-            <div className="relative w-24 bg-muted h-80 rounded-sm border">
+            <div className="relative w-24 bg-muted h-70 rounded-sm border">
             </div>
             <div className="mt-2 text-sm font-medium text-center">Pre-EMA<br/>Cost</div>
           </div>
 
           {/* Direct Savings Bar */}
           <div className="flex flex-col items-center">
-            <div className="relative w-24 h-80 rounded-sm border overflow-hidden">
+            <div className="relative w-24 h-70 rounded-sm border overflow-hidden">
               {/* Direct savings portion - waterfall from top */}
               <div 
                 className="absolute top-0 w-full bg-finance-success rounded-sm flex items-center justify-center"
@@ -69,7 +69,7 @@ export const SavingsWaterfallChart: React.FC<SavingsWaterfallChartProps> = ({ sc
 
           {/* Additional Savings Bar */}
           <div className="flex flex-col items-center">
-            <div className="relative w-24 h-80 rounded-sm border overflow-hidden">
+            <div className="relative w-24 h-70 rounded-sm border overflow-hidden">
               {/* Additional savings portion - waterfall continues from direct savings */}
               <div 
                 className="absolute w-full bg-finance-success rounded-sm flex items-center justify-center"
@@ -88,7 +88,7 @@ export const SavingsWaterfallChart: React.FC<SavingsWaterfallChartProps> = ({ sc
 
           {/* Post-EMA Cost Bar */}
           <div className="flex flex-col items-center">
-            <div className="relative w-24 h-80 rounded-sm border overflow-hidden">
+            <div className="relative w-24 h-70 rounded-sm border overflow-hidden">
               {/* Solid filled portion - remaining cost */}
               <div 
                 className="absolute bottom-0 w-full bg-finance-primary rounded-sm"
