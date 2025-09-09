@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { BookOpen, Calculator } from 'lucide-react';
 
 export const GlossarySection: React.FC = () => {
   const glossaryTerms = [
@@ -73,7 +74,10 @@ export const GlossarySection: React.FC = () => {
     <div className="space-y-8 mt-12">
       {/* Glossary */}
       <Card className="p-6 shadow-soft">
-        <h2 className="text-2xl font-bold text-finance-primary mb-4">Glossary: Key Assumptions</h2>
+        <h2 className="text-2xl font-bold text-finance-primary mb-4 flex items-center gap-2">
+          <BookOpen className="h-6 w-6" />
+          Glossary: Key Assumptions
+        </h2>
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
@@ -96,7 +100,10 @@ export const GlossarySection: React.FC = () => {
 
       {/* Other Assumptions */}
       <Card className="p-6 shadow-soft">
-        <h2 className="text-2xl font-bold text-finance-primary mb-4">Other Assumptions Used in Calculations</h2>
+        <h2 className="text-2xl font-bold text-finance-primary mb-4 flex items-center gap-2">
+          <Calculator className="h-6 w-6" />
+          Other Assumptions Used in Calculations
+        </h2>
         <ul className="space-y-3">
           {otherAssumptions.map((assumption, index) => (
             <li key={index} className="flex items-start">

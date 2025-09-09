@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, Gift } from 'lucide-react';
 
 interface AdditionalBenefitsSectionProps {
   industry: string;
@@ -21,7 +21,10 @@ export const AdditionalBenefitsSection: React.FC<AdditionalBenefitsSectionProps>
 
   return (
     <Card className="p-6 shadow-soft">
-      <h2 className="text-2xl font-bold mb-6 text-finance-primary">Benefits Not Baked In</h2>
+      <h2 className="text-2xl font-bold mb-6 text-finance-primary flex items-center gap-2">
+        <Gift className="h-6 w-6" />
+        Benefits Not Baked In
+      </h2>
       <div className="space-y-4">
         {benefits.map((benefit, index) => (
           <div key={index} className="flex items-start gap-3">
