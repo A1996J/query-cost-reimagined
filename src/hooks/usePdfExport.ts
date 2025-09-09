@@ -51,31 +51,38 @@ export const usePdfExport = () => {
         })
       );
 
-      // Wait for print view to be ready
+      // Wait for print view to be ready - increased timeout
       await new Promise<void>(resolve => {
         const checkReady = () => {
           if ((window as any).reportReady) {
+            console.log('Report ready signal received');
             resolve();
           } else {
-            setTimeout(checkReady, 100);
+            setTimeout(checkReady, 200);
           }
         };
         
         // Listen for ready event
-        window.addEventListener('report:ready', () => resolve(), { once: true });
+        window.addEventListener('report:ready', () => {
+          console.log('Report ready event received');
+          resolve();
+        }, { once: true });
         
         // Start checking after a delay
-        setTimeout(checkReady, 1000);
+        setTimeout(checkReady, 2000);
         
-        // Safety timeout
-        setTimeout(() => resolve(), 8000);
+        // Safety timeout - increased to 15 seconds
+        setTimeout(() => {
+          console.log('Report ready timeout - proceeding anyway');
+          resolve();
+        }, 15000);
       });
 
       // Import html2pdf and generate
       const html2pdf = (await import('html2pdf.js')).default;
       
       const opt = {
-        margin: [10, 10, 10, 10], // 10mm margins
+        margin: [15, 10, 15, 10], // 15mm top/bottom, 10mm left/right
         filename: `EMA_ROI_Analysis_${new Date().toISOString().split('T')[0]}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { 
@@ -86,7 +93,10 @@ export const usePdfExport = () => {
           scrollY: 0,
           width: 794,   // A4 portrait width
           height: 1123, // A4 portrait height
-          backgroundColor: '#ffffff'
+          backgroundColor: '#ffffff',
+          logging: true,
+          windowWidth: 794,
+          windowHeight: 1123
         },
         jsPDF: { 
           unit: 'mm', 
@@ -95,9 +105,10 @@ export const usePdfExport = () => {
           compress: true
         },
         pagebreak: { 
-          mode: ['avoid-all', 'css', 'legacy'],
+          mode: ['css', 'legacy'],
           before: '.pdf-page',
-          after: '.pdf-page'
+          after: '.pdf-page',
+          avoid: ['.avoid-break', '.card', '.table-wrapper']
         }
       };
 

@@ -27,13 +27,17 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
     // Wait for all content to be ready before signaling PDF readiness
     const prepareForPrint = async () => {
       try {
+        console.log('PDF preparation starting...');
+        
         // Wait for fonts to load
         if (document.fonts && document.fonts.ready) {
           await document.fonts.ready;
+          console.log('Fonts loaded');
         }
         
         // Wait for images to load
         const images = Array.from(document.images);
+        console.log(`Waiting for ${images.length} images to load`);
         await Promise.all(
           images.map(img => 
             img.complete ? Promise.resolve() : new Promise(resolve => {
@@ -42,9 +46,11 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
             })
           )
         );
+        console.log('All images loaded');
         
         // Wait for charts to stabilize
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        console.log('Charts stabilized');
         
         // Set charts ready flag
         (window as any).__chartsReady = true;
@@ -52,6 +58,7 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
         // Signal that report is ready
         (window as any).reportReady = true;
         window.dispatchEvent(new Event('report:ready'));
+        console.log('Report ready signal dispatched');
       } catch (error) {
         console.warn('Print preparation warning:', error);
         // Signal ready anyway after timeout
@@ -59,7 +66,8 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
           (window as any).__chartsReady = true;
           (window as any).reportReady = true;
           window.dispatchEvent(new Event('report:ready'));
-        }, 3000);
+          console.log('Report ready signal dispatched after error');
+        }, 4000);
       }
     };
 

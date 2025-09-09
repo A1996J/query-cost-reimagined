@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -84,7 +84,7 @@ export const EMACalculator: React.FC = () => {
   const [detailedOpen, setDetailedOpen] = useState(false);
   const [advancedOpen, setAdvancedOpen] = useState(false);
 
-  const updateInput = (field: keyof EMACalculatorInputs, value: string | number) => {
+  const updateInput = useCallback((field: keyof EMACalculatorInputs, value: string | number) => {
     setScenarios(prev => ({
       ...prev,
       [currentScenario]: {
@@ -92,7 +92,7 @@ export const EMACalculator: React.FC = () => {
         [field]: value
       }
     }));
-  };
+  }, [currentScenario]);
 
   const populateBullScenario = () => {
     const bullInputs = populateBullFromBase(scenarios.base);
