@@ -55,7 +55,7 @@ export const KeyAssumptionsTable: React.FC<KeyAssumptionsTableProps> = ({ scenar
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2 text-finance-primary">
           <FileText className="h-5 w-5" />
-          Key Assumptions (Base vs Bull)
+          Key Assumptions (Conservative vs Expected)
         </CardTitle>
         <p className="text-sm text-muted-foreground mt-2">
           Values used in output calculations for both scenarios
@@ -67,8 +67,8 @@ export const KeyAssumptionsTable: React.FC<KeyAssumptionsTableProps> = ({ scenar
             <TableHeader>
               <TableRow>
                 <TableHead className="font-semibold">Assumption</TableHead>
-                <TableHead className="text-center font-semibold">Base Value</TableHead>
-                <TableHead className="text-center font-semibold">Bull Value</TableHead>
+                <TableHead className="text-center font-semibold">Conservative Value</TableHead>
+                <TableHead className="text-center font-semibold">Expected Value</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

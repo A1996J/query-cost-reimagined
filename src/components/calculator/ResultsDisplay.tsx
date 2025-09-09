@@ -28,6 +28,11 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, currenc
     return `${(value * 100).toFixed(1)}%`;
   };
 
+  // Map scenario names for display
+  const getScenarioDisplayName = (scenario: string) => {
+    return scenario === 'base' ? 'CONSERVATIVE' : scenario === 'bull' ? 'EXPECTED' : scenario.toUpperCase();
+  };
+
   return (
     <div className="space-y-6">
       {/* Main Result Card */}
@@ -35,7 +40,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, currenc
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-xl">
             <Award className="h-6 w-6" />
-            Total All-In EMA Savings ({scenario.toUpperCase()})
+            Total All-In EMA Savings ({getScenarioDisplayName(scenario)})
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -70,7 +75,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, currenc
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-finance-primary">
             <TrendingUp className="h-5 w-5" />
-            Year-by-Year Breakdown ({scenario.toUpperCase()})
+            Year-by-Year Breakdown ({getScenarioDisplayName(scenario)})
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -207,7 +212,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, currenc
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-finance-primary">
             <PercentIcon className="h-5 w-5" />
-            3-Year Baseline Savings Summary ({scenario.toUpperCase()})
+            3-Year Baseline Savings Summary ({getScenarioDisplayName(scenario)})
           </CardTitle>
         </CardHeader>
         <CardContent>
