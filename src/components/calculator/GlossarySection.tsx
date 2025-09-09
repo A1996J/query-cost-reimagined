@@ -66,7 +66,7 @@ export const GlossarySection: React.FC = () => {
     "Working minutes per year per rep = 124,800 minutes (250 days × 8 hours × 60 minutes)",
     "Productivity gain ramp: Year 2 = Year 1 × 4/3, Year 3 = Year 2 (constant)",
     "Ema containment ramp: Year 1 = ⅓ of final input, Year 2 = ⅔ of final, Year 3 = Final value",
-    "Bull Case logic: Containment Rate = min(Base × 1.25, 90%), Compliance Reduction = Base × 3, Upsell % = Base × 1.5"
+    "Expected Case logic: Containment Rate = min(Conservative × 1.25, 90%), Compliance Reduction = Conservative × 3, Upsell % = Conservative × 1.5"
   ];
 
   return (

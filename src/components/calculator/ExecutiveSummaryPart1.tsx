@@ -140,12 +140,12 @@ export const ExecutiveSummaryPart1: React.FC<ExecutiveSummaryPart1Props> = ({ sc
                 <TableHeader>
                   <TableRow className="bg-finance-subtle">
                     <TableHead className="font-semibold border-r">Field Name</TableHead>
-                    <TableHead className="text-center border-r font-semibold">Base Case Y1</TableHead>
-                    <TableHead className="text-center border-r font-semibold">Base Case Y2</TableHead>
-                    <TableHead className="text-center border-r font-semibold">Base Case Y3</TableHead>
-                    <TableHead className="text-center border-r font-semibold">Bull Case Y1</TableHead>
-                    <TableHead className="text-center border-r font-semibold">Bull Case Y2</TableHead>
-                    <TableHead className="text-center font-semibold">Bull Case Y3</TableHead>
+                    <TableHead className="text-center border-r font-semibold">Conservative Y1</TableHead>
+                    <TableHead className="text-center border-r font-semibold">Conservative Y2</TableHead>
+                    <TableHead className="text-center border-r font-semibold">Conservative Y3</TableHead>
+                    <TableHead className="text-center border-r font-semibold">Expected Y1</TableHead>
+                    <TableHead className="text-center border-r font-semibold">Expected Y2</TableHead>
+                    <TableHead className="text-center font-semibold">Expected Y3</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

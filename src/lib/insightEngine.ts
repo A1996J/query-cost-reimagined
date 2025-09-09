@@ -34,22 +34,22 @@ export const generateInsights = (
     if (baseROI > 300) {
       return {
         type: 'positive',
-        text: `Exceptional ROI opportunity: Base case delivers ${baseROI.toFixed(0)}% ROI with ${basePayback.toFixed(1)}-year payback. EMA implementation presents compelling value creation with substantial cost reduction potential across customer service operations.`
+        text: `Exceptional ROI opportunity: Conservative case delivers ${baseROI.toFixed(0)}% ROI with ${basePayback.toFixed(1)}-year payback. EMA implementation presents compelling value creation with substantial cost reduction potential across customer service operations.`
       };
     } else if (baseROI > 150) {
       return {
         type: 'positive',
-        text: `Strong business case: Base case projects ${baseROI.toFixed(0)}% ROI with ${basePayback.toFixed(1)}-year payback. EMA demonstrates clear financial benefits through operational efficiency and cost structure optimization.`
+        text: `Strong business case: Conservative case projects ${baseROI.toFixed(0)}% ROI with ${basePayback.toFixed(1)}-year payback. EMA demonstrates clear financial benefits through operational efficiency and cost structure optimization.`
       };
     } else if (baseROI > 100) {
       return {
         type: 'neutral',
-        text: `Moderate ROI potential: Base case shows ${baseROI.toFixed(0)}% ROI with ${basePayback.toFixed(1)}-year payback. EMA implementation offers positive returns with measured risk profile and steady value realization timeline.`
+        text: `Moderate ROI potential: Conservative case shows ${baseROI.toFixed(0)}% ROI with ${basePayback.toFixed(1)}-year payback. EMA implementation offers positive returns with measured risk profile and steady value realization timeline.`
       };
     } else {
       return {
         type: 'warning',
-        text: `Conservative projections: Base case indicates ${baseROI.toFixed(0)}% ROI with ${basePayback.toFixed(1)}-year payback. Consider optimizing implementation approach or reassessing key assumptions to enhance value proposition.`
+        text: `Conservative projections: Conservative case indicates ${baseROI.toFixed(0)}% ROI with ${basePayback.toFixed(1)}-year payback. Consider optimizing implementation approach or reassessing key assumptions to enhance value proposition.`
       };
     }
   })();
@@ -80,7 +80,7 @@ export const generateInsights = (
   const directSavingsPercentage = ((base.totalSavings / (base.totalSavings + base.totalAdditionalSavings)) * 100).toFixed(0);
   const executiveSummaryInsight: Insight = {
     type: totalThreeYearSavings > 5000000 ? 'positive' : totalThreeYearSavings > 2000000 ? 'neutral' : 'warning',
-    text: `Financial impact analysis reveals $${(totalThreeYearSavings / 1000000).toFixed(1)}M in base case 3-year savings. Key value drivers include direct agent cost reduction (${directSavingsPercentage}%), productivity gains, and operational efficiency improvements creating sustainable competitive advantage.`
+    text: `Financial impact analysis reveals $${(totalThreeYearSavings / 1000000).toFixed(1)}M in conservative case 3-year savings. Key value drivers include direct agent cost reduction (${directSavingsPercentage}%), productivity gains, and operational efficiency improvements creating sustainable competitive advantage.`
   };
 
   // Assumptions insight

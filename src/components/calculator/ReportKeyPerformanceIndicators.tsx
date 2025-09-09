@@ -26,12 +26,12 @@ export const ReportKeyPerformanceIndicators: React.FC<ReportKeyPerformanceIndica
   const baseResults = scenarioResults.base;
   const bullResults = scenarioResults.bull;
 
-  // Calculate base case values
+  // Calculate conservative case values
   const baseROI = (baseResults.totalAllInSavings / baseResults.implementationCost).toFixed(1);
   const baseAvgAnnual = formatCurrency(baseResults.totalAllInSavings / 3, true);
   const basePayback = ((baseResults.implementationCost / (baseResults.totalSavings / 3)) * 12).toFixed(1);
 
-  // Calculate bull case values
+  // Calculate expected case values
   const bullROI = (bullResults.totalAllInSavings / bullResults.implementationCost).toFixed(1);
   const bullAvgAnnual = formatCurrency(bullResults.totalAllInSavings / 3, true);
   const bullPayback = ((bullResults.implementationCost / (bullResults.totalSavings / 3)) * 12).toFixed(1);

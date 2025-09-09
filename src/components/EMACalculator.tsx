@@ -113,8 +113,8 @@ export const EMACalculator: React.FC = () => {
     }));
     setCurrentScenario('bull');
     toast({
-      title: "Bull Scenario Populated",
-      description: "Bull scenario has been populated from Base with optimistic assumptions"
+      title: "Expected Scenario Populated",
+      description: "Expected scenario has been populated from Conservative with optimistic assumptions"
     });
   };
   
@@ -258,8 +258,8 @@ export const EMACalculator: React.FC = () => {
           }
         }}>
           <TabsList className="grid w-full grid-cols-3 mb-8">
-            <TabsTrigger value="base">Base Case</TabsTrigger>
-            <TabsTrigger value="bull">Bull Case</TabsTrigger>
+            <TabsTrigger value="base">Conservative</TabsTrigger>
+            <TabsTrigger value="bull">Expected</TabsTrigger>
             <TabsTrigger value="report">Report</TabsTrigger>
           </TabsList>
 
@@ -344,7 +344,7 @@ export const EMACalculator: React.FC = () => {
                   variant="outline"
                   className="w-full"
                 >
-                  Populate Bull from Base
+                  Populate Expected from Conservative
                 </Button>
               </div>
 
@@ -444,7 +444,7 @@ export const EMACalculator: React.FC = () => {
                   <BarChart3 className="h-16 w-16 mx-auto mb-4 text-finance-primary" />
                   <h3 className="text-xl font-semibold mb-2">Generate Report</h3>
                   <p className="text-muted-foreground">
-                    Complete calculations in Base and Bull scenarios to view the report
+                    Complete calculations in Conservative and Expected scenarios to view the report
                   </p>
                 </Card>
               )}

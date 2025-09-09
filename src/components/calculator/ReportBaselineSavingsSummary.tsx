@@ -29,12 +29,12 @@ export const ReportBaselineSavingsSummary: React.FC<ReportBaselineSavingsSummary
   const baseBaseline = baseResults.yearlyBreakdown.reduce((sum, year) => sum + year.preEMACost, 0);
   const bullBaseline = bullResults.yearlyBreakdown.reduce((sum, year) => sum + year.preEMACost, 0);
 
-  // Calculate base case percentages
+  // Calculate conservative case percentages
   const baseDirectPercent = ((baseResults.totalSavings / baseBaseline) * 100).toFixed(1);
   const baseAdditionalPercent = ((baseResults.totalAdditionalSavings / baseBaseline) * 100).toFixed(1);
   const baseAllInPercent = ((baseResults.totalAllInSavings / baseBaseline) * 100).toFixed(1);
 
-  // Calculate bull case percentages
+  // Calculate expected case percentages
   const bullDirectPercent = ((bullResults.totalSavings / bullBaseline) * 100).toFixed(1);
   const bullAdditionalPercent = ((bullResults.totalAdditionalSavings / bullBaseline) * 100).toFixed(1);
   const bullAllInPercent = ((bullResults.totalAllInSavings / bullBaseline) * 100).toFixed(1);

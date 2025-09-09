@@ -219,12 +219,12 @@ export const SummaryTable: React.FC<SummaryTableProps> = ({ scenarioResults, sce
           <TableHeader className="sticky top-0 bg-background">
             <TableRow className="border-b-2">
               <TableHead className="font-bold text-lg w-80">Field Name</TableHead>
-              <TableHead className="font-bold text-lg text-center">Base Case - Year 1</TableHead>
-              <TableHead className="font-bold text-lg text-center">Base Case - Year 2</TableHead>
-              <TableHead className="font-bold text-lg text-center border-r-2 border-border">Base Case - Year 3</TableHead>
-              <TableHead className="font-bold text-lg text-center">Bull Case - Year 1</TableHead>
-              <TableHead className="font-bold text-lg text-center">Bull Case - Year 2</TableHead>
-              <TableHead className="font-bold text-lg text-center">Bull Case - Year 3</TableHead>
+              <TableHead className="font-bold text-lg text-center">Conservative - Year 1</TableHead>
+              <TableHead className="font-bold text-lg text-center">Conservative - Year 2</TableHead>
+              <TableHead className="font-bold text-lg text-center border-r-2 border-border">Conservative - Year 3</TableHead>
+              <TableHead className="font-bold text-lg text-center">Expected - Year 1</TableHead>
+              <TableHead className="font-bold text-lg text-center">Expected - Year 2</TableHead>
+              <TableHead className="font-bold text-lg text-center">Expected - Year 3</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
