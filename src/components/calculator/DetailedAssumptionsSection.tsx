@@ -178,7 +178,7 @@ export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProp
                   <Input
                     id="implementationCost"
                     type="number"
-                    value={inputs.implementationCost ? inputs.implementationCost * 1000 : ''}
+                    value={inputs.implementationCost ? Math.round(inputs.implementationCost * 1000) : ''}
                     onChange={(e) => onUpdateInput('implementationCost', (parseFloat(e.target.value) || 0) / 1000)}
                     step="1"
                     className="text-lg font-medium"
