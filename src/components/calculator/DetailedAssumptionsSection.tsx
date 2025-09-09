@@ -292,43 +292,6 @@ export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProp
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                <div className="space-y-2">
-                  <Label htmlFor="customerExperience" className="flex items-center gap-2">
-                    <Zap className="h-4 w-4" />
-                    Customer Experience as % of Revenue (%)
-                  </Label>
-                  <Input
-                    id="customerExperience"
-                    type="number"
-                    value={inputs.customerExperienceAsPercentOfRevenue * 100}
-                    onChange={(e) => onUpdateInput('customerExperienceAsPercentOfRevenue', (parseFloat(e.target.value) || 0) / 100)}
-                    step="0.1"
-                    className="text-lg font-medium"
-                  />
-                  <p className="text-sm text-muted-foreground">
-                    Used to estimate total company revenue for benefit calculations
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="upsellPercent" className="flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4" />
-                    Revenue Defended and Grown (%)
-                  </Label>
-                  <Input
-                    id="upsellPercent"
-                    type="number"
-                    value={inputs.upsellPercentOfRevenue * 100}
-                    onChange={(e) => onUpdateInput('upsellPercentOfRevenue', (parseFloat(e.target.value) || 0) / 100)}
-                    step="0.1"
-                    className="text-lg font-medium"
-                  />
-                  <p className="text-sm text-muted-foreground">
-                    Percent of revenue uplifted or retained due to better CX via Ema.
-                  </p>
-                </div>
-              </div>
             </div>
           </CardContent>
         </CollapsibleContent>

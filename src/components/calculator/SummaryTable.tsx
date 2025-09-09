@@ -163,14 +163,6 @@ export const SummaryTable: React.FC<SummaryTableProps> = ({ scenarioResults, sce
             const yearData = results.yearlyBreakdown[year - 1];
             return formatCurrency(yearData.complianceSavings);
           }
-        },
-        {
-          field: "Revenue Defended / Upsell ($)",
-          getValue: (scenario: keyof ScenarioInputs, year: number) => {
-            const results = scenarioResults[scenario];
-            const yearData = results.yearlyBreakdown[year - 1];
-            return formatCurrency(yearData.upsellBenefit);
-          }
         }
       ]
     },

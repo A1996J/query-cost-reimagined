@@ -40,8 +40,6 @@ const defaultDetailedInputs: Partial<EMACalculatorInputs> = {
   year1ProductivityGain: 0.10, // 10%
   duplicateQueriesPercent: 0.10,
   annualComplianceCostReduction: 0.25,
-  customerExperienceAsPercentOfRevenue: 0.02,
-  upsellPercentOfRevenue: 0.05,
 };
 
 // PIN-protected advanced defaults

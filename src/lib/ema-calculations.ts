@@ -67,12 +67,8 @@ export function calculateEMASavings(inputs: EMACalculatorInputs): CalculationRes
     // 2. Compliance Cost Reduction
     const complianceSavings = inputs.annualComplianceCostReduction * 1000000;
     
-    // 3. Upselling / Reduced Cancellations
-    const revenueEstimate = preEMACost / inputs.customerExperienceAsPercentOfRevenue;
-    const upsellBenefit = revenueEstimate * inputs.upsellPercentOfRevenue;
-    
     // Total Additional Savings
-    const totalAdditionalSavings = firstCallResolutionBenefit + complianceSavings + upsellBenefit;
+    const totalAdditionalSavings = firstCallResolutionBenefit + complianceSavings;
     
     // All-In Savings
     const allInSavings = netSavings + totalAdditionalSavings;
@@ -95,7 +91,6 @@ export function calculateEMASavings(inputs: EMACalculatorInputs): CalculationRes
       netSavings,
       firstCallResolutionBenefit,
       complianceSavings,
-      upsellBenefit,
       totalAdditionalSavings,
       allInSavings,
       directSavingsPercentOfBaseline,
@@ -126,8 +121,7 @@ export function populateBullFromBase(baseInputs: EMACalculatorInputs): EMACalcul
     finalYearContainmentRate: Math.min(0.90, baseInputs.finalYearContainmentRate * 1.25),
     year1ProductivityGain: Math.min(1.0, baseInputs.year1ProductivityGain + 0.05), // +5 percentage points
     // Transform additional savings fields for Bull scenario
-    annualComplianceCostReduction: baseInputs.annualComplianceCostReduction * 3,
-    upsellPercentOfRevenue: baseInputs.upsellPercentOfRevenue * 1.5
+    annualComplianceCostReduction: baseInputs.annualComplianceCostReduction * 3
   };
   
   return bullInputs;

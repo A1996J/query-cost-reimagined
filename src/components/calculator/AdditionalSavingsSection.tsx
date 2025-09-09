@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
-import { Plus, Shield, TrendingUp, Repeat } from 'lucide-react';
+import { Plus, Shield, Repeat } from 'lucide-react';
 import { EMACalculatorInputs } from '@/types/ema-calculator';
 
 interface AdditionalSavingsSectionProps {
@@ -55,40 +55,6 @@ export const AdditionalSavingsSection: React.FC<AdditionalSavingsSectionProps> =
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <Label htmlFor="customerExperience">Customer Experience as % of Revenue (%)</Label>
-            <Input
-              id="customerExperience"
-              type="number"
-              value={inputs.customerExperienceAsPercentOfRevenue * 100}
-              onChange={(e) => onUpdateInput('customerExperienceAsPercentOfRevenue', (parseFloat(e.target.value) || 0) / 100)}
-              step="0.1"
-              className="text-lg font-medium"
-            />
-            <p className="text-sm text-muted-foreground">
-              Used to estimate company revenue
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="upsellPercent" className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
-              Upsell % of Revenue (%)
-            </Label>
-            <Input
-              id="upsellPercent"
-              type="number"
-              value={inputs.upsellPercentOfRevenue * 100}
-              onChange={(e) => onUpdateInput('upsellPercentOfRevenue', (parseFloat(e.target.value) || 0) / 100)}
-              step="0.1"
-              className="text-lg font-medium"
-            />
-            <p className="text-sm text-muted-foreground">
-              Revenue impact from upselling & reduced cancellations
-            </p>
-          </div>
-        </div>
       </CardContent>
     </Card>
   );

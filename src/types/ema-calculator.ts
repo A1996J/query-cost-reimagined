@@ -25,8 +25,6 @@ export interface EMACalculatorInputs {
   // Additional Savings Inputs
   duplicateQueriesPercent: number;
   annualComplianceCostReduction: number;
-  customerExperienceAsPercentOfRevenue: number;
-  upsellPercentOfRevenue: number;
 }
 
 export interface ScenarioInputs {
@@ -48,7 +46,6 @@ export interface YearlyCalculation {
   // Additional savings breakdown
   firstCallResolutionBenefit: number;
   complianceSavings: number;
-  upsellBenefit: number;
   totalAdditionalSavings: number;
   allInSavings: number;
   // Baseline percentages
