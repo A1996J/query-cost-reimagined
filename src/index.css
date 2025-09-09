@@ -113,86 +113,249 @@ All colors MUST be HSL.
 
 /* Print styles for PDF export */
 @media print {
-  .pdf-page {
-    page-break-after: always;
-    break-after: page;
+  @page { 
+    size: A4 portrait; 
+    margin: 15mm 10mm;
   }
   
-  .avoid-break {
-    break-inside: avoid;
-    page-break-inside: avoid;
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
   
-  thead {
-    display: table-header-group;
+  html, body { 
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 11px !important;
+    line-height: 1.3 !important;
+  }
+
+  .print-report {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
   
-  .no-print, button {
+  .pdf-page { 
+    break-after: page !important; 
+    page-break-after: always !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    min-height: 250mm !important;
+    padding: 0 !important;
+    margin: 0 0 5mm 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  .pdf-page:last-child {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+  }
+  
+  .avoid-break,
+  .card, .chart, .banner,
+  .table-wrapper,
+  .savings-stickers-section,
+  .chart-container,
+  .kpi-section,
+  .baseline-section,
+  .benefits-section,
+  .sensitivity-section,
+  .assumptions-section,
+  .executive-summary-part1,
+  .executive-summary-part2,
+  .glossary-section { 
+    break-inside: avoid !important; 
+    page-break-inside: avoid !important;
+    margin-bottom: 8px !important;
+  }
+
+  /* Page headers */
+  .page-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 15px !important;
+    padding-bottom: 8px !important;
+    border-bottom: 2px solid var(--finance-primary) !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .logo-section {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+  }
+
+  .logo {
+    height: 40px !important;
+    width: auto !important;
+  }
+
+  .header-text h1 {
+    font-size: 18px !important;
+    font-weight: bold !important;
+    margin: 0 !important;
+    color: var(--finance-primary) !important;
+  }
+
+  .header-text .subtitle {
+    font-size: 12px !important;
+    margin: 0 !important;
+    color: var(--muted-foreground) !important;
+  }
+
+  .date {
+    font-size: 10px !important;
+    color: var(--muted-foreground) !important;
+  }
+
+  /* Tables */
+  table { 
+    width: 100% !important; 
+    border-collapse: collapse !important;
+    font-size: 9px !important;
+    margin: 4px 0 !important;
+  }
+  
+  thead { 
+    display: table-header-group !important;
+  }
+  
+  tfoot { 
+    display: table-footer-group !important;
+  }
+  
+  tr, td, th { 
+    break-inside: avoid !important; 
+    page-break-inside: avoid !important;
+    border: 1px solid #ddd !important;
+    padding: 4px 6px !important;
+  }
+
+  th {
+    background-color: var(--finance-subtle) !important;
+    font-weight: bold !important;
+    text-align: center !important;
+  }
+
+  td {
+    text-align: center !important;
+  }
+
+  /* Cards */
+  .card {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 6px !important;
+    margin-bottom: 8px !important;
+    background: white !important;
+  }
+
+  .card-header {
+    padding: 8px 12px !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+  }
+
+  .card-content, .card-content > div {
+    padding: 12px !important;
+  }
+
+  .card-title {
+    font-size: 14px !important;
+    font-weight: bold !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+
+  /* Grid layouts */
+  .grid {
+    display: grid !important;
+  }
+
+  .grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  /* Text alignment and sizing */
+  .text-center {
+    text-align: center !important;
+  }
+
+  .text-2xl {
+    font-size: 16px !important;
+    font-weight: bold !important;
+  }
+
+  .text-sm {
+    font-size: 9px !important;
+  }
+
+  .text-xs {
+    font-size: 8px !important;
+  }
+
+  /* Hide elements that shouldn't appear in print */
+  .vite-error-overlay, 
+  .toast, 
+  .devtools-overlay, 
+  #__next-route-announcer__,
+  .no-print {
     display: none !important;
+    visibility: hidden !important;
   }
-}
 
-/* Print-specific styles */
-.print-report {
-  width: 100%;
-  max-width: none;
-}
+  /* Chart containers */
+  .chart-container {
+    margin: 10px 0 !important;
+    max-height: 200px !important;
+    overflow: hidden !important;
+  }
 
-.pdf-page {
-  width: 210mm;
-  min-height: 297mm;
-  padding: 12mm;
-  margin: 0 auto;
-  background: white;
-  page-break-after: always;
-  break-after: page;
-  position: relative;
-}
+  .recharts-wrapper {
+    font-size: 8px !important;
+  }
 
-.pdf-page:last-child {
-  page-break-after: avoid;
-  break-after: avoid;
-}
+  /* Stickers/cards layout for metrics */
+  .savings-stickers-container .grid {
+    margin-bottom: 15px !important;
+  }
 
-.avoid-break {
-  break-inside: avoid;
-  page-break-inside: avoid;
-}
+  .savings-stickers-container .card {
+    min-height: 80px !important;
+  }
 
-.page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 2px solid hsl(var(--finance-primary));
-}
+  /* Compact spacing for dense content */
+  .space-y-6 > * + * {
+    margin-top: 8px !important;
+  }
 
-.logo-section {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
+  .space-y-4 > * + * {
+    margin-top: 6px !important;
+  }
 
-.logo {
-  height: 40px;
-  width: auto;
-}
+  /* Section titles */
+  h4 {
+    font-size: 12px !important;
+    font-weight: bold !important;
+    margin: 8px 0 4px 0 !important;
+    color: var(--finance-primary) !important;
+  }
 
-.header-text h1 {
-  font-size: 24px;
-  font-weight: 700;
-  color: hsl(var(--foreground));
-  margin: 0;
-}
-
-.subtitle {
-  font-size: 14px;
-  color: hsl(var(--muted-foreground));
-  margin: 4px 0 0 0;
-}
-
-.date {
-  font-size: 12px;
-  color: hsl(var(--muted-foreground));
+  /* Ensure content fits within page boundaries */
+  .pdf-page > * {
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
 }

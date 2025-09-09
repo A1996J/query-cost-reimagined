@@ -2,13 +2,14 @@ import React from 'react';
 import { SavingsStickers } from '@/components/calculator/SavingsStickers';
 import { SavingsWaterfallChart } from '@/components/calculator/SavingsWaterfallChart';
 import { SensitivityHeatmap } from '@/components/calculator/SensitivityHeatmap';
-import { SummaryTable } from '@/components/calculator/SummaryTable';
 import { KeyAssumptionsTable } from '@/components/calculator/KeyAssumptionsTable';
 import { AdditionalBenefitsSection } from '@/components/calculator/AdditionalBenefitsSection';
 import { GlossarySection } from '@/components/calculator/GlossarySection';
-import { InsightBanner } from './InsightBanner';
+import { ReportKeyPerformanceIndicators } from '@/components/calculator/ReportKeyPerformanceIndicators';
+import { ReportBaselineSavingsSummary } from '@/components/calculator/ReportBaselineSavingsSummary';
+import { ExecutiveSummaryPart1 } from '@/components/calculator/ExecutiveSummaryPart1';
+import { ExecutiveSummaryPart2 } from '@/components/calculator/ExecutiveSummaryPart2';
 import { ScenarioResults, ScenarioInputs } from '@/types/ema-calculator';
-import { generateInsights, InsightType } from '@/lib/insightEngine';
 import emaLogo from '@/assets/ema-logo.png';
 
 interface ReportPrintViewProps {
@@ -22,8 +23,6 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
   scenarios, 
   industry 
 }) => {
-  const insights = generateInsights(scenarioResults, scenarios);
-
   React.useEffect(() => {
     // Wait for all content to be ready before signaling PDF readiness
     const prepareForPrint = async () => {
@@ -69,25 +68,20 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
 
   return (
     <div className="print-report">
-      {/* Page 1: Summary Cards + 3Y Savings Chart */}
+      {/* Page 1: All-in savings, Direct savings, Additional savings, Three-year savings summary */}
       <section id="pdf-page-1" className="pdf-page">
         <div className="page-header">
           <div className="logo-section">
             <img src={emaLogo} alt="EMA Logo" className="logo" />
             <div className="header-text">
               <h1>EMA ROI Analysis</h1>
-              <p className="subtitle">Executive Summary & Financial Impact</p>
+              <p className="subtitle">Financial Impact Summary</p>
             </div>
           </div>
           <div className="date">Generated {new Date().toLocaleDateString()}</div>
         </div>
         
-        <InsightBanner 
-          type={insights.summaryInsight.type} 
-          text={insights.summaryInsight.text}
-        />
-        
-        <div className="avoid-break">
+        <div className="avoid-break savings-stickers-section">
           <SavingsStickers scenarioResults={scenarioResults} />
         </div>
         
@@ -96,79 +90,104 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
         </div>
       </section>
 
-      {/* Page 2: Benefits Not Baked In + Sensitivity Analysis */}
+      {/* Page 2: Key performance indicators, Three-year baseline savings summary, Benefits not baked in */}
       <section id="pdf-page-2" className="pdf-page">
         <div className="page-header">
           <div className="logo-section">
             <img src={emaLogo} alt="EMA Logo" className="logo" />
             <div className="header-text">
-              <h1>Risk Analysis & Additional Benefits</h1>
-              <p className="subtitle">Sensitivity Analysis & Unquantified Value Drivers</p>
+              <h1>Performance Metrics & Additional Benefits</h1>
+              <p className="subtitle">KPIs and Unquantified Value Drivers</p>
             </div>
           </div>
           <div className="date">Page 2</div>
         </div>
 
-        <InsightBanner 
-          type={insights.sensitivityInsight.type} 
-          text={insights.sensitivityInsight.text}
-        />
-
-        <div className="avoid-break">
-          <AdditionalBenefitsSection industry={industry} />
+        <div className="avoid-break kpi-section">
+          <ReportKeyPerformanceIndicators scenarioResults={scenarioResults} scenarios={scenarios} />
         </div>
         
-        <div className="avoid-break chart-container">
-          <SensitivityHeatmap scenarioResults={scenarioResults} scenarios={scenarios} />
+        <div className="avoid-break baseline-section">
+          <ReportBaselineSavingsSummary scenarioResults={scenarioResults} scenarios={scenarios} />
+        </div>
+        
+        <div className="avoid-break benefits-section">
+          <AdditionalBenefitsSection industry={industry} />
         </div>
       </section>
 
-      {/* Page 3: Executive Summary Table */}
+      {/* Page 3: Direct savings sensitivities and key assumptions */}
       <section id="pdf-page-3" className="pdf-page">
         <div className="page-header">
           <div className="logo-section">
             <img src={emaLogo} alt="EMA Logo" className="logo" />
             <div className="header-text">
-              <h1>Detailed Financial Analysis</h1>
-              <p className="subtitle">Year-by-Year Impact & Comprehensive Metrics</p>
+              <h1>Risk Analysis & Model Assumptions</h1>
+              <p className="subtitle">Sensitivity Analysis & Input Parameters</p>
             </div>
           </div>
           <div className="date">Page 3</div>
         </div>
 
-        <InsightBanner 
-          type={insights.executiveSummaryInsight.type} 
-          text={insights.executiveSummaryInsight.text}
-        />
+        <div className="avoid-break sensitivity-section">
+          <SensitivityHeatmap scenarioResults={scenarioResults} scenarios={scenarios} />
+        </div>
         
-        <div className="table-wrapper avoid-break exec-summary">
-          <SummaryTable scenarioResults={scenarioResults} scenarios={scenarios} />
+        <div className="avoid-break assumptions-section">
+          <KeyAssumptionsTable scenarios={scenarios} />
         </div>
       </section>
 
-      {/* Page 4+: Key Assumptions, Glossary, Other Assumptions */}
+      {/* Page 4: Executive summary (Part 1 - until reduction in human handling time) */}
       <section id="pdf-page-4" className="pdf-page">
         <div className="page-header">
           <div className="logo-section">
             <img src={emaLogo} alt="EMA Logo" className="logo" />
             <div className="header-text">
-              <h1>Model Assumptions & Methodology</h1>
-              <p className="subtitle">Input Parameters & Calculation Framework</p>
+              <h1>Executive Summary - Part 1</h1>
+              <p className="subtitle">Cost Structure & Performance Metrics</p>
             </div>
           </div>
           <div className="date">Page 4</div>
         </div>
-
-        <InsightBanner 
-          type={insights.assumptionsInsight.type} 
-          text={insights.assumptionsInsight.text}
-        />
         
-        <div className="table-wrapper">
-          <KeyAssumptionsTable scenarios={scenarios} />
+        <div className="table-wrapper avoid-break executive-summary-part1">
+          <ExecutiveSummaryPart1 scenarioResults={scenarioResults} scenarios={scenarios} />
+        </div>
+      </section>
+
+      {/* Page 5: Executive summary continuation (Part 2 - from direct savings from EMA to percentage of baseline saved) */}
+      <section id="pdf-page-5" className="pdf-page">
+        <div className="page-header">
+          <div className="logo-section">
+            <img src={emaLogo} alt="EMA Logo" className="logo" />
+            <div className="header-text">
+              <h1>Executive Summary - Part 2</h1>
+              <p className="subtitle">Savings Breakdown & Impact Analysis</p>
+            </div>
+          </div>
+          <div className="date">Page 5</div>
         </div>
         
-        <div className="table-wrapper">
+        <div className="table-wrapper avoid-break executive-summary-part2">
+          <ExecutiveSummaryPart2 scenarioResults={scenarioResults} scenarios={scenarios} />
+        </div>
+      </section>
+
+      {/* Page 6: Glossary and other assumptions used in calculations */}
+      <section id="pdf-page-6" className="pdf-page">
+        <div className="page-header">
+          <div className="logo-section">
+            <img src={emaLogo} alt="EMA Logo" className="logo" />
+            <div className="header-text">
+              <h1>Methodology & Definitions</h1>
+              <p className="subtitle">Glossary & Calculation Framework</p>
+            </div>
+          </div>
+          <div className="date">Page 6</div>
+        </div>
+        
+        <div className="table-wrapper glossary-section">
           <GlossarySection />
         </div>
       </section>

@@ -26,8 +26,8 @@ export const usePdfExport = () => {
       hiddenContainer.style.position = 'fixed';
       hiddenContainer.style.top = '-9999px';
       hiddenContainer.style.left = '-9999px';
-      hiddenContainer.style.width = '1123px'; // A4 landscape width
-      hiddenContainer.style.height = '794px';  // A4 landscape height
+      hiddenContainer.style.width = '794px';  // A4 portrait width  
+      hiddenContainer.style.height = '1123px'; // A4 portrait height
       hiddenContainer.style.background = 'white';
       hiddenContainer.style.overflow = 'hidden';
       document.body.appendChild(hiddenContainer);
@@ -84,14 +84,14 @@ export const usePdfExport = () => {
           allowTaint: true,
           scrollX: 0,
           scrollY: 0,
-          width: 1123,
-          height: 794,
+          width: 794,   // A4 portrait width
+          height: 1123, // A4 portrait height
           backgroundColor: '#ffffff'
         },
         jsPDF: { 
           unit: 'mm', 
           format: 'a4', 
-          orientation: 'landscape',
+          orientation: 'portrait',
           compress: true
         },
         pagebreak: { 

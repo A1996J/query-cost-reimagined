@@ -19,6 +19,8 @@ import { KeyAssumptionsTable } from './calculator/KeyAssumptionsTable';
 import { AdditionalBenefitsSection } from './calculator/AdditionalBenefitsSection';
 import { ReportKeyPerformanceIndicators } from './calculator/ReportKeyPerformanceIndicators';
 import { ReportBaselineSavingsSummary } from './calculator/ReportBaselineSavingsSummary';
+import { ExecutiveSummaryPart1 } from './calculator/ExecutiveSummaryPart1';
+import { ExecutiveSummaryPart2 } from './calculator/ExecutiveSummaryPart2';
 import { calculateEMASavings, populateBullFromBase, calculateScenarioResults } from '@/lib/ema-calculations';
 import { EMACalculatorInputs, CalculationResults, Scenario, ScenarioInputs, ScenarioResults } from '@/types/ema-calculator';
 import { toast } from '@/hooks/use-toast';
