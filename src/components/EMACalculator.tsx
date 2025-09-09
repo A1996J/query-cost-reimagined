@@ -18,7 +18,7 @@ import { PDFExport } from './calculator/PDFExport';
 import { KeyAssumptionsTable } from './calculator/KeyAssumptionsTable';
 import { AdditionalBenefitsSection } from './calculator/AdditionalBenefitsSection';
 import { ReportKeyPerformanceIndicators } from './calculator/ReportKeyPerformanceIndicators';
-import { ReportBaselineSavingsSummary } from './calculator/ReportBaselineSavingsSummary';
+
 import { ExecutiveSummaryPart1 } from './calculator/ExecutiveSummaryPart1';
 import { ExecutiveSummaryPart2 } from './calculator/ExecutiveSummaryPart2';
 import { calculateEMASavings, populateBullFromBase, calculateScenarioResults } from '@/lib/ema-calculations';
@@ -414,10 +414,6 @@ export const EMACalculator: React.FC = () => {
                     <ReportKeyPerformanceIndicators scenarioResults={scenarioResults} scenarios={scenarios} />
                   </div>
                   
-                  {/* 3-Year Baseline Savings Summary */}
-                  <div className="report-baseline-container">
-                    <ReportBaselineSavingsSummary scenarioResults={scenarioResults} scenarios={scenarios} />
-                  </div>
                   
                   {/* Additional Benefits */}
                   <div className="additional-benefits-container">
