@@ -24,10 +24,47 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
 }) => {
   const insights = generateInsights(scenarioResults, scenarios);
 
+  React.useEffect(() => {
+    // Wait for all content to be ready before signaling PDF readiness
+    const prepareForPrint = async () => {
+      try {
+        // Wait for fonts to load
+        await document.fonts.ready;
+        
+        // Wait for images to load
+        const images = Array.from(document.images);
+        await Promise.all(
+          images.map(img => 
+            img.complete ? Promise.resolve() : new Promise(resolve => {
+              img.onload = resolve;
+              img.onerror = resolve;
+            })
+          )
+        );
+        
+        // Wait for charts to stabilize (small delay for rendering)
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Signal that report is ready
+        (window as any).reportReady = true;
+        window.dispatchEvent(new Event('report:ready'));
+      } catch (error) {
+        console.warn('Print preparation warning:', error);
+        // Signal ready anyway after timeout
+        setTimeout(() => {
+          (window as any).reportReady = true;
+          window.dispatchEvent(new Event('report:ready'));
+        }, 2000);
+      }
+    };
+
+    prepareForPrint();
+  }, []);
+
   return (
     <div className="print-report">
       {/* Page 1: Summary Cards + 3Y Savings Chart */}
-      <section className="pdf-page">
+      <section id="pdf-page-1" className="pdf-page">
         <div className="page-header">
           <div className="logo-section">
             <img src={emaLogo} alt="EMA Logo" className="logo" />
@@ -48,13 +85,13 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
           <SavingsStickers scenarioResults={scenarioResults} />
         </div>
         
-        <div className="avoid-break">
+        <div className="avoid-break chart-container">
           <SavingsWaterfallChart scenarioResults={scenarioResults} />
         </div>
       </section>
 
       {/* Page 2: Benefits Not Baked In + Sensitivity Analysis */}
-      <section className="pdf-page">
+      <section id="pdf-page-2" className="pdf-page">
         <div className="page-header">
           <div className="logo-section">
             <img src={emaLogo} alt="EMA Logo" className="logo" />
@@ -75,13 +112,13 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
           <AdditionalBenefitsSection industry={industry} />
         </div>
         
-        <div className="avoid-break">
+        <div className="avoid-break chart-container">
           <SensitivityHeatmap scenarioResults={scenarioResults} scenarios={scenarios} />
         </div>
       </section>
 
       {/* Page 3: Executive Summary Table */}
-      <section className="pdf-page">
+      <section id="pdf-page-3" className="pdf-page">
         <div className="page-header">
           <div className="logo-section">
             <img src={emaLogo} alt="EMA Logo" className="logo" />
@@ -98,13 +135,13 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
           text={insights.executiveSummaryInsight.text}
         />
         
-        <div className="avoid-break">
+        <div className="table-wrapper avoid-break">
           <SummaryTable scenarioResults={scenarioResults} scenarios={scenarios} />
         </div>
       </section>
 
       {/* Page 4+: Key Assumptions, Glossary, Other Assumptions */}
-      <section className="pdf-page">
+      <section id="pdf-page-4" className="pdf-page">
         <div className="page-header">
           <div className="logo-section">
             <img src={emaLogo} alt="EMA Logo" className="logo" />
@@ -121,11 +158,11 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
           text={insights.assumptionsInsight.text}
         />
         
-        <div className="assumptions-section">
+        <div className="table-wrapper">
           <KeyAssumptionsTable scenarios={scenarios} />
         </div>
         
-        <div className="glossary-section">
+        <div className="table-wrapper">
           <GlossarySection />
         </div>
       </section>

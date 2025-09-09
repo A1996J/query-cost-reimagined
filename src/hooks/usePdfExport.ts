@@ -27,7 +27,7 @@ export const usePdfExport = () => {
         throw new Error('Unable to open print window');
       }
 
-      // Create the print document
+      // Create the print document with landscape orientation
       const printDocument = `
         <!DOCTYPE html>
         <html lang="en">
@@ -75,25 +75,45 @@ export const usePdfExport = () => {
         })
       );
 
-      // Wait for rendering and images to load
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Wait for report ready signal
+      await new Promise<void>(resolve => {
+        const checkReady = () => {
+          if ((printWindow as any).reportReady) {
+            resolve();
+          } else {
+            setTimeout(checkReady, 100);
+          }
+        };
+        
+        // Listen for ready event
+        printWindow.addEventListener('report:ready', () => resolve(), { once: true });
+        
+        // Start checking
+        setTimeout(checkReady, 500);
+        
+        // Safety timeout
+        setTimeout(() => resolve(), 10000);
+      });
 
-      // Configure html2pdf options
+      // Configure html2pdf options for landscape
       const opt = {
-        margin: [12, 12, 12, 12],
+        margin: [10, 10, 10, 10], // 10mm margins
         filename: `EMA_ROI_Analysis_${new Date().toISOString().split('T')[0]}.pdf`,
-        image: { type: 'jpeg', quality: 0.95 },
+        image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { 
-          scale: 2,
+          scale: 2, // High DPI for crisp output
           useCORS: true,
           allowTaint: true,
           scrollX: 0,
-          scrollY: 0
+          scrollY: 0,
+          width: 1123, // A4 landscape width at 96dpi
+          height: 794,  // A4 landscape height at 96dpi
+          backgroundColor: '#ffffff'
         },
         jsPDF: { 
           unit: 'mm', 
           format: 'a4', 
-          orientation: 'portrait',
+          orientation: 'landscape', // LANDSCAPE orientation
           compress: true
         },
         pagebreak: { 
@@ -133,18 +153,27 @@ export const usePdfExport = () => {
 };
 
 const getPrintStyles = () => `
+  /* Page setup for landscape A4 */
+  @page { 
+    size: A4 landscape; 
+    margin: 10mm; 
+  }
+
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
   }
 
-  body {
+  html, body {
+    height: auto !important;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-size: 14px;
+    font-size: 12px;
     line-height: 1.4;
     color: #1f2937;
     background: white;
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
   }
 
   .print-report {
@@ -153,14 +182,16 @@ const getPrintStyles = () => `
   }
 
   .pdf-page {
-    width: 210mm;
-    min-height: 297mm;
-    padding: 12mm;
+    width: 297mm; /* A4 landscape width */
+    min-height: 210mm; /* A4 landscape height */
+    padding: 10mm;
     margin: 0 auto;
     background: white;
     page-break-after: always;
     break-after: page;
     position: relative;
+    display: flex;
+    flex-direction: column;
   }
 
   .pdf-page:last-child {
@@ -168,7 +199,18 @@ const getPrintStyles = () => `
     break-after: avoid;
   }
 
-  .avoid-break {
+  /* Prevent blank pages from margin collapsing */
+  .pdf-page:after {
+    content: "";
+    display: block;
+    height: 0;
+  }
+
+  .avoid-break,
+  .card, 
+  .chart-container, 
+  .insight-banner,
+  .table-wrapper {
     break-inside: avoid;
     page-break-inside: avoid;
   }
@@ -177,60 +219,64 @@ const getPrintStyles = () => `
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
     border-bottom: 2px solid #6ab04c;
+    flex-shrink: 0;
   }
 
   .logo-section {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
   }
 
   .logo {
-    height: 40px;
+    height: 32px;
     width: auto;
   }
 
   .header-text h1 {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 700;
     color: #1f2937;
     margin: 0;
   }
 
   .subtitle {
-    font-size: 14px;
+    font-size: 12px;
     color: #6b7280;
-    margin: 4px 0 0 0;
+    margin: 2px 0 0 0;
   }
 
   .date {
-    font-size: 12px;
+    font-size: 11px;
     color: #6b7280;
   }
 
   .insight-banner {
     display: flex !important;
     align-items: center;
-    gap: 12px;
-    padding: 16px;
-    border-radius: 8px;
-    margin-bottom: 24px;
-    font-size: 13px;
-    line-height: 1.5;
+    gap: 10px;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    font-size: 11px;
+    line-height: 1.4;
+    flex-shrink: 0;
   }
 
   .insight-banner svg {
     flex-shrink: 0;
+    width: 16px;
+    height: 16px;
   }
 
   /* Card styles */
   .bg-card {
     background: white;
     border: 1px solid #e5e7eb;
-    border-radius: 8px;
+    border-radius: 6px;
   }
 
   .shadow-soft {
@@ -241,18 +287,29 @@ const getPrintStyles = () => `
   table {
     width: 100%;
     border-collapse: collapse;
-    margin: 16px 0;
-    font-size: 12px;
+    margin: 8px 0;
+    font-size: 10px;
   }
 
   thead {
     display: table-header-group;
   }
 
+  tfoot {
+    display: table-footer-group;
+  }
+
   th, td {
-    padding: 8px 12px;
+    padding: 6px 8px;
     text-align: left;
     border-bottom: 1px solid #e5e7eb;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 
   th {
@@ -265,21 +322,45 @@ const getPrintStyles = () => `
     background: #f9fafb;
   }
 
-  /* Chart containers */
-  .savings-stickers-container,
-  .waterfall-chart-container,
-  .sensitivity-heatmap-container,
-  .executive-summary-container,
+  /* Chart containers - ensure they don't break */
+  .chart-container {
+    margin: 12px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .chart-container > * {
+    max-width: 100%;
+  }
+
+  /* Savings stickers grid */
+  .savings-stickers-container {
+    margin: 12px 0;
+  }
+
+  /* Table wrapper */
+  .table-wrapper {
+    margin: 12px 0;
+  }
+
+  /* Additional benefits section */
   .additional-benefits-container {
-    margin: 20px 0;
+    margin: 12px 0;
   }
 
   /* Hide elements that shouldn't print */
-  button, .no-print {
+  button, 
+  .no-print,
+  #__next-route-announcer__, 
+  .toast, 
+  .vite-error-overlay, 
+  .devtools-overlay {
     display: none !important;
+    visibility: hidden !important;
   }
 
-  /* Ensure text is readable */
+  /* Ensure text is readable with proper colors */
   .text-muted-foreground {
     color: #6b7280 !important;
   }
@@ -288,19 +369,51 @@ const getPrintStyles = () => `
     color: #6ab04c !important;
   }
 
-  /* Responsive adjustments for print */
+  .bg-finance-primary {
+    background-color: #6ab04c !important;
+  }
+
+  .border-finance-primary {
+    border-color: #6ab04c !important;
+  }
+
+  /* Print media query */
   @media print {
+    html, body {
+      height: auto !important;
+    }
+    
     .pdf-page {
       margin: 0;
       page-break-after: always;
+      break-after: page;
     }
     
-    .avoid-break {
+    .pdf-page:last-child {
+      page-break-after: avoid;
+      break-after: avoid;
+    }
+    
+    .avoid-break,
+    .card, 
+    .chart-container, 
+    .insight-banner,
+    .table-wrapper {
       break-inside: avoid;
+      page-break-inside: avoid;
     }
     
     thead {
       display: table-header-group;
+    }
+    
+    tfoot {
+      display: table-footer-group;
+    }
+    
+    tr, td, th {
+      break-inside: avoid;
+      page-break-inside: avoid;
     }
   }
 `;
