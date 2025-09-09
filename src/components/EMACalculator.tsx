@@ -152,9 +152,10 @@ export const EMACalculator: React.FC = () => {
       const allScenarioResults = calculateScenarioResults(scenarios);
       setResults(calculatedResults);
       setScenarioResults(allScenarioResults);
+      const scenarioDisplayName = currentScenario === 'base' ? 'Conservative' : 'Expected';
       toast({
         title: "Calculation Complete",
-        description: `Total All-In savings (${currentScenario.toUpperCase()}): $${(calculatedResults.totalAllInSavings / 1000000).toFixed(2)}M`
+        description: `Total All-In savings (${scenarioDisplayName}): $${(calculatedResults.totalAllInSavings / 1000000).toFixed(2)}M`
       });
     } catch (error) {
       toast({
