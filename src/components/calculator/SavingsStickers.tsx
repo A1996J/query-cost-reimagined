@@ -59,16 +59,13 @@ export const SavingsStickers: React.FC<SavingsStickersProps> = ({ scenarioResult
       </Card>
       
       {/* Two smaller boxes below */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {subStickers.map((sticker, index) => (
-          <Card key={index} className={`p-6 text-center shadow-soft ${sticker.className}`}>
-            <h3 className="text-lg font-semibold mb-1">
+          <Card key={index} className={`p-4 text-center shadow-soft ${sticker.className}`}>
+            <h3 className="text-base font-semibold mb-3">
               {sticker.label}
             </h3>
-            <p className="text-sm opacity-80 mb-4">
-              {sticker.sublabel}
-            </p>
-            <div className="text-2xl font-bold">
+            <div className="text-xl font-bold">
               {sticker.value}
             </div>
           </Card>
