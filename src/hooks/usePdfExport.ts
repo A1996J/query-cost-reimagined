@@ -83,22 +83,25 @@ export const usePdfExport = () => {
       // Import html2pdf and generate
       const html2pdf = (await import('html2pdf.js')).default;
       
+      // Log actual content dimensions
+      console.log('Starting PDF conversion with content length:', hiddenContainer.innerHTML.length);
+      console.log('Container dimensions:', hiddenContainer.offsetWidth, 'x', hiddenContainer.offsetHeight);
+      
       const opt = {
-        margin: [15, 10, 15, 10], // 15mm top/bottom, 10mm left/right
+        margin: [10, 10, 10, 10], // 10mm all around
         filename: `EMA_ROI_Analysis_${new Date().toISOString().split('T')[0]}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { 
-          scale: 2,
+          scale: 1.5,
           useCORS: true,
+          letterRendering: true,
           allowTaint: true,
+          backgroundColor: '#ffffff',
+          width: 794,   // A4 portrait width in pixels
+          height: 1123, // A4 portrait height in pixels
           scrollX: 0,
           scrollY: 0,
-          width: 794,   // A4 portrait width
-          height: 1123, // A4 portrait height
-          backgroundColor: '#ffffff',
-          logging: true,
-          windowWidth: 794,
-          windowHeight: 1123
+          logging: true
         },
         jsPDF: { 
           unit: 'mm', 
@@ -109,10 +112,11 @@ export const usePdfExport = () => {
         pagebreak: { 
           mode: ['css', 'legacy'],
           before: '.pdf-page',
-          after: '.pdf-page',
-          avoid: ['.avoid-break', '.card', '.table-wrapper']
+          after: '.pdf-page'
         }
       };
+      
+      console.log('PDF conversion options:', opt);
 
       // Generate and download PDF
       await html2pdf().set(opt).from(hiddenContainer).save();

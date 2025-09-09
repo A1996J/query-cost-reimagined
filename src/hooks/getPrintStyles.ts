@@ -1,8 +1,8 @@
 export const getPrintStyles = () => `
-  /* Page setup for landscape A4 */
+  /* Page setup for portrait A4 */
   @page { 
-    size: A4 landscape; 
-    margin: 10mm; 
+    size: A4 portrait; 
+    margin: 15mm 10mm; 
   }
 
   * {
@@ -28,8 +28,8 @@ export const getPrintStyles = () => `
   }
 
   .pdf-page {
-    width: 297mm;
-    min-height: 210mm;
+    width: 190mm;
+    min-height: 270mm;
     padding: 15mm;
     margin: 0 auto;
     background: white;
