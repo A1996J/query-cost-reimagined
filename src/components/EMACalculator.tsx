@@ -17,7 +17,7 @@ import { GlossarySection } from './calculator/GlossarySection';
 import { KeyAssumptionsTable } from './calculator/KeyAssumptionsTable';
 import { AdditionalBenefitsSection } from './calculator/AdditionalBenefitsSection';
 import { ReportKeyPerformanceIndicators } from './calculator/ReportKeyPerformanceIndicators';
-import { PDFExport } from './calculator/PDFExport';
+import { SimplePDFExport } from './calculator/SimplePDFExport';
 
 import { ExecutiveSummaryPart1 } from './calculator/ExecutiveSummaryPart1';
 import { ExecutiveSummaryPart2 } from './calculator/ExecutiveSummaryPart2';
@@ -397,7 +397,7 @@ export const EMACalculator: React.FC = () => {
               {scenarioResults && scenarios ? (
                 <>
                   {/* PDF Export Button */}
-                  <PDFExport scenarioResults={scenarioResults} scenarios={scenarios} industry={industry} useCase={useCase} />
+                  <SimplePDFExport />
                   
                   {/* Savings Stickers */}
                   <div className="savings-stickers-container">
