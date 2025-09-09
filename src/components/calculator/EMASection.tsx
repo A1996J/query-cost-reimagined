@@ -55,7 +55,7 @@ export const EMASection: React.FC<EMASectionProps> = ({ inputs, onUpdateInput })
             <Input
               id="implementationCost"
               type="number"
-              value={inputs.implementationCost}
+              value={inputs.implementationCost / 1000}
               onChange={(e) => onUpdateInput('implementationCost', parseFloat(e.target.value) || 0)}
               step="0.1"
               className="text-lg font-medium"
