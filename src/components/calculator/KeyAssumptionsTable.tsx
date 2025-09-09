@@ -50,6 +50,10 @@ export const KeyAssumptionsTable: React.FC<KeyAssumptionsTableProps> = ({ scenar
     return `${(value * 100).toFixed(0)}%`;
   };
 
+  const formatComplianceCost = (value: number) => {
+    return `$${value.toFixed(1)}M`;
+  };
+
   const formatCurrencyWithUnits = (value: number) => {
     if (value >= 1000000) {
       return `$${(value / 1000000).toFixed(1)}M`;
@@ -145,7 +149,7 @@ export const KeyAssumptionsTable: React.FC<KeyAssumptionsTableProps> = ({ scenar
                 <TableRow>
                   <TableCell className="font-medium">Annual Compliance Cost Reduction (Additional Savings)</TableCell>
                   <TableCell className="text-center">
-                    {createRangeValue(base.annualComplianceCostReduction, bull.annualComplianceCostReduction, formatCurrencyWithUnits)}
+                    {createRangeValue(base.annualComplianceCostReduction, bull.annualComplianceCostReduction, formatComplianceCost)}
                   </TableCell>
                 </TableRow>
                 <TableRow>
