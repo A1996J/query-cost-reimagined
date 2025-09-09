@@ -37,7 +37,7 @@ export const GlossarySection: React.FC = () => {
       description: "Expected annual increase in query volume"
     },
     {
-      term: "Final Year Ema Containment Rate",
+      term: "Final Year Ema-Handled Queries (%)",
       description: "% of queries Ema will handle by Year 3"
     },
     {
