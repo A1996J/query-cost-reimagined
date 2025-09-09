@@ -144,10 +144,10 @@ export const SensitivityHeatmap: React.FC<SensitivityHeatmapProps> = ({ scenario
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2 text-finance-primary">
           <Activity className="h-5 w-5" />
-          Direct Savings Sensitivities
+          Range of Possible Direct Savings
         </CardTitle>
         <p className="text-sm text-muted-foreground mt-2">
-          3-Year Direct Savings ($M) by Final Year Ema Containment Rate and Y1 Human Productivity Benefit
+          3-Year Direct Savings ($M) basis Ema-handled queries % and Human Efficiency from Ema 
         </p>
       </CardHeader>
       <CardContent>
