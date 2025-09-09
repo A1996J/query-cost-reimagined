@@ -29,89 +29,55 @@ export const ReportBaselineSavingsSummary: React.FC<ReportBaselineSavingsSummary
   const baseBaseline = baseResults.yearlyBreakdown.reduce((sum, year) => sum + year.preEMACost, 0);
   const bullBaseline = bullResults.yearlyBreakdown.reduce((sum, year) => sum + year.preEMACost, 0);
 
-  return (
-    <div className="space-y-6">
-      {/* Base Case Baseline Savings */}
-      <Card className="shadow-soft">
-        <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-2 text-finance-primary">
-            <Percent className="h-5 w-5" />
-            3-Year Baseline Savings Summary (BASE CASE)
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="text-center p-4 bg-finance-subtle rounded-lg">
-              <div className="text-2xl font-bold text-finance-primary mb-1">
-                {((baseResults.totalSavings / baseBaseline) * 100).toFixed(1)}%
-              </div>
-              <div className="text-sm text-muted-foreground">Direct Savings<br/>% of Baseline</div>
-              <div className="text-xs text-finance-primary mt-1">
-                {formatCurrency(baseResults.totalSavings, true)}M Total
-              </div>
-            </div>
-            <div className="text-center p-4 bg-finance-subtle rounded-lg">
-              <div className="text-2xl font-bold text-finance-accent mb-1">
-                {((baseResults.totalAdditionalSavings / baseBaseline) * 100).toFixed(1)}%
-              </div>
-              <div className="text-sm text-muted-foreground">Additional Savings<br/>% of Baseline</div>
-              <div className="text-xs text-finance-accent mt-1">
-                {formatCurrency(baseResults.totalAdditionalSavings, true)}M Total
-              </div>
-            </div>
-            <div className="text-center p-4 bg-finance-subtle rounded-lg">
-              <div className="text-2xl font-bold text-finance-success mb-1">
-                {((baseResults.totalAllInSavings / baseBaseline) * 100).toFixed(1)}%
-              </div>
-              <div className="text-sm text-muted-foreground">All-In Savings<br/>% of Baseline</div>
-              <div className="text-xs text-finance-success mt-1">
-                {formatCurrency(baseResults.totalAllInSavings, true)}M Total
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+  // Calculate base case percentages
+  const baseDirectPercent = ((baseResults.totalSavings / baseBaseline) * 100).toFixed(1);
+  const baseAdditionalPercent = ((baseResults.totalAdditionalSavings / baseBaseline) * 100).toFixed(1);
+  const baseAllInPercent = ((baseResults.totalAllInSavings / baseBaseline) * 100).toFixed(1);
 
-      {/* Bull Case Baseline Savings */}
-      <Card className="shadow-soft">
-        <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-2 text-finance-primary">
-            <Percent className="h-5 w-5" />
-            3-Year Baseline Savings Summary (BULL CASE)
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="text-center p-4 bg-finance-subtle rounded-lg">
-              <div className="text-2xl font-bold text-finance-primary mb-1">
-                {((bullResults.totalSavings / bullBaseline) * 100).toFixed(1)}%
-              </div>
-              <div className="text-sm text-muted-foreground">Direct Savings<br/>% of Baseline</div>
-              <div className="text-xs text-finance-primary mt-1">
-                {formatCurrency(bullResults.totalSavings, true)}M Total
-              </div>
+  // Calculate bull case percentages
+  const bullDirectPercent = ((bullResults.totalSavings / bullBaseline) * 100).toFixed(1);
+  const bullAdditionalPercent = ((bullResults.totalAdditionalSavings / bullBaseline) * 100).toFixed(1);
+  const bullAllInPercent = ((bullResults.totalAllInSavings / bullBaseline) * 100).toFixed(1);
+
+  return (
+    <Card className="shadow-soft">
+      <CardHeader className="pb-4">
+        <CardTitle className="flex items-center gap-2 text-finance-primary">
+          <Percent className="h-5 w-5" />
+          3-Year Baseline Savings Summary
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="text-center p-4 bg-finance-subtle rounded-lg">
+            <div className="text-2xl font-bold text-finance-primary mb-1">
+              {baseDirectPercent}% - {bullDirectPercent}%
             </div>
-            <div className="text-center p-4 bg-finance-subtle rounded-lg">
-              <div className="text-2xl font-bold text-finance-accent mb-1">
-                {((bullResults.totalAdditionalSavings / bullBaseline) * 100).toFixed(1)}%
-              </div>
-              <div className="text-sm text-muted-foreground">Additional Savings<br/>% of Baseline</div>
-              <div className="text-xs text-finance-accent mt-1">
-                {formatCurrency(bullResults.totalAdditionalSavings, true)}M Total
-              </div>
-            </div>
-            <div className="text-center p-4 bg-finance-subtle rounded-lg">
-              <div className="text-2xl font-bold text-finance-success mb-1">
-                {((bullResults.totalAllInSavings / bullBaseline) * 100).toFixed(1)}%
-              </div>
-              <div className="text-sm text-muted-foreground">All-In Savings<br/>% of Baseline</div>
-              <div className="text-xs text-finance-success mt-1">
-                {formatCurrency(bullResults.totalAllInSavings, true)}M Total
-              </div>
+            <div className="text-sm text-muted-foreground">Direct Savings<br/>% of Baseline</div>
+            <div className="text-xs text-finance-primary mt-1">
+              {formatCurrency(baseResults.totalSavings, true)}M - {formatCurrency(bullResults.totalSavings, true)}M Total
             </div>
           </div>
-        </CardContent>
-      </Card>
-    </div>
+          <div className="text-center p-4 bg-finance-subtle rounded-lg">
+            <div className="text-2xl font-bold text-finance-accent mb-1">
+              {baseAdditionalPercent}% - {bullAdditionalPercent}%
+            </div>
+            <div className="text-sm text-muted-foreground">Additional Savings<br/>% of Baseline</div>
+            <div className="text-xs text-finance-accent mt-1">
+              {formatCurrency(baseResults.totalAdditionalSavings, true)}M - {formatCurrency(bullResults.totalAdditionalSavings, true)}M Total
+            </div>
+          </div>
+          <div className="text-center p-4 bg-finance-subtle rounded-lg">
+            <div className="text-2xl font-bold text-finance-success mb-1">
+              {baseAllInPercent}% - {bullAllInPercent}%
+            </div>
+            <div className="text-sm text-muted-foreground">All-In Savings<br/>% of Baseline</div>
+            <div className="text-xs text-finance-success mt-1">
+              {formatCurrency(baseResults.totalAllInSavings, true)}M - {formatCurrency(bullResults.totalAllInSavings, true)}M Total
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
