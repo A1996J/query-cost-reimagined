@@ -110,22 +110,6 @@ export const SavingsWaterfallChart: React.FC<SavingsWaterfallChartProps> = ({ sc
             <div className="mt-2 text-sm font-medium text-center">Post-EMA<br/>Cost</div>
           </div>
         </div>
-
-        {/* Legend */}
-        <div className="mt-6 flex flex-wrap justify-center gap-4 text-sm">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-muted rounded"></div>
-            <span>Baseline Cost</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-finance-success rounded"></div>
-            <span>Savings</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 border-2 border-dashed border-finance-success bg-finance-success/10 rounded"></div>
-            <span>Savings Range</span>
-          </div>
-        </div>
       </CardContent>
     </Card>
   );
