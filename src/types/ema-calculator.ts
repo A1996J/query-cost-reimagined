@@ -17,16 +17,19 @@ export interface EMACalculatorInputs {
   // EMA Cost & Performance
   emaPricePerQuery: number;
   partnerProfitMargin: number;
-  implementationCost: number;
+  implementationCost: number; // Now in thousands ($K)
   companyGrowthRate: number;
   finalYearContainmentRate: number;
   year1ProductivityGain: number;
 
   // Additional Savings Inputs
   duplicateQueriesPercent: number;
-  annualComplianceCostReduction: number;
+  annualComplianceCostReduction: number; // Now in thousands ($K)
   customerExperienceAsPercentOfRevenue: number;
   upsellPercentOfRevenue: number;
+  
+  // Onboarding fields
+  queryTypes?: string;
 }
 
 export interface ScenarioInputs {

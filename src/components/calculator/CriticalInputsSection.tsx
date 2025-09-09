@@ -201,16 +201,16 @@ export const CriticalInputsSection: React.FC<CriticalInputsSectionProps> = ({
           <div className="space-y-2">
             <Label htmlFor="implementationCost" className="flex items-center gap-2">
               <DollarSign className="h-4 w-4" />
-              Implementation Cost ($M)
+              Implementation Cost ($K)
             </Label>
             <Input
               id="implementationCost"
               type="number"
               value={inputs.implementationCost || ''}
               onChange={(e) => onUpdateInput('implementationCost', parseFloat(e.target.value) || 0)}
-              step="0.1"
+              step="1"
               className="text-lg font-medium"
-              placeholder="Enter cost in millions"
+              placeholder="Enter cost in thousands"
             />
             <p className="text-sm text-muted-foreground">
               One-time setup and implementation cost applied in Year 1

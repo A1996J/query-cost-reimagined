@@ -85,9 +85,9 @@ export const SensitivityHeatmap: React.FC<SensitivityHeatmapProps> = ({ scenario
       // Calculate direct savings (before implementation cost)
       let yearSavings = preEMACost - postEMACost;
       
-      // Apply implementation cost in Year 1 (CRITICAL: This was missing!)
+      // Apply implementation cost in Year 1 (convert from $K to dollars)
       if (year === 1) {
-        yearSavings = yearSavings - (modifiedInputs.implementationCost * 1000000);
+        yearSavings = yearSavings - (modifiedInputs.implementationCost * 1000);
       }
       
       totalDirectSavings += yearSavings;

@@ -54,9 +54,9 @@ export function calculateEMASavings(inputs: EMACalculatorInputs): CalculationRes
     const savings = preEMACost - postEMACost;
     let netSavings = savings;
     
-    // Apply implementation cost in Year 1
+    // Apply implementation cost in Year 1 (convert from $K to dollars)
     if (year === 1) {
-      netSavings = savings - (inputs.implementationCost * 1000000);
+      netSavings = savings - (inputs.implementationCost * 1000);
     }
 
     // Additional Savings Calculations
@@ -64,8 +64,8 @@ export function calculateEMASavings(inputs: EMACalculatorInputs): CalculationRes
     // 1. First Call Resolution (Duplicate Queries)
     const firstCallResolutionBenefit = humanQueries * pricePerHumanQuery * inputs.duplicateQueriesPercent;
     
-    // 2. Compliance Cost Reduction
-    const complianceSavings = inputs.annualComplianceCostReduction * 1000000;
+    // 2. Compliance Cost Reduction (convert from $K to dollars)
+    const complianceSavings = inputs.annualComplianceCostReduction * 1000;
     
     // 3. Upselling / Reduced Cancellations
     const revenueEstimate = preEMACost / inputs.customerExperienceAsPercentOfRevenue;
@@ -114,7 +114,7 @@ export function calculateEMASavings(inputs: EMACalculatorInputs): CalculationRes
     totalSavings,
     totalAdditionalSavings,
     totalAllInSavings,
-    implementationCost: inputs.implementationCost * 1000000
+    implementationCost: inputs.implementationCost * 1000 // Convert from $K to dollars
   };
 }
 
@@ -125,7 +125,7 @@ export function populateBullFromBase(baseInputs: EMACalculatorInputs): EMACalcul
     // Transform specific fields for Bull scenario
     finalYearContainmentRate: Math.min(0.90, baseInputs.finalYearContainmentRate * 1.25),
     year1ProductivityGain: Math.min(1.0, baseInputs.year1ProductivityGain + 0.05), // +5 percentage points
-    // Transform additional savings fields for Bull scenario
+    // Transform additional savings fields for Bull scenario (values now in $K)
     annualComplianceCostReduction: baseInputs.annualComplianceCostReduction * 3,
     upsellPercentOfRevenue: baseInputs.upsellPercentOfRevenue * 1.5
   };

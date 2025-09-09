@@ -6,8 +6,16 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowRight, Building2 } from 'lucide-react';
 
+interface OnboardingData {
+  companyName: string;
+  country: string;
+  industry: string;
+  monthlyQueries: number;
+  queryTypes: string;
+}
+
 interface OnboardingProps {
-  onComplete: (companyName: string) => void;
+  onComplete: (data: OnboardingData) => void;
 }
 
 export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
@@ -15,8 +23,24 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   const [industry, setIndustry] = useState('');
   const [useCase, setUseCase] = useState('');
   const [companyName, setCompanyName] = useState('');
+  const [country, setCountry] = useState('');
+  const [monthlyQueries, setMonthlyQueries] = useState<number>(0);
+  const [queryTypes, setQueryTypes] = useState('');
   const [showIndustryMessage, setShowIndustryMessage] = useState(false);
   const [showUseCaseMessage, setShowUseCaseMessage] = useState(false);
+
+  const countries = [
+    { code: 'US', name: 'United States' },
+    { code: 'GB', name: 'United Kingdom' },
+    { code: 'IN', name: 'India' },
+    { code: 'CA', name: 'Canada' },
+    { code: 'AU', name: 'Australia' },
+    { code: 'DE', name: 'Germany' },
+    { code: 'FR', name: 'France' },
+    { code: 'JP', name: 'Japan' },
+    { code: 'CN', name: 'China' },
+    { code: 'SG', name: 'Singapore' },
+  ];
 
   const industries = [
     'Consumer Tech',
@@ -53,8 +77,14 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   };
 
   const handleComplete = () => {
-    if (companyName.trim()) {
-      onComplete(companyName.trim());
+    if (companyName.trim() && country && monthlyQueries > 0 && queryTypes.trim()) {
+      onComplete({
+        companyName: companyName.trim(),
+        country,
+        industry,
+        monthlyQueries,
+        queryTypes: queryTypes.trim()
+      });
     }
   };
 
@@ -146,15 +176,62 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
           {step === 3 && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-2xl font-semibold mb-4">Step 3: Enter Your Company Name</h2>
-                <Label htmlFor="company-name">Company Name</Label>
-                <Input
-                  id="company-name"
-                  value={companyName}
-                  onChange={(e) => setCompanyName(e.target.value)}
-                  placeholder="Enter your company name"
-                  className="mt-2"
-                />
+                <h2 className="text-2xl font-semibold mb-4">Step 3: Company Details</h2>
+                
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="company-name">Company Name</Label>
+                    <Input
+                      id="company-name"
+                      value={companyName}
+                      onChange={(e) => setCompanyName(e.target.value)}
+                      placeholder="Enter your company name"
+                      className="mt-2"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="country">Partner Country</Label>
+                    <Select value={country} onValueChange={setCountry}>
+                      <SelectTrigger className="mt-2">
+                        <SelectValue placeholder="Select partner country" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {countries.map((c) => (
+                          <SelectItem key={c.code} value={c.code}>{c.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="monthly-queries">Total Monthly Customer Queries Received</Label>
+                    <Input
+                      id="monthly-queries"
+                      type="number"
+                      value={monthlyQueries || ''}
+                      onChange={(e) => setMonthlyQueries(parseFloat(e.target.value) || 0)}
+                      placeholder="Enter monthly query volume (in millions)"
+                      className="mt-2"
+                      step="0.1"
+                    />
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Total number of customer service queries in a typical month.
+                    </p>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="query-types">Breakdown of Query Types (% Split Required) *</Label>
+                    <Input
+                      id="query-types"
+                      value={queryTypes}
+                      onChange={(e) => setQueryTypes(e.target.value)}
+                      placeholder="E.g., 40% billing, 30% technical support, 20% onboarding, 10% others"
+                      className="mt-2"
+                      required
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="flex gap-3">
@@ -163,7 +240,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
                 </Button>
                 <Button 
                   onClick={handleComplete}
-                  disabled={!companyName.trim()}
+                  disabled={!companyName.trim() || !country || !monthlyQueries || !queryTypes.trim()}
                   className="flex-1 bg-finance-gradient hover:shadow-medium transition-all duration-300"
                 >
                   Start Calculator <ArrowRight className="ml-2 h-4 w-4" />

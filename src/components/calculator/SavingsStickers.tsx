@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
+import { formatCurrencyAuto } from '@/lib/formatting';
 import { ScenarioResults } from '@/types/ema-calculator';
 
 interface SavingsStickersProps {
@@ -8,7 +9,7 @@ interface SavingsStickersProps {
 
 export const SavingsStickers: React.FC<SavingsStickersProps> = ({ scenarioResults }) => {
   const formatCurrency = (value: number) => {
-    return `$${(value / 1000000).toFixed(1)}M`;
+    return formatCurrencyAuto(value);
   };
 
   // Calculate 3-year totals
