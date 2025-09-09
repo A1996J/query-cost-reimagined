@@ -175,7 +175,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, currenc
             <div className="text-center p-4 bg-finance-subtle rounded-lg">
               <DollarSign className="h-8 w-8 mx-auto mb-2 text-finance-primary" />
               <div className="text-2xl font-bold text-finance-primary">
-                {((results.totalAllInSavings / results.implementationCost) - 1).toFixed(1)}x
+                {(results.totalAllInSavings / results.implementationCost).toFixed(1)}x
               </div>
               <div className="text-sm text-muted-foreground">All-In ROI Multiple</div>
             </div>
