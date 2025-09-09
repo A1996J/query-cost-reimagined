@@ -23,14 +23,14 @@ export const SavingsStickers: React.FC<SavingsStickersProps> = ({ scenarioResult
 
   const stickers = [
     {
-      label: "Your All-in Savings Over 3 Years",
-      sublabel: "(Post-Implementation Cost)",
+      label: "Your Expected Savings",
+      sublabel: "Over 3 Years post-implementation cost",
       value: `${formatCurrency(baseAllIn)} - ${formatCurrency(bullAllIn)}`,
       className: "bg-finance-gradient text-white"
     },
     {
       label: "Direct savings Ema-resolved Queries",
-      sublabel: "Over 3 years, after implementation cost",
+      sublabel: "Over 3 years post-implementation cost",
       value: `${formatCurrency(baseDirect)} - ${formatCurrency(bullDirect)}`,
       className: "bg-finance-gradient text-white"
     },
