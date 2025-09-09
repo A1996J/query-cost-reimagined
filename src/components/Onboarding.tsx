@@ -176,7 +176,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
           {step === 3 && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-2xl font-semibold mb-4">Step 3: Enter Your Company Name</h2>
+                <h2 className="text-2xl font-semibold mb-4">Step 3: Enter Client Name</h2>
                 <Label htmlFor="company-name">Company Name</Label>
                 <Input
                   id="company-name"
