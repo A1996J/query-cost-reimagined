@@ -167,7 +167,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, currenc
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-finance-primary">
             <Target className="h-5 w-5" />
-            Key Performance Indicators
+            Quick Payback with an exponential ROI 
           </CardTitle>
         </CardHeader>
         <CardContent>
