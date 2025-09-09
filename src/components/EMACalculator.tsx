@@ -18,7 +18,6 @@ import { GlossarySection } from './calculator/GlossarySection';
 import { PDFExport } from './calculator/PDFExport';
 import { KeyAssumptionsTable } from './calculator/KeyAssumptionsTable';
 import { calculateEMASavings, populateBullFromBase, calculateScenarioResults } from '@/lib/ema-calculations';
-import { updateImplementationCostIfNeeded } from '@/lib/implementation-cost-calculation';
 import { EMACalculatorInputs, CalculationResults, Scenario, ScenarioInputs, ScenarioResults } from '@/types/ema-calculator';
 import { toast } from '@/hooks/use-toast';
 
@@ -31,7 +30,6 @@ const emptyCriticalInputs: Partial<EMACalculatorInputs> = {
   monthlyQueryVolume: 0,
   averageHandlingTime: 0,
   implementationCost: 0,
-  implementationCostMultiplier: 1000, // $1K per rep default
   companyGrowthRate: 0,
 };
 
@@ -41,7 +39,7 @@ const defaultDetailedInputs: Partial<EMACalculatorInputs> = {
   finalYearContainmentRate: 0.75, // 75%
   year1ProductivityGain: 0.10, // 10%
   duplicateQueriesPercent: 0.10,
-  annualComplianceCostReduction: 250, // $250K
+  annualComplianceCostReduction: 0.25,
   customerExperienceAsPercentOfRevenue: 0.02,
   upsellPercentOfRevenue: 0.05,
 };
@@ -63,8 +61,6 @@ const defaultInputs: EMACalculatorInputs = {
 export const EMACalculator: React.FC = () => {
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [companyName, setCompanyName] = useState('');
-  const [industry, setIndustry] = useState('');
-  const [partnerCountry, setPartnerCountry] = useState('');
   const [currentTab, setCurrentTab] = useState('base');
   const [currentScenario, setCurrentScenario] = useState<Scenario>('base');
   const [scenarios, setScenarios] = useState<ScenarioInputs>({
@@ -82,28 +78,17 @@ export const EMACalculator: React.FC = () => {
   });
   
   // Section collapse states
-  const [detailedOpen, setDetailedOpen] = useState(false);
+  const [detailedOpen, setDetailedOpen] = useState(true);
   const [advancedOpen, setAdvancedOpen] = useState(false);
 
   const updateInput = (field: keyof EMACalculatorInputs, value: string | number) => {
-    setScenarios(prev => {
-      const newScenario = {
+    setScenarios(prev => ({
+      ...prev,
+      [currentScenario]: {
         ...prev[currentScenario],
         [field]: value
-      };
-      
-      // Auto-update implementation cost when relevant fields change
-      if (['monthlyQueryVolume', 'averageHandlingTime', 'capacityBuffer', 'implementationCostMultiplier'].includes(field)) {
-        updateImplementationCostIfNeeded(newScenario, (calcField, calcValue) => {
-          (newScenario as any)[calcField] = calcValue;
-        });
       }
-      
-      return {
-        ...prev,
-        [currentScenario]: newScenario
-      };
-    });
+    }));
   };
 
   const populateBullScenario = () => {
@@ -143,10 +128,11 @@ export const EMACalculator: React.FC = () => {
 
   const canCalculate = (inputs: EMACalculatorInputs) => {
     return inputs.country && 
+           inputs.averageAnnualSalary > 0 && 
            inputs.monthlyQueryVolume > 0 && 
-           inputs.companyGrowthRate >= 0 &&
-           inputs.averageAnnualSalary > 0 &&
-           inputs.averageHandlingTime > 0;
+           inputs.averageHandlingTime > 0 && 
+           inputs.implementationCost >= 0 && 
+           inputs.companyGrowthRate >= 0;
   };
 
   const handleCalculate = async () => {
@@ -190,75 +176,9 @@ export const EMACalculator: React.FC = () => {
     }
   }, [scenarios, currentScenario]);
 
-  const handleOnboardingComplete = (name: string, selectedIndustry: string, selectedPartnerCountry: string) => {
+  const handleOnboardingComplete = (name: string) => {
     setCompanyName(name);
-    setIndustry(selectedIndustry);
-    setPartnerCountry(selectedPartnerCountry);
     setShowOnboarding(false);
-
-    // Apply partner country to both scenarios
-    const countries = [
-      { code: 'US', name: 'United States', currency: 'USD' },
-      { code: 'GB', name: 'United Kingdom', currency: 'GBP' },
-      { code: 'IN', name: 'India', currency: 'INR' },
-      { code: 'CA', name: 'Canada', currency: 'CAD' },
-      { code: 'AU', name: 'Australia', currency: 'AUD' },
-      { code: 'DE', name: 'Germany', currency: 'EUR' },
-      { code: 'FR', name: 'France', currency: 'EUR' },
-      { code: 'JP', name: 'Japan', currency: 'JPY' },
-      { code: 'CN', name: 'China', currency: 'CNY' },
-      { code: 'SG', name: 'Singapore', currency: 'SGD' },
-    ];
-
-    const mockFXRates: { [key: string]: number } = {
-      USD: 1,
-      EUR: 0.85,
-      GBP: 0.73,
-      INR: 86.0,
-      CAD: 1.25,
-      AUD: 1.35,
-      JPY: 110.0,
-      CNY: 6.45,
-      SGD: 1.35,
-    };
-
-    const country = countries.find(c => c.code === selectedPartnerCountry);
-    if (country) {
-      const rate = mockFXRates[country.currency] || 1;
-      
-      // Set defaults based on selections
-      let salaryDefault = 0;
-      let handlingTimeDefault = 0;
-      
-      // India salary default
-      if (selectedPartnerCountry === 'IN') {
-        salaryDefault = 450000; // ₹4.5 lakh
-      }
-      
-      // Financial Services handling time default
-      if (selectedIndustry === 'Banking and Financial Services') {
-        handlingTimeDefault = 10;
-      }
-      
-      setScenarios(prev => ({
-        base: {
-          ...prev.base,
-          country: selectedPartnerCountry,
-          currency: country.currency,
-          fxRate: rate,
-          averageAnnualSalary: salaryDefault,
-          averageHandlingTime: handlingTimeDefault,
-        },
-        bull: {
-          ...prev.bull,
-          country: selectedPartnerCountry,
-          currency: country.currency,
-          fxRate: rate,
-          averageAnnualSalary: salaryDefault,
-          averageHandlingTime: handlingTimeDefault,
-        }
-      }));
-    }
   };
 
   if (showOnboarding) {
@@ -302,30 +222,8 @@ export const EMACalculator: React.FC = () => {
 
           <TabsContent value="base">
             <div className="space-y-8">
-              {/* Results Section - At Top */}
-              {results && currentScenario === 'base' && (
-                <div>
-                  <h2 className="text-2xl font-bold mb-6 text-finance-primary">Results</h2>
-                  <ResultsDisplay 
-                    results={results} 
-                    currency={scenarios.base.currency} 
-                    scenario="base"
-                  />
-                </div>
-              )}
-              
-              {!results && (
-                <Card className="p-8 text-center shadow-soft">
-                  <DollarSign className="h-16 w-16 mx-auto mb-4 text-finance-primary" />
-                  <h3 className="text-xl font-semibold mb-2">Ready to Calculate</h3>
-                  <p className="text-muted-foreground">
-                    Fill in all critical inputs to see the Ema ROI calculation results
-                  </p>
-                </Card>
-              )}
-
-              {/* Input Sections - At Bottom */}
-              <div className="space-y-6 border-t pt-8">
+              {/* Input Sections */}
+              <div className="space-y-6">
                 <CriticalInputsSection 
                   inputs={scenarios.base}
                   onUpdateInput={updateInput}
@@ -338,8 +236,6 @@ export const EMACalculator: React.FC = () => {
                   onUpdateInput={updateInput}
                   isOpen={detailedOpen}
                   onOpenChange={setDetailedOpen}
-                  industry={industry}
-                  partnerCountry={partnerCountry}
                 />
                 
                 <AdvancedInputsSection 
@@ -361,19 +257,15 @@ export const EMACalculator: React.FC = () => {
                   </Button>
                 </Card>
               </div>
-            </div>
-          </TabsContent>
 
-          <TabsContent value="bull">
-            <div className="space-y-8">
-              {/* Results Section - At Top */}
-              {results && currentScenario === 'bull' && (
-                <div>
+              {/* Results Section - Below inputs */}
+              {results && currentScenario === 'base' && (
+                <div className="border-t pt-8">
                   <h2 className="text-2xl font-bold mb-6 text-finance-primary">Results</h2>
                   <ResultsDisplay 
                     results={results} 
-                    currency={scenarios.bull.currency} 
-                    scenario="bull"
+                    currency={scenarios.base.currency} 
+                    scenario="base"
                   />
                 </div>
               )}
@@ -387,9 +279,13 @@ export const EMACalculator: React.FC = () => {
                   </p>
                 </Card>
               )}
+            </div>
+          </TabsContent>
 
-              {/* Input Sections - At Bottom */}
-              <div className="space-y-6 border-t pt-8">
+          <TabsContent value="bull">
+            <div className="space-y-8">
+              {/* Input Sections */}
+              <div className="space-y-6">
                 <div className="mb-4">
                   <Button
                     onClick={populateBullScenario}
@@ -412,8 +308,6 @@ export const EMACalculator: React.FC = () => {
                   onUpdateInput={updateInput}
                   isOpen={detailedOpen}
                   onOpenChange={setDetailedOpen}
-                  industry={industry}
-                  partnerCountry={partnerCountry}
                 />
                 
                 <AdvancedInputsSection 
@@ -435,6 +329,28 @@ export const EMACalculator: React.FC = () => {
                   </Button>
                 </Card>
               </div>
+
+              {/* Results Section - Below inputs */}
+              {results && currentScenario === 'bull' && (
+                <div className="border-t pt-8">
+                  <h2 className="text-2xl font-bold mb-6 text-finance-primary">Results</h2>
+                  <ResultsDisplay 
+                    results={results} 
+                    currency={scenarios.bull.currency} 
+                    scenario="bull"
+                  />
+                </div>
+              )}
+              
+              {!results && (
+                <Card className="p-8 text-center shadow-soft">
+                  <DollarSign className="h-16 w-16 mx-auto mb-4 text-finance-primary" />
+                  <h3 className="text-xl font-semibold mb-2">Ready to Calculate</h3>
+                  <p className="text-muted-foreground">
+                    Fill in all critical inputs to see the Ema ROI calculation results
+                  </p>
+                </Card>
+              )}
             </div>
           </TabsContent>
 

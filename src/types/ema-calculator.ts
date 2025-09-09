@@ -9,7 +9,7 @@ export interface EMACalculatorInputs {
   // Human Agent Cost Assumptions  
   averageAnnualSalary: number;
   benefitsMultiplier: number;
-  monthlyQueryVolume: number; // Now in thousands
+  monthlyQueryVolume: number;
   averageHandlingTime: number;
   capacityBuffer: number;
   partnerOverheadMultiplier: number;
@@ -17,15 +17,14 @@ export interface EMACalculatorInputs {
   // EMA Cost & Performance
   emaPricePerQuery: number;
   partnerProfitMargin: number;
-  implementationCost: number; // Now in thousands
-  implementationCostMultiplier: number; // New field for $K per rep
+  implementationCost: number;
   companyGrowthRate: number;
   finalYearContainmentRate: number;
   year1ProductivityGain: number;
 
   // Additional Savings Inputs
   duplicateQueriesPercent: number;
-  annualComplianceCostReduction: number; // Now in thousands
+  annualComplianceCostReduction: number;
   customerExperienceAsPercentOfRevenue: number;
   upsellPercentOfRevenue: number;
 }

@@ -7,13 +7,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ArrowRight, Building2 } from 'lucide-react';
 
 interface OnboardingProps {
-  onComplete: (companyName: string, industry: string, partnerCountry: string) => void;
+  onComplete: (companyName: string) => void;
 }
 
 export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   const [step, setStep] = useState(1);
   const [industry, setIndustry] = useState('');
-  const [partnerCountry, setPartnerCountry] = useState('');
   const [useCase, setUseCase] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [showIndustryMessage, setShowIndustryMessage] = useState(false);
@@ -27,19 +26,6 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
     'Healthcare',
     'Retail',
     'Other'
-  ];
-
-  const countries = [
-    { code: 'US', name: 'United States', currency: 'USD' },
-    { code: 'GB', name: 'United Kingdom', currency: 'GBP' },
-    { code: 'IN', name: 'India', currency: 'INR' },
-    { code: 'CA', name: 'Canada', currency: 'CAD' },
-    { code: 'AU', name: 'Australia', currency: 'AUD' },
-    { code: 'DE', name: 'Germany', currency: 'EUR' },
-    { code: 'FR', name: 'France', currency: 'EUR' },
-    { code: 'JP', name: 'Japan', currency: 'JPY' },
-    { code: 'CN', name: 'China', currency: 'CNY' },
-    { code: 'SG', name: 'Singapore', currency: 'SGD' },
   ];
 
   const useCases = [
@@ -68,7 +54,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
 
   const handleComplete = () => {
     if (companyName.trim()) {
-      onComplete(companyName.trim(), industry, partnerCountry);
+      onComplete(companyName.trim());
     }
   };
 
@@ -85,42 +71,17 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
           {step === 1 && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-2xl font-semibold mb-4">Step 1: Choose Your Industry & Partner Country</h2>
-                
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="industry" className="text-base font-medium">Industry</Label>
-                    <Select value={industry} onValueChange={setIndustry}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select your industry" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {industries.map((ind) => (
-                          <SelectItem key={ind} value={ind}>{ind}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="partnerCountry" className="text-base font-medium">Partner Country</Label>
-                    <Select value={partnerCountry} onValueChange={setPartnerCountry}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select partner country" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {countries.map((country) => (
-                          <SelectItem key={country.code} value={country.code}>
-                            {country.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Country where the partner's team or operation is located.
-                    </p>
-                  </div>
-                </div>
+                <h2 className="text-2xl font-semibold mb-4">Step 1: Choose Your Industry</h2>
+                <Select value={industry} onValueChange={setIndustry}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your industry" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {industries.map((ind) => (
+                      <SelectItem key={ind} value={ind}>{ind}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {showIndustryMessage && (
@@ -133,7 +94,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
 
               <Button 
                 onClick={handleIndustryNext}
-                disabled={!industry || !partnerCountry}
+                disabled={!industry}
                 className="w-full bg-finance-gradient hover:shadow-medium transition-all duration-300"
               >
                 Next <ArrowRight className="ml-2 h-4 w-4" />
