@@ -45,6 +45,8 @@ interface DetailedAssumptionsSectionProps {
   industry: string;
   fxRateUserEdited: boolean;
   onFxRateUserEdited: (edited: boolean) => void;
+  implementationCostUserEdited?: boolean;
+  onImplementationCostUserEdited?: (edited: boolean) => void;
 }
 
 export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProps> = ({ 
@@ -54,7 +56,9 @@ export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProp
   onOpenChange,
   industry,
   fxRateUserEdited,
-  onFxRateUserEdited
+  onFxRateUserEdited,
+  implementationCostUserEdited = false,
+  onImplementationCostUserEdited = () => {}
 }) => {
   const handleFxRateChange = (value: string) => {
     onFxRateUserEdited(true);
@@ -69,6 +73,11 @@ export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProp
       // Reset FX rate editing flag to allow auto-update for new currency
       onFxRateUserEdited(false);
     }
+  };
+
+  const handleImplementationCostChange = (value: string) => {
+    onImplementationCostUserEdited(true);
+    onUpdateInput('implementationCost', (parseFloat(value) || 0) / 1000);
   };
 
   // Auto-populate fields based on conditions
@@ -95,19 +104,16 @@ export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProp
   }, [industry, inputs.averageHandlingTime, onUpdateInput]);
 
   useEffect(() => {
-    // Auto-populate implementation cost based on totalReps calculation
-    if (inputs.monthlyQueryVolume && inputs.averageHandlingTime && inputs.capacityBuffer) {
+    // Auto-populate implementation cost based on totalReps calculation (only if not user edited)
+    if (inputs.monthlyQueryVolume && inputs.averageHandlingTime && inputs.capacityBuffer && !implementationCostUserEdited) {
       const annualQueries = inputs.monthlyQueryVolume * 12;
       const repsNeeded100 = (annualQueries * 1000000 * inputs.averageHandlingTime) / WORKING_MINUTES_PER_YEAR;
       const totalReps = repsNeeded100 * (1 + inputs.capacityBuffer);
       const implementationCostInMillions = (totalReps * 1000) / 1000000; // $1000 per rep, convert to millions for storage
       
-      // Only update if the current value is 0 or significantly different (to avoid overriding user edits)
-      if (inputs.implementationCost === 0 || Math.abs(inputs.implementationCost - implementationCostInMillions) < 0.001) {
-        onUpdateInput('implementationCost', implementationCostInMillions);
-      }
+      onUpdateInput('implementationCost', implementationCostInMillions);
     }
-  }, [inputs.monthlyQueryVolume, inputs.averageHandlingTime, inputs.capacityBuffer, onUpdateInput]);
+  }, [inputs.monthlyQueryVolume, inputs.averageHandlingTime, inputs.capacityBuffer, implementationCostUserEdited, onUpdateInput]);
 
   return (
     <Card className="shadow-soft">
@@ -279,7 +285,7 @@ export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProp
                     id="implementationCost"
                     type="number"
                     value={inputs.implementationCost ? Math.round(inputs.implementationCost * 1000) : ''}
-                    onChange={(e) => onUpdateInput('implementationCost', (parseFloat(e.target.value) || 0) / 1000)}
+                    onChange={(e) => handleImplementationCostChange(e.target.value)}
                     step="1"
                     className="text-lg font-medium"
                     placeholder="Enter cost in thousands"

@@ -81,6 +81,12 @@ export const EMACalculator: React.FC = () => {
     bull: false
   });
   
+  // Track implementation cost user edits per scenario
+  const [implementationCostUserEdited, setImplementationCostUserEdited] = useState<{[key in Scenario]: boolean}>({
+    base: false,
+    bull: false
+  });
+  
   // Section collapse states
   const [detailedOpen, setDetailedOpen] = useState(false);
   const [advancedOpen, setAdvancedOpen] = useState(false);
@@ -120,6 +126,13 @@ export const EMACalculator: React.FC = () => {
   
   const handleFxRateUserEdited = (edited: boolean) => {
     setFxRateUserEdited(prev => ({
+      ...prev,
+      [currentScenario]: edited
+    }));
+  };
+
+  const handleImplementationCostUserEdited = (edited: boolean) => {
+    setImplementationCostUserEdited(prev => ({
       ...prev,
       [currentScenario]: edited
     }));
@@ -311,6 +324,8 @@ export const EMACalculator: React.FC = () => {
                   industry={industry}
                   fxRateUserEdited={fxRateUserEdited.base}
                   onFxRateUserEdited={handleFxRateUserEdited}
+                  implementationCostUserEdited={implementationCostUserEdited.base}
+                  onImplementationCostUserEdited={handleImplementationCostUserEdited}
                 />
                 
                 <AdvancedInputsSection 
@@ -381,6 +396,8 @@ export const EMACalculator: React.FC = () => {
                   industry={industry}
                   fxRateUserEdited={fxRateUserEdited.bull}
                   onFxRateUserEdited={handleFxRateUserEdited}
+                  implementationCostUserEdited={implementationCostUserEdited.bull}
+                  onImplementationCostUserEdited={handleImplementationCostUserEdited}
                 />
                 
                 <AdvancedInputsSection 
