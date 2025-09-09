@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ArrowRight, Building2, Globe, TrendingUp } from 'lucide-react';
 
 interface OnboardingProps {
-  onComplete: (companyName: string, industry: string, criticalInputs: {
+  onComplete: (companyName: string, industry: string, useCase: string, criticalInputs: {
     country: string;
     monthlyQueryVolume: number;
     companyGrowthRate: number;
@@ -80,7 +80,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
 
   const handleComplete = () => {
     if (country && monthlyQueryVolume > 0 && companyGrowthRate >= 0) {
-      onComplete(companyName.trim(), industry, {
+      onComplete(companyName.trim(), industry, useCase, {
         country,
         monthlyQueryVolume,
         companyGrowthRate: companyGrowthRate / 100

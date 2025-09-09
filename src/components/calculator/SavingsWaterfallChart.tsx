@@ -5,9 +5,10 @@ import { BarChart3 } from 'lucide-react';
 
 interface SavingsWaterfallChartProps {
   scenarioResults: ScenarioResults;
+  useCase?: string;
 }
 
-export const SavingsWaterfallChart: React.FC<SavingsWaterfallChartProps> = ({ scenarioResults }) => {
+export const SavingsWaterfallChart: React.FC<SavingsWaterfallChartProps> = ({ scenarioResults, useCase }) => {
   const { base, bull } = scenarioResults;
 
   // Calculate totals for 3 years
@@ -38,7 +39,7 @@ export const SavingsWaterfallChart: React.FC<SavingsWaterfallChartProps> = ({ sc
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2 text-finance-primary text-center">
           <BarChart3 className="h-5 w-5" />
-          3Y Savings Summary
+          Save {formatRange(baseDirectPercent + baseAdditionalPercent, bullDirectPercent + bullAdditionalPercent)} of your {useCase?.toLowerCase() || 'business'} cost
         </CardTitle>
       </CardHeader>
       <CardContent>

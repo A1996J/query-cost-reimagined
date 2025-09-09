@@ -7,12 +7,13 @@ interface PdfExportOptions {
   scenarioResults: ScenarioResults;
   scenarios: ScenarioInputs;
   industry: string;
+  useCase?: string;
 }
 
 export const usePdfExport = () => {
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const exportToPdf = async ({ scenarioResults, scenarios, industry }: PdfExportOptions) => {
+  const exportToPdf = async ({ scenarioResults, scenarios, industry, useCase }: PdfExportOptions) => {
     setIsGenerating(true);
     
     try {
@@ -47,7 +48,8 @@ export const usePdfExport = () => {
         React.createElement(ReportPrintView, {
           scenarioResults,
           scenarios,
-          industry
+          industry,
+          useCase
         })
       );
 

@@ -64,6 +64,7 @@ export const EMACalculator: React.FC = () => {
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [companyName, setCompanyName] = useState('');
   const [industry, setIndustry] = useState('');
+  const [useCase, setUseCase] = useState('');
   const [currentTab, setCurrentTab] = useState('base');
   const [currentScenario, setCurrentScenario] = useState<Scenario>('base');
   const [scenarios, setScenarios] = useState<ScenarioInputs>({
@@ -176,13 +177,14 @@ export const EMACalculator: React.FC = () => {
     }
   }, [scenarios, currentScenario]);
 
-  const handleOnboardingComplete = (name: string, selectedIndustry: string, criticalInputs: {
+  const handleOnboardingComplete = (name: string, selectedIndustry: string, selectedUseCase: string, criticalInputs: {
     country: string;
     monthlyQueryVolume: number;
     companyGrowthRate: number;
   }) => {
     setCompanyName(name);
     setIndustry(selectedIndustry);
+    setUseCase(selectedUseCase);
     
     // Get currency from country
     const countries = [
@@ -395,7 +397,7 @@ export const EMACalculator: React.FC = () => {
               {scenarioResults && scenarios ? (
                 <>
                   {/* PDF Export Button */}
-                  <PDFExport scenarioResults={scenarioResults} scenarios={scenarios} industry={industry} />
+                  <PDFExport scenarioResults={scenarioResults} scenarios={scenarios} industry={industry} useCase={useCase} />
                   
                   {/* Savings Stickers */}
                   <div className="savings-stickers-container">
@@ -404,7 +406,7 @@ export const EMACalculator: React.FC = () => {
                   
                   {/* Charts */}
                   <div className="waterfall-chart-container">
-                    <SavingsWaterfallChart scenarioResults={scenarioResults} />
+                    <SavingsWaterfallChart scenarioResults={scenarioResults} useCase={useCase} />
                   </div>
                   
                   {/* Key Performance Indicators */}

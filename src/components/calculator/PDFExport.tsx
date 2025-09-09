@@ -7,16 +7,18 @@ interface PDFExportProps {
   scenarioResults: any;
   scenarios: any;
   industry: string;
+  useCase?: string;
 }
 
-export const PDFExport: React.FC<PDFExportProps> = ({ scenarioResults, scenarios, industry }) => {
+export const PDFExport: React.FC<PDFExportProps> = ({ scenarioResults, scenarios, industry, useCase }) => {
   const { exportToPdf, isGenerating } = usePdfExport();
 
   const handleExport = () => {
     exportToPdf({
       scenarioResults,
       scenarios,
-      industry
+      industry,
+      useCase
     });
   };
 

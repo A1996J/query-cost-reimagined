@@ -16,12 +16,14 @@ interface ReportPrintViewProps {
   scenarioResults: ScenarioResults;
   scenarios: ScenarioInputs;
   industry: string;
+  useCase?: string;
 }
 
 export const ReportPrintView: React.FC<ReportPrintViewProps> = ({ 
   scenarioResults, 
   scenarios, 
-  industry 
+  industry,
+  useCase 
 }) => {
   React.useEffect(() => {
     // Wait for all content to be ready before signaling PDF readiness
@@ -94,7 +96,7 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
         </div>
         
         <div className="avoid-break chart-container">
-          <SavingsWaterfallChart scenarioResults={scenarioResults} />
+          <SavingsWaterfallChart scenarioResults={scenarioResults} useCase={useCase} />
         </div>
       </section>
 
