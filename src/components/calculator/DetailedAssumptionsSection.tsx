@@ -72,17 +72,17 @@ export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProp
   useEffect(() => {
     // Auto-populate implementation cost based on totalReps calculation
     if (inputs.monthlyQueryVolume && inputs.averageHandlingTime && inputs.capacityBuffer) {
-      const annualQueries = inputs.monthlyQueryVolume * 12;
+      const annualQueries = inputs.monthlyQueryVolume * 1000 * 12;
       const repsNeeded100 = (annualQueries * 1000000 * inputs.averageHandlingTime) / WORKING_MINUTES_PER_YEAR;
       const totalReps = repsNeeded100 * (1 + inputs.capacityBuffer);
       const implementationCostInMillions = (totalReps * 1000) / 1000000; // $1000 per rep, convert to millions for storage
       
       // Only update if the current value is 0 or significantly different (to avoid overriding user edits)
-      if (inputs.implementationCost === 0 || Math.abs(inputs.implementationCost - implementationCostInMillions) < 0.001) {
+      if (inputs.implementationCost === 0 || Math.abs(inputs.implementationCost - implementationCostInMillions) > 0.01) {
         onUpdateInput('implementationCost', implementationCostInMillions);
       }
     }
-  }, [inputs.monthlyQueryVolume, inputs.averageHandlingTime, inputs.capacityBuffer, onUpdateInput]);
+  }, [inputs.monthlyQueryVolume, inputs.averageHandlingTime, inputs.capacityBuffer, inputs.implementationCost]);
 
   return (
     <Card className="shadow-soft">
