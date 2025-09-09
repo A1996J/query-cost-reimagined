@@ -404,7 +404,9 @@ export const EMACalculator: React.FC = () => {
                   </div>
                   
                   {/* Additional Benefits */}
-                  <AdditionalBenefitsSection industry={industry} />
+                  <div className="additional-benefits-container">
+                    <AdditionalBenefitsSection industry={industry} />
+                  </div>
                   
                   <div className="sensitivity-heatmap-container">
                     <SensitivityHeatmap scenarioResults={scenarioResults} scenarios={scenarios} />
