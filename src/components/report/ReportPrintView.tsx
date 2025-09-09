@@ -29,7 +29,9 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
     const prepareForPrint = async () => {
       try {
         // Wait for fonts to load
-        await document.fonts.ready;
+        if (document.fonts && document.fonts.ready) {
+          await document.fonts.ready;
+        }
         
         // Wait for images to load
         const images = Array.from(document.images);
@@ -42,8 +44,11 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
           )
         );
         
-        // Wait for charts to stabilize (small delay for rendering)
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Wait for charts to stabilize
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Set charts ready flag
+        (window as any).__chartsReady = true;
         
         // Signal that report is ready
         (window as any).reportReady = true;
@@ -52,14 +57,15 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
         console.warn('Print preparation warning:', error);
         // Signal ready anyway after timeout
         setTimeout(() => {
+          (window as any).__chartsReady = true;
           (window as any).reportReady = true;
           window.dispatchEvent(new Event('report:ready'));
-        }, 2000);
+        }, 3000);
       }
     };
 
     prepareForPrint();
-  }, []);
+  }, [scenarioResults, scenarios, industry]);
 
   return (
     <div className="print-report">
@@ -135,7 +141,7 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
           text={insights.executiveSummaryInsight.text}
         />
         
-        <div className="table-wrapper avoid-break">
+        <div className="table-wrapper avoid-break exec-summary">
           <SummaryTable scenarioResults={scenarioResults} scenarios={scenarios} />
         </div>
       </section>

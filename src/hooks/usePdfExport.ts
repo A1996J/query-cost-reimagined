@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import html2pdf from 'html2pdf.js';
 import { toast } from '@/hooks/use-toast';
 import { ScenarioResults, ScenarioInputs } from '@/types/ema-calculator';
+import { getPrintStyles } from './getPrintStyles';
 
 interface PdfExportOptions {
   scenarioResults: ScenarioResults;
@@ -21,52 +21,28 @@ export const usePdfExport = () => {
         description: "Creating your professional EMA ROI analysis..."
       });
 
-      // Create a new window with the print view
-      const printWindow = window.open('', '_blank');
-      if (!printWindow) {
-        throw new Error('Unable to open print window');
-      }
+      // Create hidden container in same window - no new tab
+      const hiddenContainer = document.createElement('div');
+      hiddenContainer.style.position = 'fixed';
+      hiddenContainer.style.top = '-9999px';
+      hiddenContainer.style.left = '-9999px';
+      hiddenContainer.style.width = '1123px'; // A4 landscape width
+      hiddenContainer.style.height = '794px';  // A4 landscape height
+      hiddenContainer.style.background = 'white';
+      hiddenContainer.style.overflow = 'hidden';
+      document.body.appendChild(hiddenContainer);
 
-      // Create the print document with landscape orientation
-      const printDocument = `
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>EMA ROI Analysis Report</title>
-          <link rel="preconnect" href="https://fonts.googleapis.com">
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-          <style>
-            ${getPrintStyles()}
-          </style>
-        </head>
-        <body>
-          <div id="print-content"></div>
-        </body>
-        </html>
-      `;
+      // Create print styles
+      const styleSheet = document.createElement('style');
+      styleSheet.textContent = getPrintStyles();
+      document.head.appendChild(styleSheet);
 
-      printWindow.document.write(printDocument);
-      printWindow.document.close();
-
-      // Wait for the window to load
-      await new Promise(resolve => {
-        printWindow.onload = resolve;
-      });
-
-      // Render the React component to the print window
+      // Render print view to hidden container
       const { createRoot } = await import('react-dom/client');
       const React = await import('react');
       const { ReportPrintView } = await import('@/components/report/ReportPrintView');
 
-      const container = printWindow.document.getElementById('print-content');
-      if (!container) {
-        throw new Error('Print container not found');
-      }
-
-      const root = createRoot(container);
+      const root = createRoot(hiddenContainer);
       root.render(
         React.createElement(ReportPrintView, {
           scenarioResults,
@@ -75,10 +51,10 @@ export const usePdfExport = () => {
         })
       );
 
-      // Wait for report ready signal
+      // Wait for print view to be ready
       await new Promise<void>(resolve => {
         const checkReady = () => {
-          if ((printWindow as any).reportReady) {
+          if ((window as any).reportReady) {
             resolve();
           } else {
             setTimeout(checkReady, 100);
@@ -86,34 +62,36 @@ export const usePdfExport = () => {
         };
         
         // Listen for ready event
-        printWindow.addEventListener('report:ready', () => resolve(), { once: true });
+        window.addEventListener('report:ready', () => resolve(), { once: true });
         
-        // Start checking
-        setTimeout(checkReady, 500);
+        // Start checking after a delay
+        setTimeout(checkReady, 1000);
         
         // Safety timeout
-        setTimeout(() => resolve(), 10000);
+        setTimeout(() => resolve(), 8000);
       });
 
-      // Configure html2pdf options for landscape
+      // Import html2pdf and generate
+      const html2pdf = (await import('html2pdf.js')).default;
+      
       const opt = {
         margin: [10, 10, 10, 10], // 10mm margins
         filename: `EMA_ROI_Analysis_${new Date().toISOString().split('T')[0]}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { 
-          scale: 2, // High DPI for crisp output
+          scale: 2,
           useCORS: true,
           allowTaint: true,
           scrollX: 0,
           scrollY: 0,
-          width: 1123, // A4 landscape width at 96dpi
-          height: 794,  // A4 landscape height at 96dpi
+          width: 1123,
+          height: 794,
           backgroundColor: '#ffffff'
         },
         jsPDF: { 
           unit: 'mm', 
           format: 'a4', 
-          orientation: 'landscape', // LANDSCAPE orientation
+          orientation: 'landscape',
           compress: true
         },
         pagebreak: { 
@@ -124,15 +102,16 @@ export const usePdfExport = () => {
       };
 
       // Generate and download PDF
-      await html2pdf().set(opt).from(container).save();
+      await html2pdf().set(opt).from(hiddenContainer).save();
 
       toast({
         title: "PDF Generated Successfully",
-        description: `Professional report saved as ${opt.filename}`,
+        description: "Professional report downloaded successfully",
       });
 
       // Clean up
-      printWindow.close();
+      document.body.removeChild(hiddenContainer);
+      document.head.removeChild(styleSheet);
 
     } catch (error) {
       console.error('PDF export error:', error);
@@ -151,269 +130,3 @@ export const usePdfExport = () => {
     isGenerating
   };
 };
-
-const getPrintStyles = () => `
-  /* Page setup for landscape A4 */
-  @page { 
-    size: A4 landscape; 
-    margin: 10mm; 
-  }
-
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  html, body {
-    height: auto !important;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-size: 12px;
-    line-height: 1.4;
-    color: #1f2937;
-    background: white;
-    -webkit-print-color-adjust: exact;
-    color-adjust: exact;
-  }
-
-  .print-report {
-    width: 100%;
-    max-width: none;
-  }
-
-  .pdf-page {
-    width: 297mm; /* A4 landscape width */
-    min-height: 210mm; /* A4 landscape height */
-    padding: 10mm;
-    margin: 0 auto;
-    background: white;
-    page-break-after: always;
-    break-after: page;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .pdf-page:last-child {
-    page-break-after: avoid;
-    break-after: avoid;
-  }
-
-  /* Prevent blank pages from margin collapsing */
-  .pdf-page:after {
-    content: "";
-    display: block;
-    height: 0;
-  }
-
-  .avoid-break,
-  .card, 
-  .chart-container, 
-  .insight-banner,
-  .table-wrapper {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-
-  .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 2px solid #6ab04c;
-    flex-shrink: 0;
-  }
-
-  .logo-section {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .logo {
-    height: 32px;
-    width: auto;
-  }
-
-  .header-text h1 {
-    font-size: 20px;
-    font-weight: 700;
-    color: #1f2937;
-    margin: 0;
-  }
-
-  .subtitle {
-    font-size: 12px;
-    color: #6b7280;
-    margin: 2px 0 0 0;
-  }
-
-  .date {
-    font-size: 11px;
-    color: #6b7280;
-  }
-
-  .insight-banner {
-    display: flex !important;
-    align-items: center;
-    gap: 10px;
-    padding: 12px;
-    border-radius: 6px;
-    margin-bottom: 16px;
-    font-size: 11px;
-    line-height: 1.4;
-    flex-shrink: 0;
-  }
-
-  .insight-banner svg {
-    flex-shrink: 0;
-    width: 16px;
-    height: 16px;
-  }
-
-  /* Card styles */
-  .bg-card {
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
-  }
-
-  .shadow-soft {
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  }
-
-  /* Table styles */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 8px 0;
-    font-size: 10px;
-  }
-
-  thead {
-    display: table-header-group;
-  }
-
-  tfoot {
-    display: table-footer-group;
-  }
-
-  th, td {
-    padding: 6px 8px;
-    text-align: left;
-    border-bottom: 1px solid #e5e7eb;
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-
-  tr {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-
-  th {
-    background: #f9fafb;
-    font-weight: 600;
-    color: #374151;
-  }
-
-  tr:nth-child(even) {
-    background: #f9fafb;
-  }
-
-  /* Chart containers - ensure they don't break */
-  .chart-container {
-    margin: 12px 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .chart-container > * {
-    max-width: 100%;
-  }
-
-  /* Savings stickers grid */
-  .savings-stickers-container {
-    margin: 12px 0;
-  }
-
-  /* Table wrapper */
-  .table-wrapper {
-    margin: 12px 0;
-  }
-
-  /* Additional benefits section */
-  .additional-benefits-container {
-    margin: 12px 0;
-  }
-
-  /* Hide elements that shouldn't print */
-  button, 
-  .no-print,
-  #__next-route-announcer__, 
-  .toast, 
-  .vite-error-overlay, 
-  .devtools-overlay {
-    display: none !important;
-    visibility: hidden !important;
-  }
-
-  /* Ensure text is readable with proper colors */
-  .text-muted-foreground {
-    color: #6b7280 !important;
-  }
-
-  .text-finance-primary {
-    color: #6ab04c !important;
-  }
-
-  .bg-finance-primary {
-    background-color: #6ab04c !important;
-  }
-
-  .border-finance-primary {
-    border-color: #6ab04c !important;
-  }
-
-  /* Print media query */
-  @media print {
-    html, body {
-      height: auto !important;
-    }
-    
-    .pdf-page {
-      margin: 0;
-      page-break-after: always;
-      break-after: page;
-    }
-    
-    .pdf-page:last-child {
-      page-break-after: avoid;
-      break-after: avoid;
-    }
-    
-    .avoid-break,
-    .card, 
-    .chart-container, 
-    .insight-banner,
-    .table-wrapper {
-      break-inside: avoid;
-      page-break-inside: avoid;
-    }
-    
-    thead {
-      display: table-header-group;
-    }
-    
-    tfoot {
-      display: table-footer-group;
-    }
-    
-    tr, td, th {
-      break-inside: avoid;
-      page-break-inside: avoid;
-    }
-  }
-`;
