@@ -219,6 +219,19 @@ export const EMACalculator: React.FC = () => {
 
           <TabsContent value="base">
             <div className="space-y-8">
+              {/* Calculate Button - Top */}
+              <Card className="p-6 shadow-soft">
+                <Button 
+                  onClick={handleCalculate}
+                  disabled={isCalculating || !canCalculate(scenarios.base)}
+                  className="w-full bg-finance-gradient hover:shadow-medium transition-all duration-300 text-lg py-6"
+                  size="lg"
+                >
+                  <TrendingUp className="mr-2 h-5 w-5" />
+                  {isCalculating ? 'Calculating...' : 'Calculate Ema Savings'}
+                </Button>
+              </Card>
+
               {/* Results Section - Above inputs */}
               {results && currentScenario === 'base' && (
                 <div className="border-b pb-8">
@@ -243,18 +256,6 @@ export const EMACalculator: React.FC = () => {
 
               {/* Input Sections */}
               <div className="space-y-6">
-                <Card className="p-6 shadow-soft">
-                  <Button 
-                    onClick={handleCalculate}
-                    disabled={isCalculating || !canCalculate(scenarios.base)}
-                    className="w-full bg-finance-gradient hover:shadow-medium transition-all duration-300 text-lg py-6"
-                    size="lg"
-                  >
-                    <TrendingUp className="mr-2 h-5 w-5" />
-                    {isCalculating ? 'Calculating...' : 'Calculate Ema Savings'}
-                  </Button>
-                </Card>
-
                 <CriticalInputsSection 
                   inputs={scenarios.base}
                   onUpdateInput={updateInput}
@@ -282,6 +283,30 @@ export const EMACalculator: React.FC = () => {
 
           <TabsContent value="bull">
             <div className="space-y-8">
+              {/* Calculate Button - Top */}
+              <Card className="p-6 shadow-soft">
+                <Button 
+                  onClick={handleCalculate}
+                  disabled={isCalculating || !canCalculate(scenarios.bull)}
+                  className="w-full bg-finance-gradient hover:shadow-medium transition-all duration-300 text-lg py-6"
+                  size="lg"
+                >
+                  <TrendingUp className="mr-2 h-5 w-5" />
+                  {isCalculating ? 'Calculating...' : 'Calculate Ema Savings'}
+                </Button>
+              </Card>
+
+              {/* Populate Bull Button */}
+              <div className="mb-4">
+                <Button
+                  onClick={populateBullScenario}
+                  variant="outline"
+                  className="w-full"
+                >
+                  Populate Bull from Base
+                </Button>
+              </div>
+
               {/* Results Section - Above inputs */}
               {results && currentScenario === 'bull' && (
                 <div className="border-b pb-8">
@@ -306,28 +331,6 @@ export const EMACalculator: React.FC = () => {
 
               {/* Input Sections */}
               <div className="space-y-6">
-                <Card className="p-6 shadow-soft">
-                  <Button 
-                    onClick={handleCalculate}
-                    disabled={isCalculating || !canCalculate(scenarios.bull)}
-                    className="w-full bg-finance-gradient hover:shadow-medium transition-all duration-300 text-lg py-6"
-                    size="lg"
-                  >
-                    <TrendingUp className="mr-2 h-5 w-5" />
-                    {isCalculating ? 'Calculating...' : 'Calculate Ema Savings'}
-                  </Button>
-                </Card>
-
-                <div className="mb-4">
-                  <Button
-                    onClick={populateBullScenario}
-                    variant="outline"
-                    className="mb-4"
-                  >
-                    Populate Bull from Base
-                  </Button>
-                </div>
-
                 <CriticalInputsSection 
                   inputs={scenarios.bull}
                   onUpdateInput={updateInput}
