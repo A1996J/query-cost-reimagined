@@ -122,10 +122,6 @@ export const SavingsWaterfallChart: React.FC<SavingsWaterfallChartProps> = ({ sc
             <span>Savings</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-finance-primary rounded"></div>
-            <span>Remaining Cost</span>
-          </div>
-          <div className="flex items-center gap-2">
             <div className="w-3 h-3 border-2 border-dashed border-finance-success bg-finance-success/10 rounded"></div>
             <span>Savings Range</span>
           </div>
