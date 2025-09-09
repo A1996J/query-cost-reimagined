@@ -35,7 +35,7 @@ export const SavingsStickers: React.FC<SavingsStickersProps> = ({ scenarioResult
       className: "bg-finance-gradient text-white"
     },
     {
-      label: "Additional Savings from Better FCR, Compliance, and Upselling",
+      label: "Additional Savings from Better First Call Resolion and Reduced Compliance Costs",
       sublabel: "Over 3 years",
       value: `${formatCurrency(baseAdditional)} - ${formatCurrency(bullAdditional)}`,
       className: "bg-finance-gradient text-white"
