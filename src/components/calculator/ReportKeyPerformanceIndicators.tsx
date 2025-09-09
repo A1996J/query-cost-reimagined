@@ -41,7 +41,7 @@ export const ReportKeyPerformanceIndicators: React.FC<ReportKeyPerformanceIndica
             <div className="text-center p-4 bg-finance-subtle rounded-lg">
               <DollarSign className="h-8 w-8 mx-auto mb-2 text-finance-primary" />
               <div className="text-2xl font-bold text-finance-primary">
-                {(baseResults.totalAllInSavings / baseResults.implementationCost).toFixed(1)}x
+                {((baseResults.totalAllInSavings / baseResults.implementationCost) - 1).toFixed(1)}x
               </div>
               <div className="text-sm text-muted-foreground">All-In ROI Multiple</div>
             </div>
@@ -81,7 +81,7 @@ export const ReportKeyPerformanceIndicators: React.FC<ReportKeyPerformanceIndica
             <div className="text-center p-4 bg-finance-subtle rounded-lg">
               <DollarSign className="h-8 w-8 mx-auto mb-2 text-finance-primary" />
               <div className="text-2xl font-bold text-finance-primary">
-                {(bullResults.totalAllInSavings / bullResults.implementationCost).toFixed(1)}x
+                {((bullResults.totalAllInSavings / bullResults.implementationCost) - 1).toFixed(1)}x
               </div>
               <div className="text-sm text-muted-foreground">All-In ROI Multiple</div>
             </div>
