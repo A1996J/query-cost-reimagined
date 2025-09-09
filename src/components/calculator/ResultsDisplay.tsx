@@ -50,11 +50,11 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, currenc
           
           <div className="mt-6 pt-4 border-t border-white/20 space-y-2">
             <div className="flex justify-between items-center text-sm">
-              <span>Direct Savings:</span>
+              <span>Direct Savings (Savings from EMA handling queries instead of humans):</span>
               <span>{formatCurrency(results.totalSavings, true)}M</span>
             </div>
             <div className="flex justify-between items-center text-sm">
-              <span>Additional Savings:</span>
+              <span>Additional Savings (Savings from First Call Resolution & Reduced Compliance Costs):</span>
               <span>{formatCurrency(results.totalAdditionalSavings, true)}M</span>
             </div>
             <div className="flex justify-between items-center text-sm border-t border-white/20 pt-2">
