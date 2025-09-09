@@ -9,6 +9,17 @@ export const SimplePDFExport: React.FC = () => {
 
   const handleExport = async () => {
     try {
+      // Check if we have report data
+      const reportContent = document.querySelector('[data-value="report"]');
+      if (!reportContent) {
+        toast({
+          title: "No Report Data",
+          description: "Please calculate savings first before exporting the report.",
+          variant: "destructive"
+        });
+        return;
+      }
+
       await exportToPdf();
       toast({
         title: "PDF Generated Successfully",
@@ -17,8 +28,8 @@ export const SimplePDFExport: React.FC = () => {
     } catch (error) {
       console.error('PDF export error:', error);
       toast({
-        title: "PDF Generation Failed",
-        description: "Please ensure the report is fully loaded and try again.",
+        title: "PDF Generation Failed", 
+        description: error instanceof Error ? error.message : "Please try again.",
         variant: "destructive"
       });
     }
