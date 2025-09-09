@@ -19,11 +19,6 @@ export const PrintPDFExport: React.FC<PrintPDFExportProps> = ({ onSwitchToReport
       setTimeout(() => {
         window.print();
       }, 100);
-      
-      toast({
-        title: "Print Dialog Opened",
-        description: "Use your browser's print dialog to save as PDF or print the report."
-      });
     } catch (error) {
       console.error('Print error:', error);
       toast({
