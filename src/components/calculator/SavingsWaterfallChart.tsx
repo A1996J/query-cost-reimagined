@@ -36,7 +36,7 @@ export const SavingsWaterfallChart: React.FC<SavingsWaterfallChartProps> = ({ sc
 
   return (
     <Card className="shadow-soft">
-      <CardHeader className="pb-4">
+      <CardHeader className="pb-8">
         <CardTitle className="flex items-center gap-2 text-finance-primary text-center">
           <BarChart3 className="h-5 w-5" />
           Save {formatRange(baseDirectPercent + baseAdditionalPercent, bullDirectPercent + bullAdditionalPercent)} of your {useCase?.toLowerCase() || 'business'} cost
