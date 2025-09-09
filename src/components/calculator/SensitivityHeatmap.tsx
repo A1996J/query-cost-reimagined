@@ -46,7 +46,7 @@ export const SensitivityHeatmap: React.FC<SensitivityHeatmapProps> = ({ scenario
     // Calculate base values (using same logic as ema-calculations.ts)
     const salaryUSD = modifiedInputs.averageAnnualSalary / modifiedInputs.fxRate;
     const allInCostPerRep = salaryUSD * modifiedInputs.benefitsMultiplier;
-    const annualQueries = modifiedInputs.monthlyQueryVolume * 1000 * 12;
+    const annualQueries = modifiedInputs.monthlyQueryVolume * 12;
     const repsNeeded100 = (annualQueries * 1000000 * modifiedInputs.averageHandlingTime) / WORKING_MINUTES_PER_YEAR;
     const totalReps = repsNeeded100 * (1 + modifiedInputs.capacityBuffer);
     const costPerQuery = (allInCostPerRep * totalReps) / (annualQueries * 1000000);

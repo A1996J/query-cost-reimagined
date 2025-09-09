@@ -236,7 +236,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
                   <div className="space-y-2">
                     <Label htmlFor="monthlyQueries" className="flex items-center gap-2">
                       <TrendingUp className="h-4 w-4" />
-                      Monthly Queries (Thousands)
+                      Monthly Queries (Millions)
                     </Label>
                     <Input
                       id="monthlyQueries"

@@ -29,7 +29,7 @@ export const SummaryTable: React.FC<SummaryTableProps> = ({ scenarioResults, sce
     const inputs = scenarios[scenario];
     const salaryUSD = inputs.averageAnnualSalary / inputs.fxRate;
     const allInCostPerRep = salaryUSD * inputs.benefitsMultiplier;
-    const annualQueries = inputs.monthlyQueryVolume * 1000 * 12;
+    const annualQueries = inputs.monthlyQueryVolume * 12;
     const repsNeeded100 = (annualQueries * 1000000 * inputs.averageHandlingTime) / WORKING_MINUTES_PER_YEAR;
     const totalReps = repsNeeded100 * (1 + inputs.capacityBuffer);
     const costPerQuery = (allInCostPerRep * totalReps) / (annualQueries * 1000000);
@@ -56,7 +56,7 @@ export const SummaryTable: React.FC<SummaryTableProps> = ({ scenarioResults, sce
 
   const getTotalPreEmaCost = (scenario: keyof ScenarioInputs, year: number) => {
     const inputs = scenarios[scenario];
-    const annualQueries = inputs.monthlyQueryVolume * 1000 * 12;
+    const annualQueries = inputs.monthlyQueryVolume * 12;
     const queries = annualQueries * Math.pow(1 + inputs.companyGrowthRate, year - 1);
     return queries * 1000000 * getPreEmaCostPerQuery(scenario);
   };

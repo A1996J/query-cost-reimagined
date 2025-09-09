@@ -52,7 +52,7 @@ export const HumanAgentSection: React.FC<HumanAgentSectionProps> = ({ inputs, on
           <div className="space-y-2">
             <Label htmlFor="queryVolume" className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
-              Monthly Query Volume (Thousands)
+              Monthly Query Volume (Millions)
             </Label>
             <Input
               id="queryVolume"

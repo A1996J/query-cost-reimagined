@@ -42,7 +42,7 @@ export const AdditionalSavingsSection: React.FC<AdditionalSavingsSectionProps> =
           <div className="space-y-2">
             <Label htmlFor="complianceCost" className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
-              Annual Compliance Cost Reduction ($K)
+              Annual Compliance Cost Reduction ($M)
             </Label>
             <Input
               id="complianceCost"

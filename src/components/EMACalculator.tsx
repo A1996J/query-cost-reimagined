@@ -38,7 +38,7 @@ const defaultDetailedInputs: Partial<EMACalculatorInputs> = {
   finalYearContainmentRate: 0.75, // 75%
   year1ProductivityGain: 0.10, // 10%
   duplicateQueriesPercent: 0.03, // 3%
-  annualComplianceCostReduction: 500, // $500K
+  annualComplianceCostReduction: 0.5, // $0.5M
 };
 
 // PIN-protected advanced defaults

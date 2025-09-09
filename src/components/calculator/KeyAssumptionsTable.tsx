@@ -17,7 +17,7 @@ export const KeyAssumptionsTable: React.FC<KeyAssumptionsTableProps> = ({ scenar
   const calculateDerivedValues = (inputs: typeof base) => {
     const salaryUSD = inputs.averageAnnualSalary / inputs.fxRate;
     const allInCostPerRep = salaryUSD * inputs.benefitsMultiplier;
-    const annualQueries = inputs.monthlyQueryVolume * 1000 * 12;
+    const annualQueries = inputs.monthlyQueryVolume * 12;
     const repsNeeded100 = (annualQueries * 1000000 * inputs.averageHandlingTime) / WORKING_MINUTES_PER_YEAR;
     const totalReps = repsNeeded100 * (1 + inputs.capacityBuffer);
     
@@ -73,7 +73,7 @@ export const KeyAssumptionsTable: React.FC<KeyAssumptionsTableProps> = ({ scenar
             </TableHeader>
             <TableBody>
               <TableRow>
-                <TableCell className="font-medium">Monthly Queries (Thousands)</TableCell>
+                <TableCell className="font-medium">Monthly Queries (Millions)</TableCell>
                 <TableCell className="text-center">{formatNumber(baseValues.monthlyQueries)}</TableCell>
                 <TableCell className="text-center">{formatNumber(bullValues.monthlyQueries)}</TableCell>
               </TableRow>
