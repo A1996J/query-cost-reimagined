@@ -18,7 +18,7 @@ export const GlossarySection: React.FC = () => {
     },
     {
       term: "Monthly Queries",
-      description: "Volume of queries received each month"
+      description: "Total volume of queries received each month by all reps combined"
     },
     {
       term: "Average Handling Time",
