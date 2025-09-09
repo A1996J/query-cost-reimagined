@@ -243,6 +243,18 @@ export const EMACalculator: React.FC = () => {
 
               {/* Input Sections */}
               <div className="space-y-6">
+                <Card className="p-6 shadow-soft">
+                  <Button 
+                    onClick={handleCalculate}
+                    disabled={isCalculating || !canCalculate(scenarios.base)}
+                    className="w-full bg-finance-gradient hover:shadow-medium transition-all duration-300 text-lg py-6"
+                    size="lg"
+                  >
+                    <TrendingUp className="mr-2 h-5 w-5" />
+                    {isCalculating ? 'Calculating...' : 'Calculate Ema Savings'}
+                  </Button>
+                </Card>
+
                 <CriticalInputsSection 
                   inputs={scenarios.base}
                   onUpdateInput={updateInput}
@@ -264,18 +276,6 @@ export const EMACalculator: React.FC = () => {
                   isOpen={advancedOpen}
                   onOpenChange={setAdvancedOpen}
                 />
-
-                <Card className="p-6 shadow-soft">
-                  <Button 
-                    onClick={handleCalculate}
-                    disabled={isCalculating || !canCalculate(scenarios.base)}
-                    className="w-full bg-finance-gradient hover:shadow-medium transition-all duration-300 text-lg py-6"
-                    size="lg"
-                  >
-                    <TrendingUp className="mr-2 h-5 w-5" />
-                    {isCalculating ? 'Calculating...' : 'Calculate Ema Savings'}
-                  </Button>
-                </Card>
               </div>
             </div>
           </TabsContent>
@@ -306,6 +306,18 @@ export const EMACalculator: React.FC = () => {
 
               {/* Input Sections */}
               <div className="space-y-6">
+                <Card className="p-6 shadow-soft">
+                  <Button 
+                    onClick={handleCalculate}
+                    disabled={isCalculating || !canCalculate(scenarios.bull)}
+                    className="w-full bg-finance-gradient hover:shadow-medium transition-all duration-300 text-lg py-6"
+                    size="lg"
+                  >
+                    <TrendingUp className="mr-2 h-5 w-5" />
+                    {isCalculating ? 'Calculating...' : 'Calculate Ema Savings'}
+                  </Button>
+                </Card>
+
                 <div className="mb-4">
                   <Button
                     onClick={populateBullScenario}
@@ -337,18 +349,6 @@ export const EMACalculator: React.FC = () => {
                   isOpen={advancedOpen}
                   onOpenChange={setAdvancedOpen}
                 />
-
-                <Card className="p-6 shadow-soft">
-                  <Button 
-                    onClick={handleCalculate}
-                    disabled={isCalculating || !canCalculate(scenarios.bull)}
-                    className="w-full bg-finance-gradient hover:shadow-medium transition-all duration-300 text-lg py-6"
-                    size="lg"
-                  >
-                    <TrendingUp className="mr-2 h-5 w-5" />
-                    {isCalculating ? 'Calculating...' : 'Calculate Ema Savings'}
-                  </Button>
-                </Card>
               </div>
             </div>
           </TabsContent>
