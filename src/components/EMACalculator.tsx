@@ -6,7 +6,6 @@ import { Calculator, TrendingUp, DollarSign, BarChart3 } from 'lucide-react';
 import emaLogo from '/lovable-uploads/93b7ff10-d08c-4f6d-bb64-a3e8cee08d36.png';
 import { Onboarding } from './Onboarding';
 import { Disclaimer } from './Disclaimer';
-import { CriticalInputsSection } from './calculator/CriticalInputsSection';
 import { DetailedAssumptionsSection } from './calculator/DetailedAssumptionsSection';
 import { AdvancedInputsSection } from './calculator/AdvancedInputsSection';
 import { ResultsDisplay } from './calculator/ResultsDisplay';
@@ -172,9 +171,49 @@ export const EMACalculator: React.FC = () => {
     }
   }, [scenarios, currentScenario]);
 
-  const handleOnboardingComplete = (name: string, selectedIndustry: string) => {
+  const handleOnboardingComplete = (name: string, selectedIndustry: string, criticalInputs: {
+    country: string;
+    monthlyQueryVolume: number;
+    companyGrowthRate: number;
+  }) => {
     setCompanyName(name);
     setIndustry(selectedIndustry);
+    
+    // Get currency from country
+    const countries = [
+      { code: 'US', name: 'United States', currency: 'USD' },
+      { code: 'GB', name: 'United Kingdom', currency: 'GBP' },
+      { code: 'IN', name: 'India', currency: 'INR' },
+      { code: 'CA', name: 'Canada', currency: 'CAD' },
+      { code: 'AU', name: 'Australia', currency: 'AUD' },
+      { code: 'DE', name: 'Germany', currency: 'EUR' },
+      { code: 'FR', name: 'France', currency: 'EUR' },
+      { code: 'JP', name: 'Japan', currency: 'JPY' },
+      { code: 'CN', name: 'China', currency: 'CNY' },
+      { code: 'SG', name: 'Singapore', currency: 'SGD' },
+    ];
+    
+    const selectedCountry = countries.find(c => c.code === criticalInputs.country);
+    const currency = selectedCountry?.currency || 'USD';
+    
+    // Update scenarios with critical inputs
+    setScenarios(prev => ({
+      base: {
+        ...prev.base,
+        country: criticalInputs.country,
+        currency: currency,
+        monthlyQueryVolume: criticalInputs.monthlyQueryVolume,
+        companyGrowthRate: criticalInputs.companyGrowthRate,
+      },
+      bull: {
+        ...prev.bull,
+        country: criticalInputs.country,
+        currency: currency,
+        monthlyQueryVolume: criticalInputs.monthlyQueryVolume,
+        companyGrowthRate: criticalInputs.companyGrowthRate,
+      }
+    }));
+    
     setShowOnboarding(false);
   };
 
@@ -256,11 +295,6 @@ export const EMACalculator: React.FC = () => {
 
               {/* Input Sections */}
               <div className="space-y-6">
-                <CriticalInputsSection 
-                  inputs={scenarios.base}
-                  onUpdateInput={updateInput}
-                />
-                
                 <DetailedAssumptionsSection 
                   inputs={scenarios.base}
                   onUpdateInput={updateInput}
@@ -331,11 +365,6 @@ export const EMACalculator: React.FC = () => {
 
               {/* Input Sections */}
               <div className="space-y-6">
-                <CriticalInputsSection 
-                  inputs={scenarios.bull}
-                  onUpdateInput={updateInput}
-                />
-                
                 <DetailedAssumptionsSection 
                   inputs={scenarios.bull}
                   onUpdateInput={updateInput}

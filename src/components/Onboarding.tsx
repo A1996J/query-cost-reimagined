@@ -4,10 +4,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowRight, Building2 } from 'lucide-react';
+import { ArrowRight, Building2, Globe, TrendingUp } from 'lucide-react';
 
 interface OnboardingProps {
-  onComplete: (companyName: string, industry: string) => void;
+  onComplete: (companyName: string, industry: string, criticalInputs: {
+    country: string;
+    monthlyQueryVolume: number;
+    companyGrowthRate: number;
+  }) => void;
 }
 
 export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
@@ -15,6 +19,9 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   const [industry, setIndustry] = useState('');
   const [useCase, setUseCase] = useState('');
   const [companyName, setCompanyName] = useState('');
+  const [country, setCountry] = useState('');
+  const [monthlyQueryVolume, setMonthlyQueryVolume] = useState(0);
+  const [companyGrowthRate, setCompanyGrowthRate] = useState(0);
   const [showIndustryMessage, setShowIndustryMessage] = useState(false);
   const [showUseCaseMessage, setShowUseCaseMessage] = useState(false);
 
@@ -32,6 +39,19 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
     'Customer Experience',
     'Sales and Marketing',
     'Recruitment'
+  ];
+
+  const countries = [
+    { code: 'US', name: 'United States', currency: 'USD' },
+    { code: 'GB', name: 'United Kingdom', currency: 'GBP' },
+    { code: 'IN', name: 'India', currency: 'INR' },
+    { code: 'CA', name: 'Canada', currency: 'CAD' },
+    { code: 'AU', name: 'Australia', currency: 'AUD' },
+    { code: 'DE', name: 'Germany', currency: 'EUR' },
+    { code: 'FR', name: 'France', currency: 'EUR' },
+    { code: 'JP', name: 'Japan', currency: 'JPY' },
+    { code: 'CN', name: 'China', currency: 'CNY' },
+    { code: 'SG', name: 'Singapore', currency: 'SGD' },
   ];
 
   const handleIndustryNext = () => {
@@ -52,9 +72,19 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
     }
   };
 
-  const handleComplete = () => {
+  const handleCompanyNameNext = () => {
     if (companyName.trim()) {
-      onComplete(companyName.trim(), industry);
+      setStep(4);
+    }
+  };
+
+  const handleComplete = () => {
+    if (country && monthlyQueryVolume > 0 && companyGrowthRate >= 0) {
+      onComplete(companyName.trim(), industry, {
+        country,
+        monthlyQueryVolume,
+        companyGrowthRate: companyGrowthRate / 100
+      });
     }
   };
 
@@ -162,8 +192,95 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
                   Back
                 </Button>
                 <Button 
-                  onClick={handleComplete}
+                  onClick={handleCompanyNameNext}
                   disabled={!companyName.trim()}
+                  className="flex-1 bg-finance-gradient hover:shadow-medium transition-all duration-300"
+                >
+                  Next <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {step === 4 && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-semibold mb-4">Step 4: Critical Business Inputs</h2>
+                <p className="text-muted-foreground mb-6">These inputs are required to calculate your ROI</p>
+                
+                <div className="space-y-4">
+                  {/* Partner Country */}
+                  <div className="space-y-2">
+                    <Label htmlFor="country" className="flex items-center gap-2">
+                      <Globe className="h-4 w-4" />
+                      Partner Country
+                    </Label>
+                    <Select value={country} onValueChange={setCountry}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select partner country" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-card">
+                        {countries.map((countryItem) => (
+                          <SelectItem key={countryItem.code} value={countryItem.code}>
+                            {countryItem.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <p className="text-sm text-muted-foreground">
+                      Country where the partner's team or operation is located
+                    </p>
+                  </div>
+
+                  {/* Monthly Queries */}
+                  <div className="space-y-2">
+                    <Label htmlFor="monthlyQueries" className="flex items-center gap-2">
+                      <TrendingUp className="h-4 w-4" />
+                      Monthly Queries (Millions)
+                    </Label>
+                    <Input
+                      id="monthlyQueries"
+                      type="number"
+                      value={monthlyQueryVolume || ''}
+                      onChange={(e) => setMonthlyQueryVolume(parseFloat(e.target.value) || 0)}
+                      step="0.1"
+                      className="text-lg font-medium"
+                      placeholder="Enter monthly volume"
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      Total customer service queries handled per month
+                    </p>
+                  </div>
+
+                  {/* Client Growth */}
+                  <div className="space-y-2">
+                    <Label htmlFor="growthRate" className="flex items-center gap-2">
+                      <TrendingUp className="h-4 w-4" />
+                      Client Growth (%)
+                    </Label>
+                    <Input
+                      id="growthRate"
+                      type="number"
+                      value={companyGrowthRate || ''}
+                      onChange={(e) => setCompanyGrowthRate(parseFloat(e.target.value) || 0)}
+                      step="1"
+                      className="text-lg font-medium"
+                      placeholder="Enter growth percentage"
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      Annual growth rate for the client's business over the next two years
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={() => setStep(3)} className="flex-1">
+                  Back
+                </Button>
+                <Button 
+                  onClick={handleComplete}
+                  disabled={!country || !monthlyQueryVolume || companyGrowthRate < 0}
                   className="flex-1 bg-finance-gradient hover:shadow-medium transition-all duration-300"
                 >
                   Start Calculator <ArrowRight className="ml-2 h-4 w-4" />
