@@ -2,12 +2,27 @@ import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
 import { Settings, ChevronDown, ChevronUp, Target, Zap, TrendingUp, DollarSign, Globe } from 'lucide-react';
 import { EMACalculatorInputs } from '@/types/ema-calculator';
 
 const WORKING_MINUTES_PER_YEAR = 124800; // 250 workdays × 8 hours × 60 minutes
+
+// Countries data for critical inputs
+const countries = [
+  { code: 'US', name: 'United States', currency: 'USD' },
+  { code: 'GB', name: 'United Kingdom', currency: 'GBP' },
+  { code: 'IN', name: 'India', currency: 'INR' },
+  { code: 'CA', name: 'Canada', currency: 'CAD' },
+  { code: 'AU', name: 'Australia', currency: 'AUD' },
+  { code: 'DE', name: 'Germany', currency: 'EUR' },
+  { code: 'FR', name: 'France', currency: 'EUR' },
+  { code: 'JP', name: 'Japan', currency: 'JPY' },
+  { code: 'CN', name: 'China', currency: 'CNY' },
+  { code: 'SG', name: 'Singapore', currency: 'SGD' },
+];
 
 // Mock FX rates - in production, this would come from an API
 const mockFXRates: { [key: string]: number } = {
@@ -44,6 +59,16 @@ export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProp
   const handleFxRateChange = (value: string) => {
     onFxRateUserEdited(true);
     onUpdateInput('fxRate', parseFloat(value) || 1);
+  };
+
+  const handleCountryChange = (countryCode: string) => {
+    const country = countries.find(c => c.code === countryCode);
+    if (country) {
+      onUpdateInput('country', countryCode);
+      onUpdateInput('currency', country.currency);
+      // Reset FX rate editing flag to allow auto-update for new currency
+      onFxRateUserEdited(false);
+    }
   };
 
   // Auto-populate fields based on conditions
@@ -103,7 +128,82 @@ export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProp
         
         <CollapsibleContent>
           <CardContent className="space-y-6">
-            {/* Moved fields from Critical Inputs */}
+            {/* Critical Business Inputs Section */}
+            <div className="border-b pb-6 mb-6">
+              <h4 className="text-lg font-semibold mb-4 text-finance-primary">Critical Business Inputs</h4>
+              <p className="text-sm text-muted-foreground mb-4">
+                Key business parameters that drive the calculation. These can be edited independently per scenario.
+              </p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Partner Country */}
+                <div className="space-y-2">
+                  <Label htmlFor="country" className="flex items-center gap-2">
+                    <Globe className="h-4 w-4" />
+                    Partner Country
+                  </Label>
+                  <Select value={inputs.country} onValueChange={handleCountryChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select partner country" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card">
+                      {countries.map((country) => (
+                        <SelectItem key={country.code} value={country.code}>
+                          {country.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-sm text-muted-foreground">
+                    Country where the client's concerned team or operation is located
+                  </p>
+                </div>
+
+                {/* Monthly Query Volume */}
+                <div className="space-y-2">
+                  <Label htmlFor="monthlyQueries" className="flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4" />
+                    Monthly Queries (Millions)
+                  </Label>
+                  <Input
+                    id="monthlyQueries"
+                    type="number"
+                    value={inputs.monthlyQueryVolume || ''}
+                    onChange={(e) => onUpdateInput('monthlyQueryVolume', parseFloat(e.target.value) || 0)}
+                    step="0.1"
+                    className="text-lg font-medium"
+                    placeholder="Enter monthly volume"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Total customer service queries handled per month by client
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                {/* Client Growth Rate */}
+                <div className="space-y-2">
+                  <Label htmlFor="growthRate" className="flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4" />
+                    Client Growth (%)
+                  </Label>
+                  <Input
+                    id="growthRate"
+                    type="number"
+                    value={inputs.companyGrowthRate ? Math.round(inputs.companyGrowthRate * 100) : ''}
+                    onChange={(e) => onUpdateInput('companyGrowthRate', (parseFloat(e.target.value) || 0) / 100)}
+                    step="1"
+                    className="text-lg font-medium"
+                    placeholder="Enter growth percentage"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Annual growth rate for the client's business over the next two years
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Core Business Parameters */}
             <div className="border-b pb-6 mb-6">
               <h4 className="text-lg font-semibold mb-4 text-finance-primary">Core Business Parameters</h4>
               
