@@ -219,6 +219,28 @@ export const EMACalculator: React.FC = () => {
 
           <TabsContent value="base">
             <div className="space-y-8">
+              {/* Results Section - Above inputs */}
+              {results && currentScenario === 'base' && (
+                <div className="border-b pb-8">
+                  <h2 className="text-2xl font-bold mb-6 text-finance-primary">Results</h2>
+                  <ResultsDisplay 
+                    results={results} 
+                    currency={scenarios.base.currency} 
+                    scenario="base"
+                  />
+                </div>
+              )}
+              
+              {!results && (
+                <Card className="p-8 text-center shadow-soft">
+                  <DollarSign className="h-16 w-16 mx-auto mb-4 text-finance-primary" />
+                  <h3 className="text-xl font-semibold mb-2">Ready to Calculate</h3>
+                  <p className="text-muted-foreground">
+                    Fill in all critical inputs to see the Ema ROI calculation results
+                  </p>
+                </Card>
+              )}
+
               {/* Input Sections */}
               <div className="space-y-6">
                 <CriticalInputsSection 
@@ -255,15 +277,19 @@ export const EMACalculator: React.FC = () => {
                   </Button>
                 </Card>
               </div>
+            </div>
+          </TabsContent>
 
-              {/* Results Section - Below inputs */}
-              {results && currentScenario === 'base' && (
-                <div className="border-t pt-8">
+          <TabsContent value="bull">
+            <div className="space-y-8">
+              {/* Results Section - Above inputs */}
+              {results && currentScenario === 'bull' && (
+                <div className="border-b pb-8">
                   <h2 className="text-2xl font-bold mb-6 text-finance-primary">Results</h2>
                   <ResultsDisplay 
                     results={results} 
-                    currency={scenarios.base.currency} 
-                    scenario="base"
+                    currency={scenarios.bull.currency} 
+                    scenario="bull"
                   />
                 </div>
               )}
@@ -277,11 +303,7 @@ export const EMACalculator: React.FC = () => {
                   </p>
                 </Card>
               )}
-            </div>
-          </TabsContent>
 
-          <TabsContent value="bull">
-            <div className="space-y-8">
               {/* Input Sections */}
               <div className="space-y-6">
                 <div className="mb-4">
@@ -328,28 +350,6 @@ export const EMACalculator: React.FC = () => {
                   </Button>
                 </Card>
               </div>
-
-              {/* Results Section - Below inputs */}
-              {results && currentScenario === 'bull' && (
-                <div className="border-t pt-8">
-                  <h2 className="text-2xl font-bold mb-6 text-finance-primary">Results</h2>
-                  <ResultsDisplay 
-                    results={results} 
-                    currency={scenarios.bull.currency} 
-                    scenario="bull"
-                  />
-                </div>
-              )}
-              
-              {!results && (
-                <Card className="p-8 text-center shadow-soft">
-                  <DollarSign className="h-16 w-16 mx-auto mb-4 text-finance-primary" />
-                  <h3 className="text-xl font-semibold mb-2">Ready to Calculate</h3>
-                  <p className="text-muted-foreground">
-                    Fill in all critical inputs to see the Ema ROI calculation results
-                  </p>
-                </Card>
-              )}
             </div>
           </TabsContent>
 
