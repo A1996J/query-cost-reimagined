@@ -41,7 +41,7 @@ export const ReportKeyPerformanceIndicators: React.FC<ReportKeyPerformanceIndica
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2 text-finance-primary">
           <TrendingUp className="h-5 w-5" />
-          Key Performance Indicators
+          Quick Payback with top-notch ROI
         </CardTitle>
       </CardHeader>
       <CardContent>
