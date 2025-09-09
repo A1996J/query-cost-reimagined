@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Download } from 'lucide-react';
-import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { toast } from '@/hooks/use-toast';
 
@@ -15,271 +14,277 @@ export const PDFExport: React.FC<PDFExportProps> = ({ scenarioResults, scenarios
     try {
       toast({
         title: "Generating PDF",
-        description: "Creating your 5-slide report..."
+        description: "Creating your professional EMA ROI report..."
       });
 
-      const pdf = new jsPDF('landscape', 'mm', 'a4');
-      const pageWidth = 297; // A4 landscape width in mm
-      const pageHeight = 210; // A4 landscape height in mm
+      const pdf = new jsPDF('portrait', 'mm', 'a4');
+      const pageWidth = 210;
+      const pageHeight = 297;
+      const margin = 20;
+      const contentWidth = pageWidth - (margin * 2);
+      
+      // Emma green color values
+      const emmaGreen = { r: 106, g: 176, b: 76 }; // RGB for hsl(135 65% 45%)
+      const lightGreen = { r: 240, g: 248, b: 241 }; // Light green background
+      const darkGray = { r: 51, g: 51, b: 51 };
+      const mediumGray = { r: 102, g: 102, b: 102 };
+      const white = { r: 255, g: 255, b: 255 };
 
-      // Function to capture element and add to PDF
-      const captureAndAdd = async (elementId: string, pageNumber: number) => {
-        const element = document.getElementById(elementId);
-        if (!element) {
-          console.warn(`Element with id ${elementId} not found`);
-          return;
+      let currentPage = 1;
+      let yPosition = margin;
+
+      // Helper functions
+      const addHeader = (title: string, subtitle?: string) => {
+        // Emma logo placeholder
+        pdf.setFillColor(emmaGreen.r, emmaGreen.g, emmaGreen.b);
+        pdf.rect(margin, yPosition, 40, 8, 'F');
+        pdf.setFontSize(12);
+        pdf.setTextColor(white.r, white.g, white.b);
+        pdf.text('EMA', margin + 2, yPosition + 5.5);
+        
+        // Main title
+        pdf.setFontSize(20);
+        pdf.setTextColor(darkGray.r, darkGray.g, darkGray.b);
+        pdf.text(title, margin, yPosition + 20);
+        
+        if (subtitle) {
+          pdf.setFontSize(12);
+          pdf.setTextColor(mediumGray.r, mediumGray.g, mediumGray.b);
+          pdf.text(subtitle, margin, yPosition + 28);
         }
+        
+        // Green line separator
+        pdf.setDrawColor(emmaGreen.r, emmaGreen.g, emmaGreen.b);
+        pdf.setLineWidth(0.5);
+        pdf.line(margin, yPosition + 35, pageWidth - margin, yPosition + 35);
+        
+        return yPosition + 45;
+      };
 
-        const canvas = await html2canvas(element, {
-          scale: 2,
-          useCORS: true,
-          backgroundColor: '#ffffff',
-          width: element.scrollWidth,
-          height: element.scrollHeight
+      const addNewPage = () => {
+        pdf.addPage();
+        currentPage++;
+        yPosition = margin;
+      };
+
+      const formatCurrency = (value: number, currency: string = 'USD') => {
+        return new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: currency,
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        }).format(value);
+      };
+
+      const addTable = (headers: string[], rows: string[][], startY: number) => {
+        const rowHeight = 8;
+        const colWidth = contentWidth / headers.length;
+        let currentY = startY;
+
+        // Header
+        pdf.setFillColor(lightGreen.r, lightGreen.g, lightGreen.b);
+        pdf.rect(margin, currentY, contentWidth, rowHeight, 'F');
+        pdf.setFontSize(10);
+        pdf.setTextColor(darkGray.r, darkGray.g, darkGray.b);
+        
+        headers.forEach((header, i) => {
+          pdf.text(header, margin + (i * colWidth) + 2, currentY + 5.5);
+        });
+        
+        currentY += rowHeight;
+
+        // Rows
+        pdf.setFillColor(white.r, white.g, white.b);
+        rows.forEach((row, rowIndex) => {
+          if (rowIndex % 2 === 1) {
+            pdf.setFillColor(248, 249, 250);
+          } else {
+            pdf.setFillColor(white.r, white.g, white.b);
+          }
+          
+          pdf.rect(margin, currentY, contentWidth, rowHeight, 'F');
+          
+          row.forEach((cell, colIndex) => {
+            pdf.setTextColor(darkGray.r, darkGray.g, darkGray.b);
+            if (colIndex === 0) {
+              pdf.setFontSize(9);
+            } else {
+              pdf.setFontSize(10);
+            }
+            pdf.text(cell, margin + (colIndex * colWidth) + 2, currentY + 5.5);
+          });
+          
+          currentY += rowHeight;
         });
 
-        const imgData = canvas.toDataURL('image/png');
-        const imgWidth = pageWidth - 20; // Margin
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        
-        // Add new page if not first page
-        if (pageNumber > 1) {
-          pdf.addPage();
-        }
-
-        // Add image centered on page
-        const x = 10; // Left margin
-        const y = Math.max(10, (pageHeight - imgHeight) / 2); // Center vertically with minimum margin
-        
-        pdf.addImage(imgData, 'PNG', x, y, imgWidth, Math.min(imgHeight, pageHeight - 20));
+        return currentY + 10;
       };
 
-      // Create temporary elements with IDs for PDF export
-      const createSlideElements = () => {
-        const createSlideHeader = (title: string, subtitle: string) => {
-          const header = document.createElement('div');
-          header.className = 'mb-8 pb-4 border-b-2 border-gray-200';
-          header.innerHTML = `
-            <h1 style="font-family: 'Inter', sans-serif; font-size: 28px; font-weight: 700; color: #1a1a1a; margin: 0 0 8px 0; line-height: 1.2;">${title}</h1>
-            <p style="font-family: 'Inter', sans-serif; font-size: 16px; color: #666; margin: 0; line-height: 1.4;">${subtitle}</p>
-          `;
-          return header;
-        };
+      // Page 1: Executive Summary
+      yPosition = addHeader('EMA ROI Analysis', 'Executive Summary & Key Metrics');
 
-        // Slide 1: Executive Summary - Key Savings & Strategic Benefits
-        const slide1 = document.createElement('div');
-        slide1.id = 'pdf-slide-1';
-        slide1.className = 'bg-white';
-        slide1.style.cssText = 'padding: 40px; font-family: Inter, sans-serif; line-height: 1.5; min-height: 800px;';
+      if (scenarioResults?.base) {
+        const base = scenarioResults.base;
         
-        const header1 = createSlideHeader(
-          'Executive Summary: EMA ROI Analysis',
-          'Quantified savings potential and strategic benefits from EMA implementation'
-        );
-        slide1.appendChild(header1);
+        // Key metrics boxes
+        pdf.setFillColor(lightGreen.r, lightGreen.g, lightGreen.b);
+        const boxWidth = (contentWidth - 10) / 3;
+        const boxHeight = 25;
+        
+        // Total Savings
+        pdf.rect(margin, yPosition, boxWidth, boxHeight, 'F');
+        pdf.setFontSize(14);
+        pdf.setTextColor(emmaGreen.r, emmaGreen.g, emmaGreen.b);
+        pdf.text('Total 3-Year Savings', margin + 2, yPosition + 8);
+        pdf.setFontSize(16);
+        pdf.setTextColor(darkGray.r, darkGray.g, darkGray.b);
+        pdf.text(formatCurrency(base.totalSavings * 3), margin + 2, yPosition + 16);
 
-        const contentDiv1 = document.createElement('div');
-        contentDiv1.style.cssText = 'display: grid; grid-template-columns: 1fr; gap: 24px;';
-        
-        const stickers = document.querySelector('.savings-stickers-container') as HTMLElement;
-        const waterfall = document.querySelector('.waterfall-chart-container') as HTMLElement;
-        const benefits = document.querySelector('.additional-benefits-container') as HTMLElement;
-        
-        if (stickers) {
-          const stickersClone = stickers.cloneNode(true) as HTMLElement;
-          stickersClone.style.cssText = 'margin-bottom: 24px;';
-          contentDiv1.appendChild(stickersClone);
-        }
-        
-        if (waterfall) {
-          const waterfallClone = waterfall.cloneNode(true) as HTMLElement;
-          waterfallClone.style.cssText = 'margin-bottom: 24px;';
-          contentDiv1.appendChild(waterfallClone);
-        }
+        // ROI
+        pdf.rect(margin + boxWidth + 5, yPosition, boxWidth, boxHeight, 'F');
+        pdf.setFontSize(14);
+        pdf.setTextColor(emmaGreen.r, emmaGreen.g, emmaGreen.b);
+        pdf.text('ROI', margin + boxWidth + 7, yPosition + 8);
+        pdf.setFontSize(16);
+        pdf.setTextColor(darkGray.r, darkGray.g, darkGray.b);
+        const roi = ((base.totalSavings * 3) / (scenarios?.base?.implementationCost || 1)) * 100;
+        pdf.text(`${roi.toFixed(0)}%`, margin + boxWidth + 7, yPosition + 16);
 
-        if (benefits) {
-          const benefitsClone = benefits.cloneNode(true) as HTMLElement;
-          benefitsClone.style.cssText = 'margin-top: 24px;';
-          contentDiv1.appendChild(benefitsClone);
-        }
+        // Payback Period
+        pdf.rect(margin + (boxWidth + 5) * 2, yPosition, boxWidth, boxHeight, 'F');
+        pdf.setFontSize(14);
+        pdf.setTextColor(emmaGreen.r, emmaGreen.g, emmaGreen.b);
+        pdf.text('Payback Period', margin + (boxWidth + 5) * 2 + 2, yPosition + 8);
+        pdf.setFontSize(16);
+        pdf.setTextColor(darkGray.r, darkGray.g, darkGray.b);
+        const payback = (scenarios?.base?.implementationCost || 0) / (base.totalSavings || 1);
+        pdf.text(`${payback.toFixed(1)} years`, margin + (boxWidth + 5) * 2 + 2, yPosition + 16);
 
-        slide1.appendChild(contentDiv1);
-        document.body.appendChild(slide1);
+        yPosition += boxHeight + 20;
 
-        // Slide 2: Risk Analysis & Key Assumptions
-        const slide2 = document.createElement('div');
-        slide2.id = 'pdf-slide-2';
-        slide2.className = 'bg-white';
-        slide2.style.cssText = 'padding: 40px; font-family: Inter, sans-serif; line-height: 1.5; min-height: 800px;';
-        
-        const header2 = createSlideHeader(
-          'Sensitivity Analysis & Key Assumptions',
-          'Risk assessment and critical input parameters driving ROI calculations'
-        );
-        slide2.appendChild(header2);
+        // Savings breakdown table
+        pdf.setFontSize(14);
+        pdf.setTextColor(darkGray.r, darkGray.g, darkGray.b);
+        pdf.text('Annual Savings Breakdown', margin, yPosition);
+        yPosition += 10;
 
-        const contentDiv2 = document.createElement('div');
-        contentDiv2.style.cssText = 'display: grid; grid-template-columns: 1fr; gap: 32px;';
-        
-        const sensitivity = document.querySelector('.sensitivity-heatmap-container') as HTMLElement;
-        const keyAssumptions = document.querySelector('.key-assumptions-container') as HTMLElement;
-        
-        if (sensitivity) {
-          const sensitivityClone = sensitivity.cloneNode(true) as HTMLElement;
-          sensitivityClone.style.cssText = 'margin-bottom: 24px;';
-          contentDiv2.appendChild(sensitivityClone);
-        }
-        
-        if (keyAssumptions) {
-          const assumptionsClone = keyAssumptions.cloneNode(true) as HTMLElement;
-          assumptionsClone.style.cssText = 'margin-top: 24px;';
-          contentDiv2.appendChild(assumptionsClone);
-        }
+        const savingsHeaders = ['Category', 'Year 1', 'Year 2', 'Year 3'];
+        const savingsRows = [
+          ['Direct Agent Savings', 
+           formatCurrency(base.directAgentSavings || 0),
+           formatCurrency((base.directAgentSavings || 0) * 1.1),
+           formatCurrency((base.directAgentSavings || 0) * 1.2)],
+          ['Productivity Gains',
+           formatCurrency(base.productivitySavings || 0),
+           formatCurrency((base.productivitySavings || 0) * 1.1),
+           formatCurrency((base.productivitySavings || 0) * 1.2)],
+          ['Additional Benefits',
+           formatCurrency(base.additionalSavings || 0),
+           formatCurrency((base.additionalSavings || 0) * 1.1),
+           formatCurrency((base.additionalSavings || 0) * 1.2)]
+        ];
 
-        slide2.appendChild(contentDiv2);
-        document.body.appendChild(slide2);
+        yPosition = addTable(savingsHeaders, savingsRows, yPosition);
+      }
 
-        // Slide 3: Financial Impact - Pre & Post EMA Analysis
-        const slide3 = document.createElement('div');
-        slide3.id = 'pdf-slide-3';
-        slide3.className = 'bg-white';
-        slide3.style.cssText = 'padding: 40px; font-family: Inter, sans-serif; line-height: 1.5; min-height: 800px;';
-        
-        const header3 = createSlideHeader(
-          'Financial Impact Analysis (Part 1)',
-          'Detailed cost structure comparison - current state vs. EMA-enabled operations'
-        );
-        slide3.appendChild(header3);
+      // Benefits not baked in section (for Banking industry)
+      if (scenarios?.base?.industry === 'Banking and Financial Services') {
+        pdf.setFontSize(14);
+        pdf.setTextColor(darkGray.r, darkGray.g, darkGray.b);
+        pdf.text('Additional Benefits Not Quantified', margin, yPosition);
+        yPosition += 10;
 
-        const summary = document.querySelector('.executive-summary-container') as HTMLElement;
-        if (summary) {
-          const summaryClone = summary.cloneNode(true) as HTMLElement;
-          summaryClone.style.cssText = 'margin-top: 24px;';
-          
-          const table = summaryClone.querySelector('table');
-          if (table) {
-            table.style.cssText = 'width: 100%; font-family: Inter, sans-serif; font-size: 14px;';
-            const tbody = table.querySelector('tbody');
-            if (tbody) {
-              // Keep only first 3 sections (Pre-Ema, Post-Ema, Direct Savings)
-              const rows = tbody.querySelectorAll('tr');
-              let sectionCount = 0;
-              const rowsToKeep: Element[] = [];
-              
-              rows.forEach((row) => {
-                const firstCell = row.querySelector('td');
-                if (firstCell?.getAttribute('colSpan') === '7') {
-                  sectionCount++;
-                }
-                if (sectionCount <= 3) {
-                  rowsToKeep.push(row);
-                }
-              });
-              
-              // Clear tbody and add only first 3 sections
-              tbody.innerHTML = '';
-              rowsToKeep.forEach(row => tbody.appendChild(row));
-            }
-          }
-          slide3.appendChild(summaryClone);
-        }
-        document.body.appendChild(slide3);
+        const benefits = [
+          '• Reduced customer churn from no wait times and 24/7 availability',
+          '• Increased CSAT from consistent experience',
+          '• Reduction in branch visits',
+          '• Avoided cancellations from real understanding of core issue',
+          '• Long-term savings from agent use in other business areas'
+        ];
 
-        // Slide 4: Total Value Realization
-        const slide4 = document.createElement('div');
-        slide4.id = 'pdf-slide-4';
-        slide4.className = 'bg-white';
-        slide4.style.cssText = 'padding: 40px; font-family: Inter, sans-serif; line-height: 1.5; min-height: 800px;';
-        
-        const header4 = createSlideHeader(
-          'Total Value Realization (Part 2)',
-          'Comprehensive savings summary including additional operational efficiencies'
-        );
-        slide4.appendChild(header4);
-        
-        if (summary) {
-          const summaryClone2 = summary.cloneNode(true) as HTMLElement;
-          summaryClone2.style.cssText = 'margin-top: 24px;';
-          
-          const table2 = summaryClone2.querySelector('table');
-          if (table2) {
-            table2.style.cssText = 'width: 100%; font-family: Inter, sans-serif; font-size: 14px;';
-            const tbody2 = table2.querySelector('tbody');
-            if (tbody2) {
-              // Keep only last 2 sections (Additional Savings, All-In Savings)
-              const rows = tbody2.querySelectorAll('tr');
-              let sectionCount = 0;
-              const rowsToKeep: Element[] = [];
-              
-              rows.forEach((row) => {
-                const firstCell = row.querySelector('td');
-                if (firstCell?.getAttribute('colSpan') === '7') {
-                  sectionCount++;
-                }
-                if (sectionCount > 3) {
-                  rowsToKeep.push(row);
-                }
-              });
-              
-              // Clear tbody and add only last 2 sections
-              tbody2.innerHTML = '';
-              rowsToKeep.forEach(row => tbody2.appendChild(row));
-            }
-          }
-          slide4.appendChild(summaryClone2);
-        }
-        document.body.appendChild(slide4);
-
-        // Slide 5: Technical Appendix
-        const slide5 = document.createElement('div');
-        slide5.id = 'pdf-slide-5';
-        slide5.className = 'bg-white';
-        slide5.style.cssText = 'padding: 40px; font-family: Inter, sans-serif; line-height: 1.5; min-height: 800px;';
-        
-        const header5 = createSlideHeader(
-          'Technical Appendix',
-          'Definitions and methodological notes for ROI calculation framework'
-        );
-        slide5.appendChild(header5);
-        
-        const glossary = document.querySelector('.glossary-container') as HTMLElement;
-        if (glossary) {
-          const glossaryClone = glossary.cloneNode(true) as HTMLElement;
-          glossaryClone.style.cssText = 'margin-top: 24px; font-family: Inter, sans-serif;';
-          slide5.appendChild(glossaryClone);
-        }
-        document.body.appendChild(slide5);
-
-        return [slide1, slide2, slide3, slide4, slide5];
-      };
-
-      const cleanupSlideElements = (elements: HTMLElement[]) => {
-        elements.forEach(el => {
-          if (el.parentNode) {
-            el.parentNode.removeChild(el);
-          }
+        pdf.setFontSize(10);
+        pdf.setTextColor(mediumGray.r, mediumGray.g, mediumGray.b);
+        benefits.forEach(benefit => {
+          pdf.text(benefit, margin, yPosition);
+          yPosition += 6;
         });
-      };
+      }
 
-      const slideElements = createSlideElements();
+      // Page 2: Detailed Analysis
+      addNewPage();
+      yPosition = addHeader('Detailed Financial Analysis', 'Key assumptions and sensitivity analysis');
 
-      // Capture slides
-      await captureAndAdd('pdf-slide-1', 1);
-      await captureAndAdd('pdf-slide-2', 2);
-      await captureAndAdd('pdf-slide-3', 3);
-      await captureAndAdd('pdf-slide-4', 4);
-      await captureAndAdd('pdf-slide-5', 5);
+      if (scenarios) {
+        // Key assumptions table
+        pdf.setFontSize(14);
+        pdf.setTextColor(darkGray.r, darkGray.g, darkGray.b);
+        pdf.text('Key Input Assumptions', margin, yPosition);
+        yPosition += 10;
 
-      // Cleanup
-      cleanupSlideElements(slideElements);
+        const assumptionHeaders = ['Parameter', 'Base Case', 'Bull Case', 'Bear Case'];
+        const assumptionRows = [
+          ['Monthly Query Volume', 
+           (scenarios.base?.monthlyQueryVolume || 0).toLocaleString(),
+           (scenarios.bull?.monthlyQueryVolume || 0).toLocaleString(),
+           (scenarios.bear?.monthlyQueryVolume || 0).toLocaleString()],
+          ['Avg Handling Time (min)',
+           (scenarios.base?.averageHandlingTime || 0).toString(),
+           (scenarios.bull?.averageHandlingTime || 0).toString(), 
+           (scenarios.bear?.averageHandlingTime || 0).toString()],
+          ['Final Containment Rate',
+           `${((scenarios.base?.finalYearContainmentRate || 0) * 100).toFixed(0)}%`,
+           `${((scenarios.bull?.finalYearContainmentRate || 0) * 100).toFixed(0)}%`,
+           `${((scenarios.bear?.finalYearContainmentRate || 0) * 100).toFixed(0)}%`],
+          ['Implementation Cost',
+           formatCurrency(scenarios.base?.implementationCost || 0),
+           formatCurrency(scenarios.bull?.implementationCost || 0),
+           formatCurrency(scenarios.bear?.implementationCost || 0)]
+        ];
 
-      // Save PDF
-      const fileName = `Ema_ROI_Report_${new Date().toISOString().split('T')[0]}.pdf`;
+        yPosition = addTable(assumptionHeaders, assumptionRows, yPosition);
+
+        // Scenario comparison
+        pdf.setFontSize(14);
+        pdf.setTextColor(darkGray.r, darkGray.g, darkGray.b);
+        pdf.text('Scenario Comparison', margin, yPosition);
+        yPosition += 10;
+
+        const scenarioHeaders = ['Metric', 'Bear Case', 'Base Case', 'Bull Case'];
+        const scenarioRows = [
+          ['Total 3-Year Savings',
+           formatCurrency((scenarioResults.bear?.totalSavings || 0) * 3),
+           formatCurrency((scenarioResults.base?.totalSavings || 0) * 3),
+           formatCurrency((scenarioResults.bull?.totalSavings || 0) * 3)],
+          ['ROI',
+           `${(((scenarioResults.bear?.totalSavings || 0) * 3) / (scenarios.bear?.implementationCost || 1) * 100).toFixed(0)}%`,
+           `${(((scenarioResults.base?.totalSavings || 0) * 3) / (scenarios.base?.implementationCost || 1) * 100).toFixed(0)}%`,
+           `${(((scenarioResults.bull?.totalSavings || 0) * 3) / (scenarios.bull?.implementationCost || 1) * 100).toFixed(0)}%`],
+          ['Payback Period (years)',
+           `${((scenarios.bear?.implementationCost || 0) / (scenarioResults.bear?.totalSavings || 1)).toFixed(1)}`,
+           `${((scenarios.base?.implementationCost || 0) / (scenarioResults.base?.totalSavings || 1)).toFixed(1)}`,
+           `${((scenarios.bull?.implementationCost || 0) / (scenarioResults.bull?.totalSavings || 1)).toFixed(1)}`]
+        ];
+
+        addTable(scenarioHeaders, scenarioRows, yPosition);
+      }
+
+      // Add footer to all pages
+      const totalPages = pdf.getNumberOfPages();
+      for (let i = 1; i <= totalPages; i++) {
+        pdf.setPage(i);
+        pdf.setFontSize(8);
+        pdf.setTextColor(mediumGray.r, mediumGray.g, mediumGray.b);
+        pdf.text(`EMA ROI Analysis - Page ${i} of ${totalPages}`, margin, pageHeight - 10);
+        pdf.text(`Generated on ${new Date().toLocaleDateString()}`, pageWidth - margin - 50, pageHeight - 10);
+      }
+
+      // Save the PDF
+      const fileName = `EMA_ROI_Analysis_${new Date().toISOString().split('T')[0]}.pdf`;
       pdf.save(fileName);
 
       toast({
-        title: "PDF Generated",
-        description: `Report exported as ${fileName}`
+        title: "PDF Generated Successfully",
+        description: `Professional report saved as ${fileName}`,
       });
 
     } catch (error) {
@@ -296,10 +301,10 @@ export const PDFExport: React.FC<PDFExportProps> = ({ scenarioResults, scenarios
     <Button 
       onClick={exportToPDF}
       variant="outline" 
-      className="mb-6"
+      className="mb-6 border-finance-primary text-finance-primary hover:bg-finance-primary hover:text-white"
     >
       <Download className="mr-2 h-4 w-4" />
-      Export 5-Slide PDF Report
+      Export Professional PDF Report
     </Button>
   );
 };
