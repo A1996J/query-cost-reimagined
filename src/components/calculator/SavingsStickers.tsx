@@ -22,8 +22,7 @@ export const SavingsStickers: React.FC<SavingsStickersProps> = ({ scenarioResult
   const bullAdditional = scenarioResults.bull.totalAdditionalSavings;
 
   const mainSticker = {
-    label: "Your Expected Savings",
-    sublabel: "Over 3 Years after implementation cost",
+    label: "Your 3-year Expected Savings after implementation cost",
     value: `${formatCurrency(baseAllIn)} - ${formatCurrency(bullAllIn)}`,
     className: "bg-finance-gradient text-white"
   };
