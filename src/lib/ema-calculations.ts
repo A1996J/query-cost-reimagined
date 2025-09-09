@@ -9,15 +9,15 @@ export function calculateEMASavings(inputs: EMACalculatorInputs): CalculationRes
   // Calculate all-in annual cost per rep
   const allInCostPerRep = salaryUSD * inputs.benefitsMultiplier;
   
-  // Calculate annual queries
+  // Calculate annual queries - now input is in thousands
   const annualQueries = inputs.monthlyQueryVolume * 12;
   
   // Calculate reps needed
-  const repsNeeded100 = (annualQueries * 1000000 * inputs.averageHandlingTime) / WORKING_MINUTES_PER_YEAR;
+  const repsNeeded100 = (annualQueries * 1000 * inputs.averageHandlingTime) / WORKING_MINUTES_PER_YEAR;
   const totalReps = repsNeeded100 * (1 + inputs.capacityBuffer);
   
   // Calculate cost per query
-  const costPerQuery = (allInCostPerRep * totalReps) / (annualQueries * 1000000);
+  const costPerQuery = (allInCostPerRep * totalReps) / (annualQueries * 1000);
   const pricePerHumanQuery = costPerQuery * inputs.partnerOverheadMultiplier;
   
   // Customer price per EMA query
@@ -39,11 +39,11 @@ export function calculateEMASavings(inputs: EMACalculatorInputs): CalculationRes
     }
     
     // Pre-EMA cost
-    const preEMACost = queries * 1000000 * pricePerHumanQuery;
+    const preEMACost = queries * 1000 * pricePerHumanQuery;
     
     // Post-EMA cost calculation
-    const emaQueries = queries * 1000000 * emaContainmentRate;
-    const humanQueries = queries * 1000000 * (1 - emaContainmentRate);
+    const emaQueries = queries * 1000 * emaContainmentRate;
+    const humanQueries = queries * 1000 * (1 - emaContainmentRate);
     const postEMAHumanCostPerQuery = pricePerHumanQuery * (1 - productivityGain);
     
     const emaCost = emaQueries * emaCustomerPrice;
@@ -54,9 +54,9 @@ export function calculateEMASavings(inputs: EMACalculatorInputs): CalculationRes
     const savings = preEMACost - postEMACost;
     let netSavings = savings;
     
-    // Apply implementation cost in Year 1
+    // Apply implementation cost in Year 1 - now in thousands
     if (year === 1) {
-      netSavings = savings - (inputs.implementationCost * 1000000);
+      netSavings = savings - (inputs.implementationCost * 1000);
     }
 
     // Additional Savings Calculations
@@ -64,8 +64,8 @@ export function calculateEMASavings(inputs: EMACalculatorInputs): CalculationRes
     // 1. First Call Resolution (Duplicate Queries)
     const firstCallResolutionBenefit = humanQueries * pricePerHumanQuery * inputs.duplicateQueriesPercent;
     
-    // 2. Compliance Cost Reduction
-    const complianceSavings = inputs.annualComplianceCostReduction * 1000000;
+    // 2. Compliance Cost Reduction - now in thousands
+    const complianceSavings = inputs.annualComplianceCostReduction * 1000;
     
     // 3. Upselling / Reduced Cancellations
     const revenueEstimate = preEMACost / inputs.customerExperienceAsPercentOfRevenue;
@@ -84,7 +84,7 @@ export function calculateEMASavings(inputs: EMACalculatorInputs): CalculationRes
     
     yearlyBreakdown.push({
       year,
-      queries: queries * 1000000,
+      queries: queries * 1000,
       emaContainmentRate,
       productivityGain,
       preEMACost,
@@ -114,7 +114,7 @@ export function calculateEMASavings(inputs: EMACalculatorInputs): CalculationRes
     totalSavings,
     totalAdditionalSavings,
     totalAllInSavings,
-    implementationCost: inputs.implementationCost * 1000000
+    implementationCost: inputs.implementationCost * 1000
   };
 }
 

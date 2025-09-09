@@ -65,13 +65,10 @@ export const CriticalInputsSection: React.FC<CriticalInputsSectionProps> = ({
     onUpdateInput('fxRate', parseFloat(value) || 1);
   };
 
-  // Check if required fields are filled
+  // Check if required fields are filled - removed averageAnnualSalary and averageHandlingTime since they're in Detailed
   const missingFields = [];
   if (!inputs.country) missingFields.push('Country');
-  if (!inputs.averageAnnualSalary) missingFields.push('Average Annual Salary');
   if (!inputs.monthlyQueryVolume) missingFields.push('Monthly Queries');
-  if (!inputs.averageHandlingTime) missingFields.push('Average Handling Time');
-  if (!inputs.implementationCost) missingFields.push('Implementation Cost');
   if (!inputs.companyGrowthRate) missingFields.push('Company Growth');
 
   return (
@@ -92,26 +89,19 @@ export const CriticalInputsSection: React.FC<CriticalInputsSectionProps> = ({
           </Alert>
         )}
 
-        {/* Country Selection */}
+        {/* Display Partner Country (read-only, set from onboarding) */}
         <div className="space-y-2">
-          <Label htmlFor="country" className="flex items-center gap-2">
+          <Label className="flex items-center gap-2">
             <Globe className="h-4 w-4" />
             Partner Country
           </Label>
-          <Select value={inputs.country || ''} onValueChange={handleCountryChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select partner country" />
-            </SelectTrigger>
-            <SelectContent className="bg-card">
-              {countries.map((country) => (
-                <SelectItem key={country.code} value={country.code}>
-                  {country.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="p-3 bg-muted rounded-md">
+            <span className="text-lg font-medium">
+              {countries.find(c => c.code === inputs.country)?.name || 'Not selected'}
+            </span>
+          </div>
           <p className="text-sm text-muted-foreground">
-            Country where the partner's team or operation is located.
+            Set during onboarding. Country where the partner's team or operation is located.
           </p>
         </div>
 
@@ -135,85 +125,60 @@ export const CriticalInputsSection: React.FC<CriticalInputsSectionProps> = ({
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Average Annual Salary */}
-          <div className="space-y-2">
-            <Label htmlFor="salary" className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4" />
-              Average Annual Salary per Rep ({inputs.currency})
-            </Label>
-            <Input
-              id="salary"
-              type="number"
-              value={inputs.averageAnnualSalary || ''}
-              onChange={(e) => onUpdateInput('averageAnnualSalary', parseFloat(e.target.value) || 0)}
-              className="text-lg font-medium"
-              placeholder="Enter annual salary"
-            />
-            <p className="text-sm text-muted-foreground">
-              Base salary before benefits and management overhead
-            </p>
-          </div>
-
-          {/* Monthly Queries */}
-          <div className="space-y-2">
-            <Label htmlFor="queryVolume" className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
-              Monthly Queries (Millions)
-            </Label>
-            <Input
-              id="queryVolume"
-              type="number"
-              value={inputs.monthlyQueryVolume || ''}
-              onChange={(e) => onUpdateInput('monthlyQueryVolume', parseFloat(e.target.value) || 0)}
-              step="0.1"
-              className="text-lg font-medium"
-              placeholder="Enter monthly volume"
-            />
-            <p className="text-sm text-muted-foreground">
-              Total customer service queries handled per month
-            </p>
-          </div>
+        {/* Monthly Queries - Now in thousands */}
+        <div className="space-y-2">
+          <Label htmlFor="queryVolume" className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4" />
+            Monthly Queries (Thousands)
+          </Label>
+          <Input
+            id="queryVolume"
+            type="number"
+            value={inputs.monthlyQueryVolume || ''}
+            onChange={(e) => onUpdateInput('monthlyQueryVolume', parseFloat(e.target.value) || 0)}
+            step="1"
+            className="text-lg font-medium"
+            placeholder="Enter monthly volume in thousands"
+          />
+          <p className="text-sm text-muted-foreground">
+            Total customer service queries handled per month (in thousands)
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Average Handling Time */}
+          {/* Implementation Cost Multiplier */}
           <div className="space-y-2">
-            <Label htmlFor="aht" className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4" />
-              Average Handling Time (Minutes)
+            <Label htmlFor="implementationCostMultiplier" className="flex items-center gap-2">
+              <DollarSign className="h-4 w-4" />
+              Implementation Cost Multiplier ($K per Rep)
             </Label>
             <Input
-              id="aht"
+              id="implementationCostMultiplier"
               type="number"
-              value={inputs.averageHandlingTime || ''}
-              onChange={(e) => onUpdateInput('averageHandlingTime', parseFloat(e.target.value) || 0)}
-              step="0.5"
+              value={inputs.implementationCostMultiplier || ''}
+              onChange={(e) => onUpdateInput('implementationCostMultiplier', parseFloat(e.target.value) || 0)}
+              step="0.1"
               className="text-lg font-medium"
-              placeholder="Enter handling time"
+              placeholder="Enter cost per rep in thousands"
             />
             <p className="text-sm text-muted-foreground">
-              Average time per customer interaction including wrap-up
+              Cost per rep for implementation (default: $1K per rep)
             </p>
           </div>
 
-          {/* Implementation Cost */}
+          {/* Implementation Cost - Calculated */}
           <div className="space-y-2">
-            <Label htmlFor="implementationCost" className="flex items-center gap-2">
+            <Label className="flex items-center gap-2">
               <DollarSign className="h-4 w-4" />
-              Implementation Cost ($M)
+              Implementation Cost ($K)
             </Label>
-            <Input
-              id="implementationCost"
-              type="number"
-              value={inputs.implementationCost || ''}
-              onChange={(e) => onUpdateInput('implementationCost', parseFloat(e.target.value) || 0)}
-              step="0.1"
-              className="text-lg font-medium"
-              placeholder="Enter cost in millions"
-            />
+            <div className="p-3 bg-muted rounded-md">
+              <span className="text-lg font-medium">
+                {(inputs.implementationCost || 0).toLocaleString()} $K
+              </span>
+            </div>
             <p className="text-sm text-muted-foreground">
-              One-time setup and implementation cost applied in Year 1
+              Auto-calculated: Total Reps × $K Multiplier (applied in Year 1)
             </p>
           </div>
         </div>

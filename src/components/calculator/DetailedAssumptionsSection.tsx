@@ -4,7 +4,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
-import { Settings, ChevronDown, ChevronUp, Target, Zap, TrendingUp } from 'lucide-react';
+import { Settings, ChevronDown, ChevronUp, Target, Zap, TrendingUp, DollarSign } from 'lucide-react';
 import { EMACalculatorInputs } from '@/types/ema-calculator';
 
 interface DetailedAssumptionsSectionProps {
@@ -12,13 +12,17 @@ interface DetailedAssumptionsSectionProps {
   onUpdateInput: (field: keyof EMACalculatorInputs, value: string | number) => void;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  industry: string;
+  partnerCountry: string;
 }
 
 export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProps> = ({ 
   inputs, 
   onUpdateInput,
   isOpen,
-  onOpenChange
+  onOpenChange,
+  industry,
+  partnerCountry
 }) => {
   return (
     <Card className="shadow-soft">
@@ -39,6 +43,54 @@ export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProp
         
         <CollapsibleContent>
           <CardContent className="space-y-6">
+            {/* Human Agent Fields - Moved from Critical Inputs */}
+            <div className="border-b pb-6 mb-6">
+              <h4 className="text-lg font-semibold mb-4 text-finance-primary">Human Agent Assumptions</h4>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Average Annual Salary */}
+                <div className="space-y-2">
+                  <Label htmlFor="salary" className="flex items-center gap-2">
+                    <DollarSign className="h-4 w-4" />
+                    Average Annual Salary per Rep ({inputs.currency})
+                  </Label>
+                  <Input
+                    id="salary"
+                    type="number"
+                    value={inputs.averageAnnualSalary || ''}
+                    onChange={(e) => onUpdateInput('averageAnnualSalary', parseFloat(e.target.value) || 0)}
+                    className="text-lg font-medium"
+                    placeholder="Enter annual salary"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Base salary before benefits and management overhead
+                    {partnerCountry === 'IN' && ' (Default: ₹4.5 lakh for India)'}
+                  </p>
+                </div>
+
+                {/* Average Handling Time */}
+                <div className="space-y-2">
+                  <Label htmlFor="aht" className="flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4" />
+                    Average Handling Time (Minutes)
+                  </Label>
+                  <Input
+                    id="aht"
+                    type="number"
+                    value={inputs.averageHandlingTime || ''}
+                    onChange={(e) => onUpdateInput('averageHandlingTime', parseFloat(e.target.value) || 0)}
+                    step="0.5"
+                    className="text-lg font-medium"
+                    placeholder="Enter handling time"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Average time per customer interaction including wrap-up
+                    {industry === 'Banking and Financial Services' && ' (Default: 10 minutes for Financial Services)'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Capacity Buffer */}
               <div className="space-y-2">
@@ -127,18 +179,18 @@ export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProp
                 <div className="space-y-2">
                   <Label htmlFor="complianceCost" className="flex items-center gap-2">
                     <Settings className="h-4 w-4" />
-                    Annual Compliance Cost Reduction ($M)
+                    Annual Compliance Cost Reduction ($K)
                   </Label>
                   <Input
                     id="complianceCost"
                     type="number"
                     value={inputs.annualComplianceCostReduction}
                     onChange={(e) => onUpdateInput('annualComplianceCostReduction', parseFloat(e.target.value) || 0)}
-                    step="0.1"
+                    step="1"
                     className="text-lg font-medium"
                   />
                   <p className="text-sm text-muted-foreground">
-                    Reduction in compliance cost from responses aligned with regulatory standards.
+                    Reduction in compliance cost from responses aligned with regulatory standards (in thousands).
                   </p>
                 </div>
               </div>
