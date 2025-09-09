@@ -36,6 +36,12 @@ export const ReportKeyPerformanceIndicators: React.FC<ReportKeyPerformanceIndica
   const bullAvgAnnual = formatCurrency(bullResults.totalAllInSavings / 3, true);
   const bullPayback = ((bullResults.implementationCost / (bullResults.totalSavings / 3)) * 12).toFixed(1);
 
+  // Order payback periods from smallest to largest
+  const basePaybackNum = parseFloat(basePayback);
+  const bullPaybackNum = parseFloat(bullPayback);
+  const minPayback = Math.min(basePaybackNum, bullPaybackNum).toFixed(1);
+  const maxPayback = Math.max(basePaybackNum, bullPaybackNum).toFixed(1);
+
   return (
     <Card className="shadow-soft">
       <CardHeader className="pb-4">
@@ -49,7 +55,7 @@ export const ReportKeyPerformanceIndicators: React.FC<ReportKeyPerformanceIndica
           <div className="text-center p-4 bg-finance-subtle rounded-lg">
             <Target className="h-8 w-8 mx-auto mb-2 text-finance-success" />
             <div className="text-2xl font-bold text-finance-success">
-              {basePayback} - {bullPayback}
+              {minPayback} - {maxPayback}
             </div>
             <div className="text-sm text-muted-foreground">
               Payback Period (Months)
