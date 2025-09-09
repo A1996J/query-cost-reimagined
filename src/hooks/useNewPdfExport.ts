@@ -19,54 +19,79 @@ export const useNewPdfExport = () => {
     setIsGenerating(true);
     
     try {
-      console.log('Starting PDF generation...');
+      console.log('Starting PDF generation...', { scenarioResults, scenarios, industry, useCase });
       
       // Create a temporary container for the report
       const tempContainer = document.createElement('div');
       tempContainer.style.position = 'absolute';
       tempContainer.style.left = '-9999px';
       tempContainer.style.top = '0';
-      tempContainer.style.width = '210mm'; // A4 width
+      tempContainer.style.width = '794px'; // A4 width in pixels
       tempContainer.style.backgroundColor = 'white';
       tempContainer.style.fontFamily = 'Inter, system-ui, sans-serif';
+      tempContainer.style.fontSize = '14px';
+      tempContainer.style.lineHeight = '1.5';
       document.body.appendChild(tempContainer);
+
+      console.log('Container created, rendering component...');
 
       // Create React root and render the print view
       const root = ReactDOM.createRoot(tempContainer);
       
-      await new Promise<void>((resolve) => {
-        root.render(
-          React.createElement(NewReportPrintView, {
-            scenarioResults,
-            scenarios,
-            industry,
-            useCase,
-          })
-        );
-        
-        // Wait for component to render and content to be ready
-        setTimeout(() => {
-          console.log('Report rendered, starting PDF conversion...');
-          resolve();
-        }, 2000);
+      await new Promise<void>((resolve, reject) => {
+        try {
+          root.render(
+            React.createElement(NewReportPrintView, {
+              scenarioResults,
+              scenarios,
+              industry,
+              useCase,
+            })
+          );
+          
+          // Wait for component to render and content to be ready
+          setTimeout(() => {
+            console.log('Report rendered, checking content...', tempContainer.innerHTML.length);
+            if (tempContainer.innerHTML.length < 100) {
+              console.error('Rendered content is too short, something went wrong');
+              reject(new Error('Rendered content is empty or too short'));
+              return;
+            }
+            console.log('Content looks good, proceeding to PDF conversion...');
+            resolve();
+          }, 3000); // Increased wait time
+        } catch (error) {
+          console.error('Error rendering component:', error);
+          reject(error);
+        }
       });
 
-      // Wait for any charts or images to load
+      // Wait for any images to load (though we're not using external images now)
       const images = Array.from(tempContainer.querySelectorAll('img'));
       if (images.length > 0) {
         console.log(`Waiting for ${images.length} images to load...`);
         await Promise.all(
           images.map(img => 
             img.complete ? Promise.resolve() : new Promise(resolve => {
-              img.onload = resolve;
-              img.onerror = resolve;
+              img.onload = () => {
+                console.log('Image loaded:', img.src);
+                resolve(undefined);
+              };
+              img.onerror = () => {
+                console.log('Image failed to load:', img.src);
+                resolve(undefined);
+              };
+              // Timeout for images
+              setTimeout(() => resolve(undefined), 2000);
             })
           )
         );
       }
 
-      // Additional wait for charts to stabilize
+      // Additional wait for any remaining rendering
       await new Promise(resolve => setTimeout(resolve, 1000));
+
+      console.log('Starting PDF conversion with content length:', tempContainer.innerHTML.length);
 
       // Configure html2pdf options for professional output
       const opt = {
@@ -74,18 +99,19 @@ export const useNewPdfExport = () => {
         filename: `EMA_ROI_Analysis_${new Date().toISOString().split('T')[0]}.pdf`,
         image: { 
           type: 'jpeg', 
-          quality: 0.95 
+          quality: 0.98 
         },
         html2canvas: { 
-          scale: 2,
+          scale: 1.5, // Reduced scale for better compatibility
           useCORS: true,
           letterRendering: true,
-          allowTaint: false,
+          allowTaint: true, // Allow taint for better compatibility
           backgroundColor: '#ffffff',
           width: 794, // A4 width in pixels at 96 DPI
           height: 1123, // A4 height in pixels at 96 DPI
           scrollX: 0,
           scrollY: 0,
+          logging: true, // Enable logging for debugging
         },
         jsPDF: { 
           unit: 'mm', 
@@ -94,19 +120,18 @@ export const useNewPdfExport = () => {
           compress: true
         },
         pagebreak: { 
-          mode: ['avoid-all', 'css', 'legacy'],
+          mode: ['css', 'legacy'],
           before: '.pdf-page',
-          after: '.pdf-page',
-          avoid: ['.avoid-break', '.card', '.chart-container', '.table-wrapper']
+          after: '.pdf-page'
         }
       };
 
-      console.log('Converting to PDF...');
+      console.log('PDF conversion options:', opt);
       
       // Generate and save the PDF
-      await html2pdf().set(opt).from(tempContainer).save();
+      const pdfResult = await html2pdf().set(opt).from(tempContainer).save();
       
-      console.log('PDF generated successfully!');
+      console.log('PDF generated successfully!', pdfResult);
 
       // Clean up
       root.unmount();
@@ -114,6 +139,7 @@ export const useNewPdfExport = () => {
       
     } catch (error) {
       console.error('PDF generation failed:', error);
+      throw error;
     } finally {
       setIsGenerating(false);
     }
