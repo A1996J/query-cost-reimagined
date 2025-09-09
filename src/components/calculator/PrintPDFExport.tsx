@@ -36,7 +36,7 @@ export const PrintPDFExport: React.FC<PrintPDFExportProps> = ({ onSwitchToReport
       className="mb-6 border-finance-primary text-finance-primary hover:bg-finance-primary hover:text-white"
     >
       <Download className="mr-2 h-4 w-4" />
-      Export Professional PDF Report
+      Export PDF Report
     </Button>
   );
 };
