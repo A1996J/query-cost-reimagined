@@ -31,7 +31,7 @@ const mockFXRates: { [key: string]: number } = {
   USD: 1,
   EUR: 0.85,
   GBP: 0.73,
-  INR: 83.12,
+  INR: 86.0,
   CAD: 1.25,
   AUD: 1.35,
   JPY: 110.0,
