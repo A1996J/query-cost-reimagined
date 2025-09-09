@@ -6,7 +6,6 @@ import { KeyAssumptionsTable } from '@/components/calculator/KeyAssumptionsTable
 import { AdditionalBenefitsSection } from '@/components/calculator/AdditionalBenefitsSection';
 import { GlossarySection } from '@/components/calculator/GlossarySection';
 import { ReportKeyPerformanceIndicators } from '@/components/calculator/ReportKeyPerformanceIndicators';
-import { ReportBaselineSavingsSummary } from '@/components/calculator/ReportBaselineSavingsSummary';
 import { ExecutiveSummaryPart1 } from '@/components/calculator/ExecutiveSummaryPart1';
 import { ExecutiveSummaryPart2 } from '@/components/calculator/ExecutiveSummaryPart2';
 import { ScenarioResults, ScenarioInputs } from '@/types/ema-calculator';
@@ -117,9 +116,6 @@ export const ReportPrintView: React.FC<ReportPrintViewProps> = ({
           <ReportKeyPerformanceIndicators scenarioResults={scenarioResults} scenarios={scenarios} />
         </div>
         
-        <div className="avoid-break baseline-section">
-          <ReportBaselineSavingsSummary scenarioResults={scenarioResults} scenarios={scenarios} />
-        </div>
         
         <div className="avoid-break benefits-section">
           <AdditionalBenefitsSection industry={industry} />
