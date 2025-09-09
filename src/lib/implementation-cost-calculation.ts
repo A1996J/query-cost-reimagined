@@ -8,8 +8,8 @@ export function calculateImplementationCost(inputs: EMACalculatorInputs): number
   const repsNeeded100 = (annualQueries * 1000 * inputs.averageHandlingTime) / WORKING_MINUTES_PER_YEAR;
   const totalReps = repsNeeded100 * (1 + inputs.capacityBuffer);
   
-  // Calculate implementation cost: Total Reps × $K Multiplier
-  return totalReps * (inputs.implementationCostMultiplier || 1);
+  // Calculate implementation cost in $K: Total Reps × $1000 per rep / 1000 to get $K
+  return totalReps * (inputs.implementationCostMultiplier || 1000) / 1000;
 }
 
 export function updateImplementationCostIfNeeded(inputs: EMACalculatorInputs, onUpdateInput: (field: keyof EMACalculatorInputs, value: number) => void) {

@@ -54,7 +54,7 @@ export function calculateEMASavings(inputs: EMACalculatorInputs): CalculationRes
     const savings = preEMACost - postEMACost;
     let netSavings = savings;
     
-    // Apply implementation cost in Year 1 - now in thousands
+    // Apply implementation cost in Year 1 - implementation cost is already in $K, multiply by 1000 to get actual dollars
     if (year === 1) {
       netSavings = savings - (inputs.implementationCost * 1000);
     }

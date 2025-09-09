@@ -31,7 +31,7 @@ const emptyCriticalInputs: Partial<EMACalculatorInputs> = {
   monthlyQueryVolume: 0,
   averageHandlingTime: 0,
   implementationCost: 0,
-  implementationCostMultiplier: 1, // $1K per rep default
+  implementationCostMultiplier: 1000, // $1K per rep default
   companyGrowthRate: 0,
 };
 
