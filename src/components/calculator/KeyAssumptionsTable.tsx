@@ -50,6 +50,15 @@ export const KeyAssumptionsTable: React.FC<KeyAssumptionsTableProps> = ({ scenar
     return `${(value * 100).toFixed(0)}%`;
   };
 
+  const createRangeValue = (baseValue: number, bullValue: number, formatter: (val: number) => string) => {
+    if (baseValue === bullValue) {
+      return formatter(baseValue);
+    }
+    const minValue = Math.min(baseValue, bullValue);
+    const maxValue = Math.max(baseValue, bullValue);
+    return `${formatter(minValue)} - ${formatter(maxValue)}`;
+  };
+
   return (
     <Card className="shadow-soft">
       <CardHeader className="pb-4">
@@ -62,43 +71,82 @@ export const KeyAssumptionsTable: React.FC<KeyAssumptionsTableProps> = ({ scenar
         </p>
       </CardHeader>
       <CardContent>
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="font-semibold">Assumption</TableHead>
-                <TableHead className="text-center font-semibold">Conservative Value</TableHead>
-                <TableHead className="text-center font-semibold">Expected Value</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="font-medium">Monthly Queries (Millions)</TableCell>
-                <TableCell className="text-center">{formatNumber(baseValues.monthlyQueries)}</TableCell>
-                <TableCell className="text-center">{formatNumber(bullValues.monthlyQueries)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">Avg Handling Time (Minutes)</TableCell>
-                <TableCell className="text-center">{formatNumber(baseValues.averageHandlingTime)}</TableCell>
-                <TableCell className="text-center">{formatNumber(bullValues.averageHandlingTime)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">Reps Needed (Total)</TableCell>
-                <TableCell className="text-center">{formatNumber(baseValues.totalReps, 0)}</TableCell>
-                <TableCell className="text-center">{formatNumber(bullValues.totalReps, 0)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">Rep Cost per Year (All-In, $)</TableCell>
-                <TableCell className="text-center">{formatCurrency(baseValues.repCostPerYear)}</TableCell>
-                <TableCell className="text-center">{formatCurrency(bullValues.repCostPerYear)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">Share of Queries Handled by EMA (Y3)</TableCell>
-                <TableCell className="text-center">{formatPercentage(baseValues.finalYearContainmentRate)}</TableCell>
-                <TableCell className="text-center">{formatPercentage(bullValues.finalYearContainmentRate)}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+        <div className="grid grid-cols-2 gap-6">
+          {/* Left Section */}
+          <div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="font-semibold">Assumption</TableHead>
+                  <TableHead className="text-center font-semibold">Conservative-Expected Values</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell className="font-medium">Monthly Queries (Millions)</TableCell>
+                  <TableCell className="text-center">
+                    {createRangeValue(baseValues.monthlyQueries, bullValues.monthlyQueries, formatNumber)}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Avg Handling Time (Minutes)</TableCell>
+                  <TableCell className="text-center">
+                    {createRangeValue(baseValues.averageHandlingTime, bullValues.averageHandlingTime, formatNumber)}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Reps Needed (Total)</TableCell>
+                  <TableCell className="text-center">
+                    {createRangeValue(baseValues.totalReps, bullValues.totalReps, (val) => formatNumber(val, 0))}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Rep Cost per Year (All-In, $)</TableCell>
+                  <TableCell className="text-center">
+                    {createRangeValue(baseValues.repCostPerYear, bullValues.repCostPerYear, formatCurrency)}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Right Section */}
+          <div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="font-semibold">Assumption</TableHead>
+                  <TableHead className="text-center font-semibold">Conservative-Expected Values</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell className="font-medium">Share of Queries Handled by EMA (Y3)</TableCell>
+                  <TableCell className="text-center">
+                    {createRangeValue(baseValues.finalYearContainmentRate, bullValues.finalYearContainmentRate, formatPercentage)}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Productivity Gain for Human Agents (%)</TableCell>
+                  <TableCell className="text-center">
+                    {createRangeValue(base.year1ProductivityGain, bull.year1ProductivityGain, formatPercentage)}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Annual Compliance Cost Reduction (Additional Savings)</TableCell>
+                  <TableCell className="text-center">
+                    {createRangeValue(base.annualComplianceCostReduction, bull.annualComplianceCostReduction, formatCurrency)}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">% Duplicate Calls Today (Additional Savings)</TableCell>
+                  <TableCell className="text-center">
+                    {createRangeValue(base.duplicateQueriesPercent, bull.duplicateQueriesPercent, formatPercentage)}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </CardContent>
     </Card>
