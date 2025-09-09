@@ -26,87 +26,54 @@ export const ReportKeyPerformanceIndicators: React.FC<ReportKeyPerformanceIndica
   const baseResults = scenarioResults.base;
   const bullResults = scenarioResults.bull;
 
-  return (
-    <div className="space-y-6">
-      {/* Base Case KPIs */}
-      <Card className="shadow-soft">
-        <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-2 text-finance-primary">
-            <TrendingUp className="h-5 w-5" />
-            Key Performance Indicators (BASE CASE)
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="text-center p-4 bg-finance-subtle rounded-lg">
-              <DollarSign className="h-8 w-8 mx-auto mb-2 text-finance-primary" />
-              <div className="text-2xl font-bold text-finance-primary">
-                {((baseResults.totalAllInSavings / baseResults.implementationCost) - 1).toFixed(1)}x
-              </div>
-              <div className="text-sm text-muted-foreground">All-In ROI Multiple</div>
-            </div>
-            <div className="text-center p-4 bg-finance-subtle rounded-lg">
-              <TrendingUp className="h-8 w-8 mx-auto mb-2 text-finance-success" />
-              <div className="text-2xl font-bold text-finance-success">
-                {formatCurrency(baseResults.totalAllInSavings / 3, true)}M
-              </div>
-              <div className="text-sm text-muted-foreground">Avg Annual All-In Savings</div>
-            </div>
-            <div className="text-center p-4 bg-finance-subtle rounded-lg">
-              <Target className="h-8 w-8 mx-auto mb-2 text-finance-accent" />
-              <div className="text-2xl font-bold text-finance-accent">
-                {((baseResults.implementationCost / (baseResults.totalSavings / 3)) * 12).toFixed(1)}
-              </div>
-              <div className="text-sm text-muted-foreground">
-                Payback Period (Months)
-                <div className="text-xs text-muted-foreground/80 mt-1">
-                  Based on direct savings only
-                </div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+  // Calculate base case values
+  const baseROI = ((baseResults.totalAllInSavings / baseResults.implementationCost) - 1).toFixed(1);
+  const baseAvgAnnual = formatCurrency(baseResults.totalAllInSavings / 3, true);
+  const basePayback = ((baseResults.implementationCost / (baseResults.totalSavings / 3)) * 12).toFixed(1);
 
-      {/* Bull Case KPIs */}
-      <Card className="shadow-soft">
-        <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-2 text-finance-primary">
-            <TrendingUp className="h-5 w-5" />
-            Key Performance Indicators (BULL CASE)
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="text-center p-4 bg-finance-subtle rounded-lg">
-              <DollarSign className="h-8 w-8 mx-auto mb-2 text-finance-primary" />
-              <div className="text-2xl font-bold text-finance-primary">
-                {((bullResults.totalAllInSavings / bullResults.implementationCost) - 1).toFixed(1)}x
-              </div>
-              <div className="text-sm text-muted-foreground">All-In ROI Multiple</div>
+  // Calculate bull case values
+  const bullROI = ((bullResults.totalAllInSavings / bullResults.implementationCost) - 1).toFixed(1);
+  const bullAvgAnnual = formatCurrency(bullResults.totalAllInSavings / 3, true);
+  const bullPayback = ((bullResults.implementationCost / (bullResults.totalSavings / 3)) * 12).toFixed(1);
+
+  return (
+    <Card className="shadow-soft">
+      <CardHeader className="pb-4">
+        <CardTitle className="flex items-center gap-2 text-finance-primary">
+          <TrendingUp className="h-5 w-5" />
+          Key Performance Indicators
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="text-center p-4 bg-finance-subtle rounded-lg">
+            <DollarSign className="h-8 w-8 mx-auto mb-2 text-finance-primary" />
+            <div className="text-2xl font-bold text-finance-primary">
+              {baseROI}x - {bullROI}x
             </div>
-            <div className="text-center p-4 bg-finance-subtle rounded-lg">
-              <TrendingUp className="h-8 w-8 mx-auto mb-2 text-finance-success" />
-              <div className="text-2xl font-bold text-finance-success">
-                {formatCurrency(bullResults.totalAllInSavings / 3, true)}M
-              </div>
-              <div className="text-sm text-muted-foreground">Avg Annual All-In Savings</div>
+            <div className="text-sm text-muted-foreground">All-In ROI Multiple</div>
+          </div>
+          <div className="text-center p-4 bg-finance-subtle rounded-lg">
+            <TrendingUp className="h-8 w-8 mx-auto mb-2 text-finance-success" />
+            <div className="text-2xl font-bold text-finance-success">
+              {baseAvgAnnual}M - {bullAvgAnnual}M
             </div>
-            <div className="text-center p-4 bg-finance-subtle rounded-lg">
-              <Target className="h-8 w-8 mx-auto mb-2 text-finance-accent" />
-              <div className="text-2xl font-bold text-finance-accent">
-                {((bullResults.implementationCost / (bullResults.totalSavings / 3)) * 12).toFixed(1)}
-              </div>
-              <div className="text-sm text-muted-foreground">
-                Payback Period (Months)
-                <div className="text-xs text-muted-foreground/80 mt-1">
-                  Based on direct savings only
-                </div>
+            <div className="text-sm text-muted-foreground">Avg Annual All-In Savings</div>
+          </div>
+          <div className="text-center p-4 bg-finance-subtle rounded-lg">
+            <Target className="h-8 w-8 mx-auto mb-2 text-finance-accent" />
+            <div className="text-2xl font-bold text-finance-accent">
+              {basePayback} - {bullPayback}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              Payback Period (Months)
+              <div className="text-xs text-muted-foreground/80 mt-1">
+                Based on direct savings only
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
