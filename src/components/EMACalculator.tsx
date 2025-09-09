@@ -398,9 +398,6 @@ export const EMACalculator: React.FC = () => {
                     <SavingsStickers scenarioResults={scenarioResults} />
                   </div>
                   
-                  {/* Additional Benefits */}
-                  <AdditionalBenefitsSection industry={industry} />
-                  
                   {/* Charts */}
                   <div className="waterfall-chart-container">
                     <SavingsWaterfallChart scenarioResults={scenarioResults} />
@@ -418,6 +415,9 @@ export const EMACalculator: React.FC = () => {
                   <div className="executive-summary-container">
                     <SummaryTable scenarioResults={scenarioResults} scenarios={scenarios} />
                   </div>
+                  
+                  {/* Additional Benefits */}
+                  <AdditionalBenefitsSection industry={industry} />
                   
                   {/* Glossary and Other Assumptions */}
                   <div className="glossary-container">
