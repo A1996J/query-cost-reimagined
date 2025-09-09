@@ -159,6 +159,7 @@ export const SensitivityHeatmap: React.FC<SensitivityHeatmapProps> = ({ scenario
                 <tr>
                   <th className="border border-border p-2 bg-muted text-sm font-medium">
                     Y1 Human Productivity Gains (%) ↓ / Y3 Ema-handled Queries (%)
+                  </th>
                   {containmentRates.map((rate, idx) => (
                     <th key={idx} className="border border-border p-2 bg-muted text-sm font-medium min-w-20">
                       {formatPercentage(rate)}
