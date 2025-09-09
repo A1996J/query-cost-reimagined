@@ -391,7 +391,7 @@ export const EMACalculator: React.FC = () => {
               {scenarioResults && scenarios ? (
                 <>
                   {/* PDF Export Button */}
-                  <PDFExport scenarioResults={scenarioResults} scenarios={scenarios} />
+                  <PDFExport scenarioResults={scenarioResults} scenarios={scenarios} industry={industry} />
                   
                   {/* Savings Stickers */}
                   <div className="savings-stickers-container">
