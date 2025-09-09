@@ -296,7 +296,6 @@ export const EMACalculator: React.FC = () => {
                       scenarioResults={scenarioResults} 
                       scenarios={scenarios} 
                     />
-                    <DetailedAssumptionsSection />
                   </>
                 ) : (
                   <Card className="p-8 text-center shadow-soft">
