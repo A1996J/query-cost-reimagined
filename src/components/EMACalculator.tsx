@@ -38,8 +38,8 @@ const defaultDetailedInputs: Partial<EMACalculatorInputs> = {
   capacityBuffer: 0.15, // 15%
   finalYearContainmentRate: 0.75, // 75%
   year1ProductivityGain: 0.10, // 10%
-  duplicateQueriesPercent: 0.10,
-  annualComplianceCostReduction: 0.25,
+  duplicateQueriesPercent: 0.03, // 3%
+  annualComplianceCostReduction: 0.5, // $0.5M
 };
 
 // PIN-protected advanced defaults
