@@ -216,7 +216,7 @@ export const DetailedAssumptionsSection: React.FC<DetailedAssumptionsSectionProp
               <div className="space-y-2">
                 <Label htmlFor="containmentRate" className="flex items-center gap-2">
                   <Target className="h-4 w-4" />
-                  Final Year Ema Containment Rate (%)
+                  Final Year Ema-Handled Queries (%)
                 </Label>
                 <Input
                   id="containmentRate"
