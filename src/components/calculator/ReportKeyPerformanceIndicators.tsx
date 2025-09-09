@@ -47,6 +47,18 @@ export const ReportKeyPerformanceIndicators: React.FC<ReportKeyPerformanceIndica
       <CardContent>
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center p-4 bg-finance-subtle rounded-lg">
+            <Target className="h-8 w-8 mx-auto mb-2 text-finance-success" />
+            <div className="text-2xl font-bold text-finance-success">
+              {basePayback} - {bullPayback}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              Payback Period (Months)
+              <div className="text-xs text-muted-foreground/80 mt-1">
+                Based on direct savings only
+              </div>
+            </div>
+          </div>
+          <div className="text-center p-4 bg-finance-subtle rounded-lg">
             <DollarSign className="h-8 w-8 mx-auto mb-2 text-finance-primary" />
             <div className="text-2xl font-bold text-finance-primary">
               {baseROI}x - {bullROI}x
@@ -59,18 +71,6 @@ export const ReportKeyPerformanceIndicators: React.FC<ReportKeyPerformanceIndica
               {baseAvgAnnual}M - {bullAvgAnnual}M
             </div>
             <div className="text-sm text-muted-foreground">Avg Annual All-In Savings</div>
-          </div>
-          <div className="text-center p-4 bg-finance-subtle rounded-lg">
-            <Target className="h-8 w-8 mx-auto mb-2 text-finance-accent" />
-            <div className="text-2xl font-bold text-finance-accent">
-              {basePayback} - {bullPayback}
-            </div>
-            <div className="text-sm text-muted-foreground">
-              Payback Period (Months)
-              <div className="text-xs text-muted-foreground/80 mt-1">
-                Based on direct savings only
-              </div>
-            </div>
           </div>
         </div>
       </CardContent>

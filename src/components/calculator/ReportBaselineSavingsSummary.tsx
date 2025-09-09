@@ -59,11 +59,11 @@ export const ReportBaselineSavingsSummary: React.FC<ReportBaselineSavingsSummary
             </div>
           </div>
           <div className="text-center p-4 bg-finance-subtle rounded-lg">
-            <div className="text-2xl font-bold text-finance-accent mb-1">
+            <div className="text-2xl font-bold text-finance-success mb-1">
               {baseAdditionalPercent}% - {bullAdditionalPercent}%
             </div>
             <div className="text-sm text-muted-foreground">Additional Savings<br/>% of Baseline</div>
-            <div className="text-xs text-finance-accent mt-1">
+            <div className="text-xs text-finance-success mt-1">
               {formatCurrency(baseResults.totalAdditionalSavings, true)}M - {formatCurrency(bullResults.totalAdditionalSavings, true)}M Total
             </div>
           </div>
