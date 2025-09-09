@@ -29,7 +29,7 @@ export const SavingsStickers: React.FC<SavingsStickersProps> = ({ scenarioResult
 
   const subStickers = [
     {
-      label: "Direct savings Ema-resolved Queries",
+      label: "Direct savings from Ema-resolved Queries",
       sublabel: "Over 3 years after implementation cost",
       value: `${formatCurrency(baseDirect)} - ${formatCurrency(bullDirect)}`,
       className: "bg-finance-subtle text-finance-primary border border-finance-primary/20"
