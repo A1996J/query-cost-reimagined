@@ -174,7 +174,7 @@ export const CriticalInputsSection: React.FC<CriticalInputsSectionProps> = ({
             </Label>
             <div className="p-3 bg-muted rounded-md">
               <span className="text-lg font-medium">
-                {(inputs.implementationCost || 0).toLocaleString()} $K
+                ${(inputs.implementationCost || 0).toLocaleString()}K 
               </span>
             </div>
             <p className="text-sm text-muted-foreground">
