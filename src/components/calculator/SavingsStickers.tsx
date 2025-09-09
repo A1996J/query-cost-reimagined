@@ -46,12 +46,9 @@ export const SavingsStickers: React.FC<SavingsStickersProps> = ({ scenarioResult
     <div className="space-y-6 mb-8">
       {/* Main savings box - large, full width */}
       <Card className={`p-8 text-center shadow-soft ${mainSticker.className}`}>
-        <h3 className="text-2xl font-semibold mb-2">
+        <h3 className="text-2xl font-semibold mb-6">
           {mainSticker.label}
         </h3>
-        <p className="text-base opacity-90 mb-6">
-          {mainSticker.sublabel}
-        </p>
         <div className="text-4xl font-bold">
           {mainSticker.value}
         </div>
