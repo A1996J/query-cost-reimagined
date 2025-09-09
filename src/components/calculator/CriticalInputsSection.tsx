@@ -213,7 +213,7 @@ export const CriticalInputsSection: React.FC<CriticalInputsSectionProps> = ({
               placeholder="Enter cost in thousands"
             />
             <p className="text-sm text-muted-foreground">
-              One-time setup and implementation cost applied in Year 1
+              Auto-calculated as Total Reps Needed × $1K (editable)
             </p>
           </div>
         </div>

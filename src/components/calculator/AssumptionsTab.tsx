@@ -8,7 +8,7 @@ import { AdditionalSavingsSection } from './AdditionalSavingsSection';
 import { ResultsDisplay } from './ResultsDisplay';
 import { EMASection } from './EMASection';
 import { HumanAgentSection } from './HumanAgentSection';
-import { CurrencySection } from './CurrencySection';
+import { BullCaseSection } from './BullCaseSection';
 import { EMACalculatorInputs, ScenarioResults, ScenarioInputs } from '@/types/ema-calculator';
 
 interface AssumptionsTabProps {
@@ -20,6 +20,7 @@ interface AssumptionsTabProps {
   onFxRateUserEdited: (edited: boolean) => void;
   scenarioResults: ScenarioResults;
   scenarios: ScenarioInputs;
+  onPopulateBullScenario: () => void;
 }
 
 export const AssumptionsTab: React.FC<AssumptionsTabProps> = ({
@@ -30,7 +31,8 @@ export const AssumptionsTab: React.FC<AssumptionsTabProps> = ({
   fxRateUserEdited,
   onFxRateUserEdited,
   scenarioResults,
-  scenarios
+  scenarios,
+  onPopulateBullScenario
 }) => {
   const [showBullDeviations, setShowBullDeviations] = useState(false);
 
@@ -68,84 +70,24 @@ export const AssumptionsTab: React.FC<AssumptionsTabProps> = ({
         onUpdateInput={onUpdateBaseInput}
       />
 
-      {/* Section 3: Bull Case Deviations */}
-      <Card className="shadow-soft">
-        <CardHeader className="pb-4">
-          <Button
-            variant="ghost"
-            onClick={() => setShowBullDeviations(!showBullDeviations)}
-            className="flex items-center gap-2 p-0 h-auto text-finance-primary hover:text-finance-primary/80"
-          >
-            {showBullDeviations ? <ChevronDown className="h-5 w-5" /> : <ChevronRight className="h-5 w-5" />}
-            <CardTitle className="text-finance-primary">Bull Case Deviations</CardTitle>
-          </Button>
-        </CardHeader>
-        
-        {showBullDeviations && (
-          <CardContent className="space-y-6">
-            <p className="text-muted-foreground">
-              The bull case scenario automatically adjusts the following parameters for a more optimistic projection:
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="p-4 bg-finance-subtle rounded-lg">
-                  <h4 className="font-semibold mb-2">Containment Rate</h4>
-                  <p className="text-sm text-muted-foreground">Base × 1.25 (max 90%)</p>
-                  <p className="text-sm font-medium mt-1">
-                    Base: {(baseInputs.finalYearContainmentRate * 100).toFixed(1)}% → 
-                    Bull: {(bullInputs.finalYearContainmentRate * 100).toFixed(1)}%
-                  </p>
-                </div>
-                
-                <div className="p-4 bg-finance-subtle rounded-lg">
-                  <h4 className="font-semibold mb-2">Compliance Reduction</h4>
-                  <p className="text-sm text-muted-foreground">Base × 3</p>
-                  <p className="text-sm font-medium mt-1">
-                    Base: ${baseInputs.annualComplianceCostReduction}K → 
-                    Bull: ${bullInputs.annualComplianceCostReduction}K
-                  </p>
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="p-4 bg-finance-subtle rounded-lg">
-                  <h4 className="font-semibold mb-2">Productivity Gain</h4>
-                  <p className="text-sm text-muted-foreground">Base + 5 percentage points</p>
-                  <p className="text-sm font-medium mt-1">
-                    Base: {(baseInputs.year1ProductivityGain * 100).toFixed(1)}% → 
-                    Bull: {(bullInputs.year1ProductivityGain * 100).toFixed(1)}%
-                  </p>
-                </div>
-                
-                <div className="p-4 bg-finance-subtle rounded-lg">
-                  <h4 className="font-semibold mb-2">Upsell %</h4>
-                  <p className="text-sm text-muted-foreground">Base × 1.5</p>
-                  <p className="text-sm font-medium mt-1">
-                    Base: {(baseInputs.upsellPercentOfRevenue * 100).toFixed(2)}% → 
-                    Bull: {(bullInputs.upsellPercentOfRevenue * 100).toFixed(2)}%
-                  </p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        )}
-      </Card>
+      {/* Section 3: Bull Case Scenario */}
+      <BullCaseSection
+        inputs={bullInputs}
+        onUpdateInput={onUpdateBullInput}
+        isOpen={showBullDeviations}
+        onOpenChange={setShowBullDeviations}
+        fxRateUserEdited={fxRateUserEdited}
+        onFxRateUserEdited={onFxRateUserEdited}
+        scenarioResults={scenarioResults}
+        scenarios={scenarios}
+        onPopulateBullScenario={onPopulateBullScenario}
+      />
 
       {/* Results for Base Case */}
       <ResultsDisplay
         results={scenarioResults.base}
         currency={baseInputs.currency}
         scenario="base"
-        scenarioResults={scenarioResults}
-        scenarios={scenarios}
-      />
-
-      {/* Results for Bull Case */}
-      <ResultsDisplay
-        results={scenarioResults.bull}
-        currency={bullInputs.currency}
-        scenario="bull"
         scenarioResults={scenarioResults}
         scenarios={scenarios}
       />

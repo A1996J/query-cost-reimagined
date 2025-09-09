@@ -204,33 +204,36 @@ export const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
                     </Select>
                   </div>
 
-                  <div>
-                    <Label htmlFor="monthly-queries">Total Monthly Customer Queries Received</Label>
-                    <Input
-                      id="monthly-queries"
-                      type="number"
-                      value={monthlyQueries || ''}
-                      onChange={(e) => setMonthlyQueries(parseFloat(e.target.value) || 0)}
-                      placeholder="Enter monthly query volume (in millions)"
-                      className="mt-2"
-                      step="0.1"
-                    />
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Total number of customer service queries in a typical month.
-                    </p>
-                  </div>
+                   <div>
+                     <Label htmlFor="monthly-queries">Total Monthly Customer Queries Received (K)</Label>
+                     <Input
+                       id="monthly-queries"
+                       type="number"
+                       value={monthlyQueries || ''}
+                       onChange={(e) => setMonthlyQueries(parseFloat(e.target.value) || 0)}
+                       placeholder="Enter monthly query volume (in thousands)"
+                       className="mt-2"
+                       step="1"
+                     />
+                     <p className="text-sm text-muted-foreground mt-1">
+                       Total number of customer service queries in a typical month.
+                     </p>
+                   </div>
 
-                  <div>
-                    <Label htmlFor="query-types">Breakdown of Query Types (% Split Required) *</Label>
-                    <Input
-                      id="query-types"
-                      value={queryTypes}
-                      onChange={(e) => setQueryTypes(e.target.value)}
-                      placeholder="E.g., 40% billing, 30% technical support, 20% onboarding, 10% others"
-                      className="mt-2"
-                      required
-                    />
-                  </div>
+                   <div>
+                     <Label htmlFor="query-types">Breakdown of Query Types *</Label>
+                     <Input
+                       id="query-types"
+                       value={queryTypes}
+                       onChange={(e) => setQueryTypes(e.target.value)}
+                       placeholder="E.g., billing, tech support, onboarding"
+                       className="mt-2"
+                       required
+                     />
+                     <p className="text-sm text-muted-foreground mt-1">
+                       Describe the kinds of queries typically handled — e.g., billing, tech support, onboarding.
+                     </p>
+                   </div>
                 </div>
               </div>
 

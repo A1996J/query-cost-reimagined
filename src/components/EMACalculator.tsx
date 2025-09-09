@@ -165,6 +165,35 @@ export const EMACalculator: React.FC = () => {
     }
   };
 
+  // Auto-calculate implementation cost when inputs change
+  useEffect(() => {
+    if (scenarios[currentScenario].monthlyQueryVolume > 0 && 
+        scenarios[currentScenario].averageHandlingTime > 0 && 
+        scenarios[currentScenario].averageAnnualSalary > 0 && 
+        scenarios[currentScenario].capacityBuffer >= 0) {
+      const autoImplementationCost = calculateImplementationCost(
+        scenarios[currentScenario].monthlyQueryVolume,
+        scenarios[currentScenario].averageHandlingTime,
+        scenarios[currentScenario].capacityBuffer,
+        scenarios[currentScenario].averageAnnualSalary,
+        scenarios[currentScenario].benefitsMultiplier,
+        scenarios[currentScenario].fxRate
+      );
+      
+      // Only auto-update if user hasn't manually set a different value
+      if (scenarios[currentScenario].implementationCost === 0) {
+        setScenarios(prev => ({
+          ...prev,
+          [currentScenario]: {
+            ...prev[currentScenario],
+            implementationCost: autoImplementationCost
+          }
+        }));
+      }
+    }
+  }, [scenarios[currentScenario].monthlyQueryVolume, scenarios[currentScenario].averageHandlingTime, 
+      scenarios[currentScenario].averageAnnualSalary, scenarios[currentScenario].capacityBuffer, currentScenario]);
+
   // Auto-calculate when inputs change (only if all required fields are filled)
   useEffect(() => {
     if (canCalculate(scenarios[currentScenario])) {
@@ -190,9 +219,12 @@ export const EMACalculator: React.FC = () => {
       updateInput('companyGrowthRate', 0.05);
     }
     
-    // Set monthly queries and query types
-    updateInput('monthlyQueryVolume', data.monthlyQueries);
+    // Set monthly queries and query types (convert from thousands to millions)
+    updateInput('monthlyQueryVolume', data.monthlyQueries / 1000);
     updateInput('queryTypes', data.queryTypes);
+    
+    // Pre-fill partner country
+    updateInput('country', data.country);
   };
 
   if (showOnboarding) {
@@ -269,6 +301,7 @@ export const EMACalculator: React.FC = () => {
                 onFxRateUserEdited={handleFxRateUserEdited}
                 scenarioResults={scenarioResults || { base: calculateEMASavings(scenarios.base), bull: calculateEMASavings(scenarios.bull) }}
                 scenarios={scenarios}
+                onPopulateBullScenario={populateBullScenario}
               />
             )}
             {currentTab === 'report' && (
