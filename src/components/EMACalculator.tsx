@@ -242,7 +242,7 @@ export const EMACalculator: React.FC = () => {
             <div>
               <h1 className="text-3xl font-bold mb-2">{companyName}'s ROI with Ema</h1>
               <p className="text-white/90 text-lg">
-                Calculate 3-year direct cost savings from implementing an Ema solution
+                Calculate 3-year direct cost savings from implementing Ema
               </p>
             </div>
           </div>
@@ -274,7 +274,7 @@ export const EMACalculator: React.FC = () => {
                   size="lg"
                 >
                   <TrendingUp className="mr-2 h-5 w-5" />
-                  {isCalculating ? 'Calculating...' : 'Calculate Ema Savings'}
+                  {isCalculating ? 'Calculating...' : 'Calculate Savings from Ema'}
                 </Button>
               </Card>
 
@@ -333,7 +333,7 @@ export const EMACalculator: React.FC = () => {
                   size="lg"
                 >
                   <TrendingUp className="mr-2 h-5 w-5" />
-                  {isCalculating ? 'Calculating...' : 'Calculate Ema Savings'}
+                  {isCalculating ? 'Calculating...' : 'Calculate Savings from Ema'}
                 </Button>
               </Card>
 
